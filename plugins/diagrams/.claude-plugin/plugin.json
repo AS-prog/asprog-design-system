@@ -1,7 +1,7 @@
 {
   "name": "diagrams",
   "displayName": "Diagramas",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Los 45 tipos de diagrama de diagram-design con la identidad Delphos: una sola tinta, clases .d-* del sistema y SVG en línea dentro del documento.",
   "author": {
     "name": "Andrés R. Sotelo",
