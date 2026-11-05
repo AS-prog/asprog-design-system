@@ -1,0 +1,120 @@
+/*
+  Delphos · css/base.css — la capa base, común a documentos y al sitio.
+  Se carga después de tokens.css y antes de document.css o site.css.
+  Contiene: alias --f-*, reset, cuerpo con retícula, titulares, prosa,
+  enlaces y foco, citas, figuras y diagramas, código, nota de trabajo,
+  botón, antetítulo y la regla de movimiento reducido. Nada de layout de página.
+*/
+
+/* ---------- Alias: los nombres cortos del código fuente ---------- */
+:root {
+  --f-display: var(--font-display);
+  --f-body:    var(--font-body);
+  --f-mono:    var(--font-mono);
+}
+
+/* ---------- Hoja base ---------- */
+* { box-sizing: border-box; }
+html { scrollbar-color: var(--rule) transparent; caret-color: var(--accent); }
+::selection { background: var(--accent); color: var(--ground); }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  /* Papel de libreta de puntos: un punto por celda, desplazado media celda para que caiga
+     en el cruce de la retícula, donde antes se cortaban las líneas. */
+  background-image: radial-gradient(circle, var(--grid) 1px, transparent 2px);
+  background-size: var(--unit) var(--unit);
+  background-position: calc(50% - var(--unit) / 2) calc(var(--unit) / -2);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: var(--t-4);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+}
+
+h1, h2, h3 { font-family: var(--f-display); font-weight: 400; margin: 0; text-wrap: balance; letter-spacing: var(--ls-headline); }
+h1 { font-size: var(--t-9); line-height: var(--lh-1); font-weight: 300; }
+h2 { font-size: var(--t-h2); line-height: var(--lh-5); }
+h3 { font-size: var(--t-6); line-height: var(--lh-7); }
+h1 em, h2 em { font-style: italic; }
+
+.h-id      { font-family: var(--f-mono); font-size: var(--t-4); font-weight: 500; letter-spacing: var(--ls-id); }
+.h-entry { font-family: var(--f-body); font-size: var(--t-4); font-weight: 500; letter-spacing: var(--ls-entry); }
+
+p { margin: 0; max-width: var(--measure); }
+.lede { font-size: var(--t-5); color: var(--muted); line-height: var(--lh-10); }
+.metrics { font-family: var(--f-mono); font-size: var(--t-2); color: var(--muted); line-height: var(--lh-11); max-width: var(--measure-wide); }
+
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: .2em; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: var(--focus); outline-offset: var(--focus-offset); border-radius: var(--r-1); }
+hr { border: 0; border-top: 1px solid var(--rule); margin: var(--s-11) 0 0; }
+
+blockquote { margin: 0; font-family: var(--f-display); font-weight: 300; font-size: var(--t-quote); line-height: var(--lh-8); max-width: var(--measure-quote); }
+.quote-compact { font-size: var(--t-6); line-height: var(--lh-9); max-width: var(--measure); }
+.attrib { font-size: var(--t-2); color: var(--muted); margin-top: var(--s-4); }
+
+figure { margin: 0; }
+figure svg { display: block; width: 100%; max-width: 100%; height: auto; }
+figcaption { font-size: var(--t-2); color: var(--muted); margin-top: var(--s-4); line-height: var(--lh-10); max-width: var(--measure-wide); }
+figcaption strong { color: var(--ink); font-weight: 600; }
+.d-box  { fill: none; stroke: currentColor; stroke-width: var(--diagram-stroke); }
+.d-fill { fill: var(--ground); stroke: currentColor; stroke-width: var(--diagram-stroke); }
+.d-line { stroke: currentColor; stroke-width: var(--diagram-stroke); fill: none; }
+.d-dash { stroke: currentColor; stroke-width: var(--diagram-stroke); fill: none; stroke-dasharray: 4 4; opacity: .7; }
+.d-t    { fill: currentColor; font-family: var(--f-body); font-size: 13px; }
+.d-tm   { fill: currentColor; font-family: var(--f-mono); font-size: 12.5px; }
+.d-sm   { fill: currentColor; font-family: var(--f-body); font-size: 12.5px; } /* sin opacidad: con .82 el texto en .g-stop bajaba a 3,5:1 */
+.d-mid  { text-anchor: middle; }
+.d-end  { text-anchor: end; }
+/* Para los gráficos de datos (barras, mapas de calor, Sankey, treemap): la misma tinta en coberturas. */
+.d-bar  { fill: currentColor; }                        /* relleno pleno: barra, punto, punta de flecha */
+.d-mask { fill: var(--ground); }                       /* máscara opaca bajo una etiqueta o un nodo, sin trazo */
+.d-wash-1 { fill: currentColor; fill-opacity: .08; }   /* lavado: franja, fondo de zona */
+.d-wash-2 { fill: currentColor; fill-opacity: .2; }    /* celda baja, área bajo una línea */
+.d-wash-3 { fill: currentColor; fill-opacity: .4; }    /* celda media */
+.d-wash-4 { fill: currentColor; fill-opacity: .65; }   /* celda alta; con texto encima, en .d-mask */
+.g-stop { color: var(--stop); }
+.g-warn { color: var(--warn); }
+.g-ok   { color: var(--ok); }
+.figwrap { background: var(--paper); border-radius: var(--r-2); padding: var(--s-7) var(--s-5) var(--s-6); margin-top: var(--s-7); }
+.figwrap figcaption { margin-top: var(--s-4); }
+
+pre { margin: var(--s-3) 0 0; overflow-x: auto; font-family: var(--f-mono); font-size: var(--t-1); line-height: var(--lh-12); background: var(--ground); border-radius: var(--r-1); padding: var(--s-4); color: var(--ink); }
+code { font-family: var(--f-mono); font-size: .875em; }
+/* Resaltado mínimo de código. Con prefijo para no chocar con las clases de un conversor de Markdown. */
+.hl-k { color: var(--accent); }
+.hl-s { color: var(--ok); }
+.hl-n { color: var(--stop); font-weight: 500; }
+.hl-c { color: var(--muted); font-style: italic; }
+
+/* Nota de trabajo */
+.note { background: var(--note-bg); color: var(--note-ink); border-top: 2px solid var(--note-rule); border-radius: 0 0 var(--r-1) var(--r-1); padding: var(--s-3) var(--s-4); margin-top: var(--s-5); font-size: var(--t-2); line-height: var(--lh-10); max-width: var(--measure-wide); }
+.note b { display: block; font-size: var(--t-1); font-weight: 600; margin-bottom: var(--s-1); }
+
+/* Botones */
+.btn { display: inline-block; font-family: var(--f-body); font-size: var(--t-4); font-weight: 500; padding: var(--s-3) var(--s-5); border-radius: var(--r-2); text-decoration: none; background: var(--ink); color: var(--ground); border: 1px solid var(--ink); transition: transform var(--dur) var(--ease), opacity var(--dur) var(--ease); }
+.btn:hover { opacity: .88; transform: translateY(-1px); }
+.btn-quiet { background: transparent; color: var(--ink); border-color: var(--rule); }
+.btn-quiet:hover { border-color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .001ms !important; }
+}
+
+/* Eyebrow */
+.eyebrow { font-family: var(--f-mono); font-size: var(--t-1); line-height: var(--lh-9); text-transform: uppercase; letter-spacing: var(--ls-mono); margin: 0 0 var(--s-5); }
+
+/* ---------- Impresión ----------
+   Los valores los pone tokens.css (@media print → tema print). Aquí, lo que no es color:
+   sin retícula, sin nota de trabajo, URL tras los enlaces externos, código que no se corta. */
+@media print {
+  body { background-image: none; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .note { display: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-family: var(--f-mono); font-size: var(--t-1); word-break: break-all; }
+  pre { white-space: pre-wrap; overflow: visible; }
+  pre, figure, blockquote { break-inside: avoid; }
+  h1, h2, h3 { break-after: avoid; }
+}

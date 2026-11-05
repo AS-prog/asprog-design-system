@@ -1,0 +1,39 @@
+# Proyecto de ejemplo: un controlador de riego ficticio. Sirve para probar el
+# plugin documentation (npm test) y como modelo de un proyecto real.
+
+[project]
+name = "Riego · ejemplo"
+brand = "riego-management"
+
+[[section]]
+title = "Método"
+
+[[section.page]]
+title = "El ciclo de desarrollo"
+path = "metodo/ciclo-de-desarrollo.html"
+type = "método"
+
+[[section]]
+title = "Lectura de sensores"
+
+[[section.page]]
+title = "Cómo funciona"
+path = "tecnica/lector-sensores/lector-sensores.html"
+type = "cómo funciona"
+
+[[section.page]]
+title = "RS 01 · Lector"
+path = "registro/sensores/2026-11-05-implementacion-lector-sensores/lector-sensores.html"
+type = "implementación"
+
+[[section.page]]
+title = "Diseño del lector"
+path = "registro/sensores/2026-11-03-diseno-lector-sensores/lector-sensores.html"
+type = "diseño"
+
+[[section]]
+title = "Programación del riego"
+
+[[section.page]]
+title = "Cómo funciona"
+type = "cómo funciona"

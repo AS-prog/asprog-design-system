@@ -1,0 +1,29 @@
+<!-- Ejemplo de la skill diagram: línea de tiempo (type-timeline.md) con hitos en d-bar, fechas en mono y el hito focal con máscara y relleno. -->
+<figure class="figwrap">
+  <svg viewBox="0 0 640 180" role="img" aria-labelledby="hist-title hist-desc">
+    <title id="hist-title">Un día y medio de Delphos</title>
+    <desc id="hist-desc">Del análisis del repo el 21 de octubre al plugin de diagramas el 22: cuatro hitos en orden.</desc>
+    <!-- Eje -->
+    <line class="d-line" x1="40" y1="96" x2="600" y2="96"/>
+    <!-- Hitos: arriba y abajo alternados -->
+    <circle class="d-bar" cx="80" cy="96" r="5"/>
+    <line class="d-dash" x1="80" y1="91" x2="80" y2="56"/>
+    <text class="d-tm d-mid" x="80" y="36">21-10</text>
+    <text class="d-sm d-mid" x="80" y="52">Análisis y 8 PRs</text>
+    <circle class="d-bar" cx="240" cy="96" r="5"/>
+    <line class="d-dash" x1="240" y1="101" x2="240" y2="128"/>
+    <text class="d-tm d-mid" x="240" y="160">22-10</text>
+    <text class="d-sm d-mid" x="240" y="144">Publicación en Pages</text>
+    <circle class="d-bar" cx="400" cy="96" r="5"/>
+    <line class="d-dash" x1="400" y1="91" x2="400" y2="56"/>
+    <text class="d-tm d-mid" x="400" y="36">22-10</text>
+    <text class="d-sm d-mid" x="400" y="52">Marketplace delphos-inc</text>
+    <g class="g-ok">
+      <circle class="d-fill" cx="560" cy="96" r="8"/>
+      <line class="d-line" x1="560" y1="104" x2="560" y2="128"/>
+      <text class="d-tm d-mid" x="560" y="160">22-10</text>
+      <text class="d-t d-mid" x="560" y="144">Plugin diagrams</text>
+    </g>
+  </svg>
+  <figcaption>El hito focal lleva relleno y su nombre en <strong>d-t</strong>; los demás, en <strong>d-sm</strong>.</figcaption>
+</figure>

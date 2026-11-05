@@ -1,0 +1,97 @@
+<!doctype html>
+<!--
+  Página de diseño: la propuesta de una ficha de diseño, con sus diagramas. Va junto a su
+  .md en registro/<tema>/<AAAA-MM-DD>-diseno-<objeto>/ y, una vez integrada, no se reescribe.
+  Se crea con: site.py new design <ruta.html> --title "…"
+  Lo que va entre {{…}} se rellena con el contenido del .md; delphos-check no
+  deja pasar la página mientras quede alguno. Guía: skill method, reference/document-types.md.
+-->
+<html lang="es" data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{title}}</title>
+    <meta name="description" content="{{una frase: qué se propone}}" />
+    <meta name="theme-color" content="#F0EBDE" />
+    <link rel="stylesheet" href="{{system}}/tokens.css" />
+    <link rel="stylesheet" href="{{system}}/css/base.css" />
+    <link rel="stylesheet" href="{{system}}/css/document.css" />
+    <script>
+      // Antes de pintar, para que no haya destello: el tema guardado manda sobre «auto».
+      try {
+        var t = localStorage.getItem('tema');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div class="doc">
+      <header class="doc-bar">
+        <span class="doc-brand">{{brand}} / registro</span>
+        <button class="doc-theme" type="button" aria-label="Cambiar tema">Tema</button>
+      </header>
+
+      <header class="doc-header">
+        <h1>{{title}}</h1>
+        <p class="eyebrow">{{ficha: NN}}</p>
+        <p class="lede">{{una o dos frases: qué problema resuelve el diseño}}</p>
+        <dl class="doc-meta">
+          <div><dt>Fecha</dt><dd><time datetime="{{date}}">{{date}}</time></dd></div>
+          <div><dt>Estado</dt><dd>{{borrador | vigente}}</dd></div>
+          <div><dt>Ficha</dt><dd>{{.scratch/&lt;área&gt;/&lt;tema&gt;/NN-….md}}</dd></div>
+          <div><dt>Decisiones</dt><dd>{{Dnn}}</dd></div>
+        </dl>
+      </header>
+
+      <nav class="doc-toc" aria-label="Índice">
+        <h2>Índice</h2>
+        <ol>
+          <li><a href="#conclusion">Conclusión</a></li>
+          <li><a href="#contexto">Contexto</a></li>
+          <li><a href="#propuesta">Propuesta</a></li>
+          <li><a href="#alternativas">Alternativas</a></li>
+          <li><a href="#decisiones">Decisiones</a></li>
+          <li><a href="#pendiente">Pendiente</a></li>
+        </ol>
+      </nav>
+
+      <article class="doc-prose">
+        <h2 id="conclusion">Conclusión</h2>
+        <p>{{qué se propone y qué se decide, en un párrafo}}</p>
+
+        <h2 id="contexto">Contexto</h2>
+        <p>{{qué hay hoy y por qué no basta}}</p>
+
+        <h2 id="propuesta">Propuesta</h2>
+        <p>{{una subsección h3 por pieza, con su figura}}</p>
+
+        <h2 id="alternativas">Alternativas</h2>
+        <p>{{lo que se descartó y por qué}}</p>
+
+        <h2 id="decisiones">Decisiones</h2>
+        <p>{{las Dnn que abre o cierra, con enlace a decisiones/}}</p>
+
+        <h2 id="pendiente">Pendiente</h2>
+        <div class="notice notice-pending">
+          <span class="notice-title">Pendiente</span>
+          <p>{{lo que queda abierto, con su ficha}}</p>
+        </div>
+      </article>
+
+      <footer class="doc-footer">
+        <span>Fuente: {{ruta}}.md</span>
+        <span>asprog-design-system</span>
+      </footer>
+    </div>
+
+    <script>
+      document.querySelector('.doc-theme').addEventListener('click', function () {
+        var r = document.documentElement, t = r.getAttribute('data-theme');
+        var isDark = t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        var next = isDark ? 'light' : 'dark';
+        r.setAttribute('data-theme', next);
+        try { localStorage.setItem('tema', next); } catch (e) {}
+      });
+    </script>
+  </body>
+</html>

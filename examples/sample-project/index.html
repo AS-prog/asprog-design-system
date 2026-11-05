@@ -1,0 +1,112 @@
+<!doctype html>
+<!-- Generada desde docs/site/home.md y docs/site/site.toml con site.py build. No se edita a mano. -->
+<html lang="es" data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Controlador de riego</title>
+    <meta name="description" content="Un proyecto ficticio que lee la humedad del suelo, decide cuándo regar y abre las válvulas. Este sitio reúne su documentación y sirve de modelo para un proyecto real." />
+    <meta name="theme-color" content="#F0EBDE" />
+    <link rel="stylesheet" href="docs/design-system/v0.7/tokens.css" />
+    <link rel="stylesheet" href="docs/design-system/v0.7/css/base.css" />
+    <link rel="stylesheet" href="docs/design-system/v0.7/css/document.css" />
+    <!-- site:css --><link rel="stylesheet" href="docs/design-system/v0.7/css/library.css" /><!-- /site:css -->
+    <script>
+      // Antes de pintar, para que no haya destello: el tema guardado manda sobre «auto».
+      try {
+        var t = localStorage.getItem('tema');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
+  </head>
+  <body class="lib">
+    <!-- site:nav -->
+    <nav class="lib-nav" aria-label="Sitio">
+    <details open>
+    <summary><a class="lib-home" href="index.html" aria-current="page">Riego · ejemplo</a><span class="lib-menu">Índice</span></summary>
+    <h2>Método</h2>
+    <ul>
+    <li><a href="metodo/ciclo-de-desarrollo.html">El ciclo de desarrollo</a></li>
+    </ul>
+    <h2>Lectura de sensores</h2>
+    <ul>
+    <li><a href="tecnica/lector-sensores/lector-sensores.html">Cómo funciona</a></li>
+    <li><a href="registro/sensores/2026-11-05-implementacion-lector-sensores/lector-sensores.html">RS 01 · Lector</a></li>
+    <li><a href="registro/sensores/2026-11-03-diseno-lector-sensores/lector-sensores.html">Diseño del lector</a></li>
+    </ul>
+    <h2>Programación del riego</h2>
+    <ul>
+    <li><span title="Aún sin página">Cómo funciona</span></li>
+    </ul>
+    </details>
+    </nav>
+    <script>(function () { var m = matchMedia('(max-width: 56rem)'), d = document.querySelector('.lib-nav details'); d.open = !m.matches; m.addEventListener('change', function () { d.open = !m.matches; }); })();</script>
+    <!-- /site:nav -->
+    <div class="doc">
+      <header class="doc-bar">
+        <span class="doc-brand">riego-management</span>
+        <button class="doc-theme" type="button" aria-label="Cambiar tema">Tema</button>
+      </header>
+
+      <header class="doc-header">
+        <h1>Controlador de riego</h1>
+        <p class="lede">Un proyecto ficticio que lee la humedad del suelo, decide cuándo regar y abre las válvulas. Este sitio reúne su documentación y sirve de modelo para un proyecto real.</p>
+      </header>
+
+      <article class="doc-prose">
+<h2 id="de-que-va">De qué va</h2>
+<p>Cada parcela tiene un sensor de humedad y una válvula. El controlador lee los sensores cada diez minutos, compara la humedad con el umbral de la parcela y abre la válvula el tiempo que haga falta.</p>
+<h2 id="los-repos">Los repos</h2>
+<table>
+<thead>
+<tr>
+<th>Repo</th>
+<th>Qué tiene</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>riego-management</code></td>
+<td>El diseño, las decisiones, las fichas y este sitio. Es la fuente de verdad</td>
+</tr>
+<tr>
+<td><code>riego-controller</code></td>
+<td>El código, los tests, la configuración y el glosario</td>
+</tr>
+</tbody>
+</table>
+<h2 id="como-leer-el-sitio">Cómo leer el sitio</h2>
+<p>Cada tema tiene tres tipos de página: <strong>cómo funciona</strong> (la página técnica, viva), <strong>implementación</strong> (fechada, una por ficha) y <strong>diseño</strong> (fechada, la propuesta antes de construir).</p>
+        <h2 id="que-hay-en-el-sitio">Qué hay en el sitio</h2>
+<ul class="lib-sections">
+<li><h3>Método</h3><ul>
+<li><a href="metodo/ciclo-de-desarrollo.html">El ciclo de desarrollo</a><span class="lib-type">método</span></li>
+</ul></li>
+<li><h3>Lectura de sensores</h3><ul>
+<li><a href="tecnica/lector-sensores/lector-sensores.html">Cómo funciona</a><span class="lib-type">cómo funciona</span></li>
+<li><a href="registro/sensores/2026-11-05-implementacion-lector-sensores/lector-sensores.html">RS 01 · Lector</a><span class="lib-type">implementación</span></li>
+<li><a href="registro/sensores/2026-11-03-diseno-lector-sensores/lector-sensores.html">Diseño del lector</a><span class="lib-type">diseño</span></li>
+</ul></li>
+<li><h3>Programación del riego</h3><ul>
+<li><span class="lib-pending">Cómo funciona</span><span class="lib-type">pendiente</span></li>
+</ul></li>
+</ul>
+      </article>
+
+      <footer class="doc-footer">
+        <span>Fuente: docs/site/home.md y docs/site/site.toml</span>
+        <span>asprog-design-system v0.7.0</span>
+      </footer>
+    </div>
+
+    <script>
+      document.querySelector('.doc-theme').addEventListener('click', function () {
+        var r = document.documentElement, t = r.getAttribute('data-theme');
+        var isDark = t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        var next = isDark ? 'light' : 'dark';
+        r.setAttribute('data-theme', next);
+        try { localStorage.setItem('tema', next); } catch (e) {}
+      });
+    </script>
+  </body>
+</html>

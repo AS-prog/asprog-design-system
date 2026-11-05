@@ -1,0 +1,21 @@
+{
+  "name": "diagrams",
+  "displayName": "Diagramas",
+  "version": "0.7.0",
+  "description": "Los 45 tipos de diagrama de diagram-design con la identidad Delphos: una sola tinta, clases .d-* del sistema y SVG en línea dentro del documento.",
+  "author": {
+    "name": "Andrés R. Sotelo",
+    "url": "https://github.com/AS-prog"
+  },
+  "homepage": "https://github.com/AS-prog/asprog-design-system",
+  "repository": "https://github.com/AS-prog/asprog-design-system",
+  "license": "MIT",
+  "keywords": [
+    "delphos",
+    "diagrams",
+    "svg",
+    "architecture",
+    "flowchart",
+    "charts"
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "documentation",
+  "displayName": "Documentación",
+  "version": "0.7.0",
+  "description": "El método de documentación de los proyectos y su sistema de diseño (identidad Delphos): dónde va cada documento y qué lleva, las plantillas de página, el sitio con barra lateral y delphos-check, que revisa cada HTML.",
+  "author": {
+    "name": "Andrés R. Sotelo",
+    "url": "https://github.com/AS-prog"
+  },
+  "repository": "https://github.com/AS-prog/asprog-design-system",
+  "license": "MIT",
+  "keywords": [
+    "documentation",
+    "design-system",
+    "delphos",
+    "html",
+    "method"
+  ],
+  "userConfig": {
+    "libraryDir": {
+      "title": "Carpeta de la biblioteca",
+      "description": "Si se fija, el hook solo revisa los HTML que están dentro de esta carpeta.",
+      "type": "string",
+      "required": false
+    }
+  }
+}

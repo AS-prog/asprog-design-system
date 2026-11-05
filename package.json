@@ -1,0 +1,16 @@
+{
+  "name": "asprog-design-system",
+  "version": "0.7.0",
+  "private": true,
+  "description": "El sistema de diseño y el método de documentación de los proyectos de Andrés R. Sotelo, con sus plugins de Claude Code.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "example": "uv run --no-project --with markdown python plugins/documentation/scripts/site.py vendor --root examples/sample-project && uv run --no-project --with markdown python plugins/documentation/scripts/site.py build --root examples/sample-project",
+    "test": "node scripts/test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

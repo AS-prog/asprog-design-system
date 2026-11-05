@@ -1,0 +1,120 @@
+<!doctype html>
+<!--
+  Página técnica: cómo funciona hoy un componente. Vive en tecnica/<componente>/ y se
+  actualiza en la rama de cada ficha que cambia el componente.
+  Se crea con: site.py new technical <ruta.html> --title "…"
+  Lo que va entre {{…}} se rellena con el contenido del .md; delphos-check no
+  deja pasar la página mientras quede alguno. Guía: skill method, reference/technical-pages.md.
+-->
+<html lang="es" data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{title}}</title>
+    <meta name="description" content="{{una frase: qué hace el componente}}" />
+    <meta name="theme-color" content="#F0EBDE" />
+    <link rel="stylesheet" href="{{system}}/tokens.css" />
+    <link rel="stylesheet" href="{{system}}/css/base.css" />
+    <link rel="stylesheet" href="{{system}}/css/document.css" />
+    <script>
+      // Antes de pintar, para que no haya destello: el tema guardado manda sobre «auto».
+      try {
+        var t = localStorage.getItem('tema');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div class="doc">
+      <header class="doc-bar">
+        <span class="doc-brand">{{brand}} / técnica</span>
+        <button class="doc-theme" type="button" aria-label="Cambiar tema">Tema</button>
+      </header>
+
+      <header class="doc-header">
+        <h1>{{title}}</h1>
+        <p class="lede">{{una frase: qué hace el componente}}</p>
+        <dl class="doc-meta">
+          <div><dt>Vigente a</dt><dd><time datetime="{{date}}">{{date}}</time></dd></div>
+          <div><dt>Código</dt><dd>{{repo-código@hash}}</dd></div>
+          <div><dt>Diseño</dt><dd>{{diseno/….md}}</dd></div>
+          <div><dt>Decisiones</dt><dd>{{Dnn, Dnn}}</dd></div>
+        </dl>
+      </header>
+
+      <nav class="doc-toc" aria-label="Índice">
+        <h2>Índice</h2>
+        <ol>
+          <li><a href="#en-una-frase">En una frase</a></li>
+          <li><a href="#mapa">Mapa general</a></li>
+          <li><a href="#vocabulario">Vocabulario</a></li>
+          <li><a href="#como-funciona">Cómo funciona</a></li>
+          <li><a href="#que-deja">Qué deja</a></li>
+          <li><a href="#despliegue">Despliegue</a></li>
+          <li><a href="#como-se-opera">Cómo se opera</a></li>
+          <li><a href="#limites">Límites conocidos</a></li>
+          <li><a href="#donde-esta">Dónde está en el código</a></li>
+          <li><a href="#historial">Historial</a></li>
+        </ol>
+      </nav>
+
+      <article class="doc-prose">
+        <h2 id="en-una-frase">En una frase</h2>
+        <p>{{qué hace y qué no hace (lo que es de otra capa o de otro componente)}}</p>
+
+        <h2 id="mapa">Mapa general</h2>
+        <p>{{figura: de dónde lee, dónde escribe y qué otros sistemas toca}}</p>
+
+        <h2 id="vocabulario">Vocabulario</h2>
+        <dl>
+          <dt>{{término}}</dt><dd>{{una línea, con las palabras del glosario}}</dd>
+        </dl>
+
+        <h2 id="como-funciona">Cómo funciona</h2>
+        <p>{{una subsección h3 por flujo o mecanismo, cada una con su figura}}</p>
+
+        <h2 id="que-deja">Qué deja</h2>
+        <p>{{tablas, columnas, ficheros o eventos que produce, con su significado}}</p>
+
+        <h2 id="despliegue">Despliegue</h2>
+        <p>{{figura: cómo llega del repo al servicio y qué protege de tocar producción}}</p>
+
+        <h2 id="como-se-opera">Cómo se opera</h2>
+        <p>{{comandos en local y en el servicio, consultas, y la tabla síntoma → qué pasa → qué hacer}}</p>
+
+        <h2 id="limites">Límites conocidos</h2>
+        <div class="notice notice-risk">
+          <span class="notice-title">Riesgo</span>
+          <p>{{lo que puede fallar hoy y pide acción}}</p>
+        </div>
+
+        <h2 id="donde-esta">Dónde está en el código</h2>
+        <table>
+          <thead><tr><th>Parte</th><th>Fichero</th></tr></thead>
+          <tbody><tr><td>{{…}}</td><td><code>{{repo-código:ruta}}</code></td></tr></tbody>
+        </table>
+
+        <h2 id="historial">Historial</h2>
+        <table>
+          <thead><tr><th>Fecha</th><th>Ficha</th><th>Qué cambió</th></tr></thead>
+          <tbody><tr><td>{{AAAA-MM-DD}}</td><td>{{NN}}</td><td>{{… y enlace a su página de implementación}}</td></tr></tbody>
+        </table>
+      </article>
+
+      <footer class="doc-footer">
+        <span>Fuente: {{ruta}}.md</span>
+        <span>asprog-design-system</span>
+      </footer>
+    </div>
+
+    <script>
+      document.querySelector('.doc-theme').addEventListener('click', function () {
+        var r = document.documentElement, t = r.getAttribute('data-theme');
+        var isDark = t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        var next = isDark ? 'light' : 'dark';
+        r.setAttribute('data-theme', next);
+        try { localStorage.setItem('tema', next); } catch (e) {}
+      });
+    </script>
+  </body>
+</html>

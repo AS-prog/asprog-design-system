@@ -1,0 +1,11 @@
+{
+  "extraKnownMarketplaces": {
+    "asprog": {
+      "source": { "source": "github", "repo": "AS-prog/asprog-design-system" }
+    }
+  },
+  "enabledPlugins": {
+    "documentation@asprog": true,
+    "diagrams@asprog": true
+  }
+}

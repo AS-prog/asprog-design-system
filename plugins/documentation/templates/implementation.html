@@ -1,0 +1,112 @@
+<!doctype html>
+<!--
+  Página de implementación: qué hizo una ficha y cómo se comprobó. Va junto a su .md
+  en registro/<tema>/<AAAA-MM-DD>-implementacion-<objeto>/ y, una vez integrada, no se reescribe.
+  Se crea con: site.py new implementation <ruta.html> --title "…"
+  Lo que va entre {{…}} se rellena con el contenido del .md; delphos-check no
+  deja pasar la página mientras quede alguno. Guía: skill method, reference/implementation-pages.md.
+-->
+<html lang="es" data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{title}}</title>
+    <meta name="description" content="{{una frase: qué se implementó}}" />
+    <meta name="theme-color" content="#F0EBDE" />
+    <link rel="stylesheet" href="{{system}}/tokens.css" />
+    <link rel="stylesheet" href="{{system}}/css/base.css" />
+    <link rel="stylesheet" href="{{system}}/css/document.css" />
+    <script>
+      // Antes de pintar, para que no haya destello: el tema guardado manda sobre «auto».
+      try {
+        var t = localStorage.getItem('tema');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div class="doc">
+      <header class="doc-bar">
+        <span class="doc-brand">{{brand}} / registro</span>
+        <button class="doc-theme" type="button" aria-label="Cambiar tema">Tema</button>
+      </header>
+
+      <header class="doc-header">
+        <h1>{{title}}</h1>
+        <p class="eyebrow">{{fichas: NN, NN}}</p>
+        <p class="lede">{{una o dos frases: qué hace esta parte y por qué existe}}</p>
+        <dl class="doc-meta">
+          <div><dt>Fecha</dt><dd><time datetime="{{date}}">{{date}}</time></dd></div>
+          <div><dt>Estado</dt><dd>{{borrador | vigente}}</dd></div>
+          <div><dt>Fichas</dt><dd>{{.scratch/&lt;área&gt;/&lt;tema&gt;/NN-….md}}</dd></div>
+          <div><dt>Código</dt><dd>{{repo-código@hash}}</dd></div>
+          <div><dt>Diseño</dt><dd>{{diseno/nivel-2/….md, Dnn}}</dd></div>
+        </dl>
+      </header>
+
+      <nav class="doc-toc" aria-label="Índice">
+        <h2>Índice</h2>
+        <ol>
+          <li><a href="#conclusion">Conclusión</a></li>
+          <li><a href="#que-entra">Qué entra en el cambio</a></li>
+          <li><a href="#arquitectura">Arquitectura</a></li>
+          <li><a href="#como-funciona">Cómo funciona</a></li>
+          <li><a href="#donde-esta">Dónde está en el código</a></li>
+          <li><a href="#como-se-comprobo">Cómo se comprobó</a></li>
+          <li><a href="#pendiente">Pendiente</a></li>
+          <li><a href="#historial">Historial</a></li>
+        </ol>
+      </nav>
+
+      <article class="doc-prose">
+        <h2 id="conclusion">Conclusión</h2>
+        <p>{{qué quedó implementado y qué falta, en un párrafo}}</p>
+
+        <h2 id="que-entra">Qué entra en el cambio</h2>
+        <table>
+          <thead><tr><th>Ficha</th><th>Qué aporta</th><th>Commits</th></tr></thead>
+          <tbody><tr><td>{{NN}}</td><td>{{…}}</td><td><code>{{hash}}</code></td></tr></tbody>
+        </table>
+
+        <h2 id="arquitectura">Arquitectura</h2>
+        <p>{{un diagrama de todas las piezas del cambio, configuración incluida (skill diagram)}}</p>
+
+        <h2 id="como-funciona">Cómo funciona</h2>
+        <p>{{una subsección h3 por parte, con su figura: qué recibe, qué hace y qué deja}}</p>
+
+        <h2 id="donde-esta">Dónde está en el código</h2>
+        <table>
+          <thead><tr><th>Parte</th><th>Fichero</th><th>Decisión</th></tr></thead>
+          <tbody><tr><td>{{…}}</td><td><code>{{repo-código:ruta}}</code></td><td>{{Dnn}}</td></tr></tbody>
+        </table>
+
+        <h2 id="como-se-comprobo">Cómo se comprobó</h2>
+        <p>{{tests y ejecuciones en local y en el servicio, con los comandos para repetirlo}}</p>
+
+        <h2 id="pendiente">Pendiente</h2>
+        <div class="notice notice-pending">
+          <span class="notice-title">Pendiente</span>
+          <p>{{lo que queda abierto, con su ficha}}</p>
+        </div>
+
+        <h2 id="historial">Historial</h2>
+        <p>{{fecha y qué cambió en la página; enlace a la página técnica que esta ficha actualizó}}</p>
+      </article>
+
+      <footer class="doc-footer">
+        <span>Fuente: {{ruta}}.md</span>
+        <span>asprog-design-system</span>
+      </footer>
+    </div>
+
+    <script>
+      document.querySelector('.doc-theme').addEventListener('click', function () {
+        var r = document.documentElement, t = r.getAttribute('data-theme');
+        var isDark = t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        var next = isDark ? 'light' : 'dark';
+        r.setAttribute('data-theme', next);
+        try { localStorage.setItem('tema', next); } catch (e) {}
+      });
+    </script>
+  </body>
+</html>

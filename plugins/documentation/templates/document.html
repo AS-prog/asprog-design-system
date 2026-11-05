@@ -1,0 +1,66 @@
+<!doctype html>
+<!--
+  Documento de la biblioteca: la versión HTML de cualquier .md (análisis, guía, entrega…).
+  Va junto a su .md.
+  Se crea con: site.py new document <ruta.html> --title "…"
+  Lo que va entre {{…}} se rellena con el contenido del .md; delphos-check no
+  deja pasar la página mientras quede alguno. Guía: skill method, reference/document-types.md.
+-->
+<html lang="es" data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{title}}</title>
+    <meta name="description" content="{{una frase: de qué trata}}" />
+    <meta name="theme-color" content="#F0EBDE" />
+    <link rel="stylesheet" href="{{system}}/tokens.css" />
+    <link rel="stylesheet" href="{{system}}/css/base.css" />
+    <link rel="stylesheet" href="{{system}}/css/document.css" />
+    <script>
+      // Antes de pintar, para que no haya destello: el tema guardado manda sobre «auto».
+      try {
+        var t = localStorage.getItem('tema');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div class="doc">
+      <header class="doc-bar">
+        <span class="doc-brand">{{brand}} / {{carpeta}}</span>
+        <button class="doc-theme" type="button" aria-label="Cambiar tema">Tema</button>
+      </header>
+
+      <header class="doc-header">
+        <h1>{{title}}</h1>
+        <p class="lede">{{una frase: de qué trata}}</p>
+        <dl class="doc-meta">
+          <div><dt>Fuente</dt><dd><a href="{{ruta}}.md">{{ruta}}.md</a></dd></div>
+          <div><dt>Fecha</dt><dd><time datetime="{{date}}">{{date}}</time></dd></div>
+          <div><dt>Estado</dt><dd>{{borrador | revisado | vigente | archivado}}</dd></div>
+        </dl>
+      </header>
+
+
+      <article class="doc-prose">
+        <h2 id="seccion-1">{{Sección 1}}</h2>
+        <p>{{texto}}</p>
+      </article>
+
+      <footer class="doc-footer">
+        <span>Fuente: {{ruta}}.md</span>
+        <span>asprog-design-system</span>
+      </footer>
+    </div>
+
+    <script>
+      document.querySelector('.doc-theme').addEventListener('click', function () {
+        var r = document.documentElement, t = r.getAttribute('data-theme');
+        var isDark = t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        var next = isDark ? 'light' : 'dark';
+        r.setAttribute('data-theme', next);
+        try { localStorage.setItem('tema', next); } catch (e) {}
+      });
+    </script>
+  </body>
+</html>

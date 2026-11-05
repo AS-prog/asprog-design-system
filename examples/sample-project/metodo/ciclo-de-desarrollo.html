@@ -1,0 +1,96 @@
+<!doctype html>
+<!--
+  Documento de la biblioteca: la versión HTML de cualquier .md (análisis, guía, entrega…).
+  Va junto a su .md.
+  Se crea con: site.py new document <ruta.html> --title "…"
+  Lo que va entre {{…}} se rellena con el contenido del .md; delphos-check no
+  deja pasar la página mientras quede alguno. Guía: skill method, reference/document-types.md.
+-->
+<html lang="es" data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>El ciclo de desarrollo</title>
+    <meta name="description" content="Cómo pasa una ficha de idea a código integrado en este proyecto." />
+    <meta name="theme-color" content="#F0EBDE" />
+    <link rel="stylesheet" href="../docs/design-system/v0.7/tokens.css" />
+    <link rel="stylesheet" href="../docs/design-system/v0.7/css/base.css" />
+    <link rel="stylesheet" href="../docs/design-system/v0.7/css/document.css" />
+    <!-- site:css --><link rel="stylesheet" href="../docs/design-system/v0.7/css/library.css" /><!-- /site:css -->
+    <script>
+      // Antes de pintar, para que no haya destello: el tema guardado manda sobre «auto».
+      try {
+        var t = localStorage.getItem('tema');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
+  </head>
+  <body class="lib">
+    <!-- site:nav -->
+    <nav class="lib-nav" aria-label="Sitio">
+    <details open>
+    <summary><a class="lib-home" href="../index.html">Riego · ejemplo</a><span class="lib-menu">Índice</span></summary>
+    <h2>Método</h2>
+    <ul>
+    <li><a href="ciclo-de-desarrollo.html" aria-current="page">El ciclo de desarrollo</a></li>
+    </ul>
+    <h2>Lectura de sensores</h2>
+    <ul>
+    <li><a href="../tecnica/lector-sensores/lector-sensores.html">Cómo funciona</a></li>
+    <li><a href="../registro/sensores/2026-11-05-implementacion-lector-sensores/lector-sensores.html">RS 01 · Lector</a></li>
+    <li><a href="../registro/sensores/2026-11-03-diseno-lector-sensores/lector-sensores.html">Diseño del lector</a></li>
+    </ul>
+    <h2>Programación del riego</h2>
+    <ul>
+    <li><span title="Aún sin página">Cómo funciona</span></li>
+    </ul>
+    </details>
+    </nav>
+    <script>(function () { var m = matchMedia('(max-width: 56rem)'), d = document.querySelector('.lib-nav details'); d.open = !m.matches; m.addEventListener('change', function () { d.open = !m.matches; }); })();</script>
+    <!-- /site:nav -->
+    <div class="doc">
+      <header class="doc-bar">
+        <span class="doc-brand">riego-management / método</span>
+        <button class="doc-theme" type="button" aria-label="Cambiar tema">Tema</button>
+      </header>
+
+      <header class="doc-header">
+        <h1>El ciclo de desarrollo</h1>
+        <p class="lede">Cómo pasa una ficha de idea a código integrado en este proyecto.</p>
+        <dl class="doc-meta">
+          <div><dt>Fuente</dt><dd><a href="metodo/ciclo-de-desarrollo.md">metodo/ciclo-de-desarrollo.md</a></dd></div>
+          <div><dt>Fecha</dt><dd><time datetime="2026-11-05">2026-11-05</time></dd></div>
+          <div><dt>Estado</dt><dd>vigente</dd></div>
+        </dl>
+      </header>
+
+
+      <article class="doc-prose">
+        <h2 id="el-ciclo">El ciclo</h2>
+        <ol>
+          <li>La ficha nace en <code>.scratch/controller/sensores/</code> con su rama: <code>Branch: feature/lector-sensores</code>.</li>
+          <li>Si hace falta diseño, se escribe en <code>registro/</code> como página de diseño y se cierran sus decisiones.</li>
+          <li>Se implementa en local con tests, en la misma rama en <code>riego-management</code> y en <code>riego-controller</code>.</li>
+          <li>La ficha deja su página de implementación y actualiza la página técnica del componente.</li>
+          <li>Se integra primero el diseño y después el código.</li>
+        </ol>
+        <p>Es el método común del plugin <code>documentation</code> (skill <code>method</code>); aquí solo se concreta lo propio del proyecto.</p>
+      </article>
+
+      <footer class="doc-footer">
+        <span>Fuente: metodo/ciclo-de-desarrollo.md</span>
+        <span>asprog-design-system</span>
+      </footer>
+    </div>
+
+    <script>
+      document.querySelector('.doc-theme').addEventListener('click', function () {
+        var r = document.documentElement, t = r.getAttribute('data-theme');
+        var isDark = t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        var next = isDark ? 'light' : 'dark';
+        r.setAttribute('data-theme', next);
+        try { localStorage.setItem('tema', next); } catch (e) {}
+      });
+    </script>
+  </body>
+</html>

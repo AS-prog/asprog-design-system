@@ -1,0 +1,40 @@
+# El sitio de la documentación: lo lee site.py del plugin documentation.
+# Va en docs/site/site.toml del proyecto. Rutas relativas a la raíz del repo.
+#
+# [project]
+#   name     el nombre del proyecto: enlace de la barra lateral a la portada
+#   brand    el texto de la barra de marca de la portada (por defecto, name)
+#   system   carpeta de la copia del sistema; site.py vendor la llena en
+#            <system>/vX.Y/ (por defecto, docs/design-system)
+#   home     el texto de la portada en Markdown (por defecto, docs/site/home.md)
+#   index    la portada que se genera (por defecto, index.html)
+#
+# [[section]]           una sección de la barra, en orden
+#   title
+#   [[section.page]]    una página de la sección, en orden
+#     title
+#     path       página del repo, o
+#     url        enlace externo
+#     type       cómo funciona | implementación | diseño | historia | método | guía | generada
+#     generated  true si la página la genera otra herramienta fuera de git:
+#                se enlaza, pero no se le pone la barra
+#     sin path ni url, la página está anunciada y sale atenuada
+
+[project]
+name = "{{Nombre del proyecto}}"
+brand = "{{repo-gestión}}"
+
+[[section]]
+title = "Método"
+
+[[section.page]]
+title = "El ciclo de desarrollo"
+path = "metodo/ciclo-de-desarrollo.html"
+type = "método"
+
+[[section]]
+title = "{{Componente}}"
+
+[[section.page]]
+title = "Cómo funciona"
+type = "cómo funciona"

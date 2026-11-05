@@ -1,0 +1,37 @@
+<!-- Ejemplo de la skill diagram: máquina de estados (type-state.md) con guardas en mono, un estado final en g-ok y uno de error en g-stop. -->
+<figure class="figwrap">
+  <svg viewBox="0 0 640 220" role="img" aria-labelledby="doc-state-title doc-state-desc">
+    <title id="doc-state-title">Estados de un documento</title>
+    <desc id="doc-state-desc">Un documento pasa de borrador a revisado y a vigente; desde revisado puede volver a borrador si delphos-check falla, y desde vigente pasa a archivado.</desc>
+    <defs>
+      <marker id="doc-state-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="d-bar" points="0 0, 8 3, 0 6"/></marker>
+    </defs>
+    <!-- Inicio -->
+    <circle class="d-bar" cx="24" cy="72" r="5"/>
+    <line class="d-line" x1="29" y1="72" x2="60" y2="72" marker-end="url(#doc-state-arrow)"/>
+    <!-- Transiciones -->
+    <line class="d-line" x1="172" y1="72" x2="244" y2="72" marker-end="url(#doc-state-arrow)"/>
+    <text class="d-tm d-mid" x="208" y="55">REVISAR</text>
+    <line class="d-line" x1="356" y1="72" x2="428" y2="72" marker-end="url(#doc-state-arrow)"/>
+    <text class="d-tm d-mid" x="392" y="55">APROBAR</text>
+    <path class="d-dash" d="M300 96 V156 a8 8 0 0 1 -8 8 H124 a8 8 0 0 1 -8 -8 V104" marker-end="url(#doc-state-arrow)"/>
+    <rect class="d-mask" x="152" y="168" width="112" height="14"/>
+    <text class="d-tm d-mid" x="208" y="179">[CHECK FALLA]</text>
+    <line class="d-line" x1="540" y1="72" x2="580" y2="72" marker-end="url(#doc-state-arrow)"/>
+    <!-- Estados -->
+    <rect class="d-box" x="60" y="48" width="112" height="48"/>
+    <text class="d-t d-mid" x="116" y="77">Borrador</text>
+    <g class="g-warn">
+      <rect class="d-box" x="244" y="48" width="112" height="48"/>
+      <text class="d-t d-mid" x="300" y="77">Revisado</text>
+    </g>
+    <g class="g-ok">
+      <rect class="d-fill" x="428" y="48" width="112" height="48"/>
+      <text class="d-t d-mid" x="484" y="77">Vigente</text>
+    </g>
+    <circle class="d-box" cx="600" cy="72" r="10"/>
+    <circle class="d-bar" cx="600" cy="72" r="5"/>
+    <text class="d-sm d-mid" x="600" y="104">archivado</text>
+  </svg>
+  <figcaption>La guarda va entre corchetes y en mono; el retorno, en trazo discontinuo.</figcaption>
+</figure>

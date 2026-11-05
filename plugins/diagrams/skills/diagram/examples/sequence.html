@@ -1,0 +1,38 @@
+<!-- Ejemplo de la skill diagram: secuencia (type-sequence.md) con tres actores, líneas de vida en d-dash, barra de activación y retorno discontinuo. -->
+<figure class="figwrap">
+  <svg viewBox="0 0 640 260" role="img" aria-labelledby="fetch-title fetch-desc">
+    <title id="fetch-title">Pedir una página</title>
+    <desc id="fetch-desc">El navegador pide una página al sitio, el sitio consulta el contenido y devuelve el HTML con las hojas de Delphos.</desc>
+    <defs>
+      <marker id="fetch-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="d-bar" points="0 0, 8 3, 0 6"/></marker>
+    </defs>
+    <!-- Líneas de vida -->
+    <line class="d-dash" x1="96" y1="64" x2="96" y2="236"/>
+    <line class="d-dash" x1="320" y1="64" x2="320" y2="236"/>
+    <line class="d-dash" x1="544" y1="64" x2="544" y2="236"/>
+    <!-- Barras de activación -->
+    <rect class="d-wash-1 d-box" x="316" y="104" width="8" height="96"/>
+    <rect class="d-wash-1 d-box" x="540" y="136" width="8" height="32"/>
+    <!-- Mensajes -->
+    <line class="d-line" x1="100" y1="104" x2="312" y2="104" marker-end="url(#fetch-arrow)"/>
+    <rect class="d-mask" x="160" y="80" width="92" height="14"/>
+    <text class="d-tm d-mid" x="206" y="91">GET /notas</text>
+    <line class="d-line" x1="324" y1="136" x2="536" y2="136" marker-end="url(#fetch-arrow)"/>
+    <rect class="d-mask" x="392" y="112" width="76" height="14"/>
+    <text class="d-tm d-mid" x="430" y="123">LEER .md</text>
+    <line class="d-dash" x1="536" y1="168" x2="328" y2="168" marker-end="url(#fetch-arrow)"/>
+    <rect class="d-mask" x="400" y="176" width="60" height="14"/>
+    <text class="d-tm d-mid" x="430" y="187">HTML</text>
+    <line class="d-dash" x1="312" y1="200" x2="104" y2="200" marker-end="url(#fetch-arrow)"/>
+    <rect class="d-mask" x="150" y="208" width="112" height="14"/>
+    <text class="d-tm d-mid" x="206" y="219">200 + DELPHOS</text>
+    <!-- Actores -->
+    <rect class="d-fill" x="24" y="16" width="144" height="48"/>
+    <text class="d-t d-mid" x="96" y="45">Navegador</text>
+    <rect class="d-fill" x="248" y="16" width="144" height="48"/>
+    <text class="d-t d-mid" x="320" y="45">Sitio</text>
+    <rect class="d-fill" x="472" y="16" width="144" height="48"/>
+    <text class="d-t d-mid" x="544" y="45">Contenido</text>
+  </svg>
+  <figcaption>Las respuestas van en trazo discontinuo; el tiempo baja.</figcaption>
+</figure>

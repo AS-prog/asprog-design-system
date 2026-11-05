@@ -1,0 +1,39 @@
+<!-- Ejemplo de la skill diagram: arquitectura (type-architecture.md) con dos zonas en d-wash-1, un nodo focal en d-fill, un almacén y una llamada externa en d-dash. -->
+<figure class="figwrap">
+  <svg viewBox="0 0 680 300" role="img" aria-labelledby="arch-title arch-desc">
+    <title id="arch-title">Cómo se publica la web</title>
+    <desc id="arch-desc">Un agente con el plugin escribe el Markdown en el repo; en Cloudflare, Astro lo construye con Delphos y Pages sirve el resultado, que enlaza las hojas del sistema de diseño.</desc>
+    <defs>
+      <marker id="arch-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="d-bar" points="0 0, 8 3, 0 6"/></marker>
+    </defs>
+    <!-- Zonas -->
+    <rect class="d-wash-1" x="16" y="16" width="296" height="176"/>
+    <text class="d-tm" x="28" y="36">LOCAL</text>
+    <rect class="d-wash-1" x="368" y="16" width="296" height="176"/>
+    <text class="d-tm" x="380" y="36">CLOUDFLARE</text>
+    <!-- Conectores (antes que las cajas) -->
+    <line class="d-line" x1="164" y1="80" x2="164" y2="120" marker-end="url(#arch-arrow)"/>
+    <text class="d-tm" x="174" y="104">.MD</text>
+    <line class="d-line" x1="236" y1="144" x2="440" y2="144" marker-end="url(#arch-arrow)"/>
+    <rect class="d-mask" x="312" y="120" width="52" height="14"/>
+    <text class="d-tm d-mid" x="338" y="131">PUSH</text>
+    <path class="d-dash" d="M516 192 V240 a8 8 0 0 1 -8 8 H352" marker-end="url(#arch-arrow)"/>
+    <rect class="d-mask" x="392" y="254" width="84" height="14"/>
+    <text class="d-tm d-mid" x="434" y="265">/v0.3/*.CSS</text>
+    <!-- Nodos -->
+    <rect class="d-box" x="92" y="48" width="144" height="32"/>
+    <text class="d-t d-mid" x="164" y="68">Agente + plugins</text>
+    <rect class="d-fill" x="92" y="120" width="144" height="48"/>
+    <text class="d-t d-mid" x="164" y="141">sitio-personal</text>
+    <text class="d-tm d-mid" x="164" y="158">src/content/</text>
+    <rect class="d-box" x="444" y="120" width="144" height="48"/>
+    <text class="d-t d-mid" x="516" y="141">Astro + Delphos</text>
+    <text class="d-tm d-mid" x="516" y="158">build</text>
+    <rect class="d-box" x="444" y="168" width="144" height="24"/>
+    <text class="d-sm d-mid" x="516" y="184">Pages (web)</text>
+    <rect class="d-box" x="208" y="224" width="144" height="48"/>
+    <text class="d-t d-mid" x="280" y="245">delphos-design-system</text>
+    <text class="d-tm d-mid" x="280" y="262">pages.dev</text>
+  </svg>
+  <figcaption>Las zonas son lavados al 8 %; la llamada externa va en trazo discontinuo.</figcaption>
+</figure>

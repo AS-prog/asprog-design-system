@@ -1,0 +1,22 @@
+{
+  "name": "asprog",
+  "owner": {
+    "name": "Andrés R. Sotelo",
+    "url": "https://github.com/AS-prog"
+  },
+  "metadata": {
+    "description": "El sistema de diseño y el método de documentación de los proyectos de Andrés R. Sotelo."
+  },
+  "plugins": [
+    {
+      "name": "documentation",
+      "description": "Método de documentación, sistema de diseño Delphos, plantillas de página, sitio con barra lateral y delphos-check.",
+      "source": "./plugins/documentation"
+    },
+    {
+      "name": "diagrams",
+      "description": "Los 45 tipos de diagrama de diagram-design con la identidad Delphos, como SVG en línea.",
+      "source": "./plugins/diagrams"
+    }
+  ]
+}

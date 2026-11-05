@@ -1,0 +1,29 @@
+<!-- Ejemplo de la skill diagram: mapa de calor (type-heatmap.md); cada celda codifica su valor con d-wash-1…4 o d-bar, y la cifra va en mono. -->
+<figure class="figwrap">
+  <svg viewBox="0 0 640 200" role="img" aria-labelledby="checks-title checks-desc">
+    <title id="checks-title">Reglas que fallan por tipo de documento</title>
+    <desc id="checks-desc">Cuántas veces falla cada regla de delphos-check en publicaciones, páginas Astro y HTML sueltos: los HTML sueltos fallan sobre todo la regla de colores a mano.</desc>
+    <!-- Cabeceras -->
+    <text class="d-tm d-mid" x="256" y="28">R1 estilo</text>
+    <text class="d-tm d-mid" x="368" y="28">R2 color</text>
+    <text class="d-tm d-mid" x="480" y="28">R7 svg</text>
+    <text class="d-tm d-mid" x="592" y="28">R8 clase</text>
+    <!-- Filas -->
+    <text class="d-t d-end" x="192" y="68">Publicación</text>
+    <rect class="d-wash-1" x="208" y="44" width="96" height="40"/><text class="d-tm d-mid" x="256" y="68">1</text>
+    <rect class="d-wash-1" x="320" y="44" width="96" height="40"/><text class="d-tm d-mid" x="368" y="68">0</text>
+    <rect class="d-wash-2" x="432" y="44" width="96" height="40"/><text class="d-tm d-mid" x="480" y="68">3</text>
+    <rect class="d-wash-1" x="544" y="44" width="96" height="40"/><text class="d-tm d-mid" x="592" y="68">1</text>
+    <text class="d-t d-end" x="192" y="120">Página Astro</text>
+    <rect class="d-wash-1" x="208" y="96" width="96" height="40"/><text class="d-tm d-mid" x="256" y="120">0</text>
+    <rect class="d-wash-2" x="320" y="96" width="96" height="40"/><text class="d-tm d-mid" x="368" y="120">2</text>
+    <rect class="d-wash-1" x="432" y="96" width="96" height="40"/><text class="d-tm d-mid" x="480" y="120">1</text>
+    <rect class="d-wash-3" x="544" y="96" width="96" height="40"/><text class="d-tm d-mid" x="592" y="120">5</text>
+    <text class="d-t d-end" x="192" y="172">HTML suelto</text>
+    <rect class="d-wash-3" x="208" y="148" width="96" height="40"/><text class="d-tm d-mid" x="256" y="172">6</text>
+    <rect class="d-bar" x="320" y="148" width="96" height="40"/><rect class="d-mask" x="356" y="156" width="24" height="24"/><text class="d-tm d-mid" x="368" y="172">14</text>
+    <rect class="d-wash-2" x="432" y="148" width="96" height="40"/><text class="d-tm d-mid" x="480" y="172">2</text>
+    <rect class="d-wash-4" x="544" y="148" width="96" height="40"/><rect class="d-mask" x="580" y="156" width="24" height="24"/><text class="d-tm d-mid" x="592" y="172">9</text>
+  </svg>
+  <figcaption>Cuatro coberturas de la misma tinta; sobre las dos más altas, la cifra lleva máscara.</figcaption>
+</figure>

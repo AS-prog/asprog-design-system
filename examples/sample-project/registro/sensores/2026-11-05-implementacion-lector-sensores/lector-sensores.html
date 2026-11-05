@@ -1,0 +1,155 @@
+<!doctype html>
+<!--
+  Página de implementación: qué hizo una ficha y cómo se comprobó. Va junto a su .md
+  en registro/<tema>/<AAAA-MM-DD>-implementacion-<objeto>/ y, una vez integrada, no se reescribe.
+  Se crea con: site.py new implementation <ruta.html> --title "…"
+  Lo que va entre {{…}} se rellena con el contenido del .md; delphos-check no
+  deja pasar la página mientras quede alguno. Guía: skill method, reference/implementation-pages.md.
+-->
+<html lang="es" data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Implementación del lector de sensores</title>
+    <meta name="description" content="El lector de sensores: lectura, validación y guardado de la humedad." />
+    <meta name="theme-color" content="#F0EBDE" />
+    <link rel="stylesheet" href="../../../docs/design-system/v0.7/tokens.css" />
+    <link rel="stylesheet" href="../../../docs/design-system/v0.7/css/base.css" />
+    <link rel="stylesheet" href="../../../docs/design-system/v0.7/css/document.css" />
+    <!-- site:css --><link rel="stylesheet" href="../../../docs/design-system/v0.7/css/library.css" /><!-- /site:css -->
+    <script>
+      // Antes de pintar, para que no haya destello: el tema guardado manda sobre «auto».
+      try {
+        var t = localStorage.getItem('tema');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
+  </head>
+  <body class="lib">
+    <!-- site:nav -->
+    <nav class="lib-nav" aria-label="Sitio">
+    <details open>
+    <summary><a class="lib-home" href="../../../index.html">Riego · ejemplo</a><span class="lib-menu">Índice</span></summary>
+    <h2>Método</h2>
+    <ul>
+    <li><a href="../../../metodo/ciclo-de-desarrollo.html">El ciclo de desarrollo</a></li>
+    </ul>
+    <h2>Lectura de sensores</h2>
+    <ul>
+    <li><a href="../../../tecnica/lector-sensores/lector-sensores.html">Cómo funciona</a></li>
+    <li><a href="lector-sensores.html" aria-current="page">RS 01 · Lector</a></li>
+    <li><a href="../2026-11-03-diseno-lector-sensores/lector-sensores.html">Diseño del lector</a></li>
+    </ul>
+    <h2>Programación del riego</h2>
+    <ul>
+    <li><span title="Aún sin página">Cómo funciona</span></li>
+    </ul>
+    </details>
+    </nav>
+    <script>(function () { var m = matchMedia('(max-width: 56rem)'), d = document.querySelector('.lib-nav details'); d.open = !m.matches; m.addEventListener('change', function () { d.open = !m.matches; }); })();</script>
+    <!-- /site:nav -->
+    <div class="doc">
+      <header class="doc-bar">
+        <span class="doc-brand">riego-management / registro</span>
+        <button class="doc-theme" type="button" aria-label="Cambiar tema">Tema</button>
+      </header>
+
+      <header class="doc-header">
+        <h1>Implementación del lector de sensores</h1>
+        <p class="eyebrow">RS 01</p>
+        <p class="lede">El lector deja cada diez minutos la humedad de cada parcela en una tabla, para que la programación del riego decida con datos frescos.</p>
+        <dl class="doc-meta">
+          <div><dt>Fecha</dt><dd><time datetime="2026-11-05">2026-11-05</time></dd></div>
+          <div><dt>Estado</dt><dd>vigente</dd></div>
+          <div><dt>Fichas</dt><dd><code>.scratch/controller/sensores/01-lector.md</code></dd></div>
+          <div><dt>Código</dt><dd><code>riego-controller@3f2a9c1</code></dd></div>
+          <div><dt>Diseño</dt><dd><code>diseno/nivel-2/3-lectura.md</code>, D03</dd></div>
+        </dl>
+      </header>
+
+      <nav class="doc-toc" aria-label="Índice">
+        <h2>Índice</h2>
+        <ol>
+          <li><a href="#conclusion">Conclusión</a></li>
+          <li><a href="#como-funciona">Cómo funciona</a></li>
+          <li><a href="#donde-esta">Dónde está en el código</a></li>
+          <li><a href="#como-se-comprobo">Cómo se comprobó</a></li>
+          <li><a href="#pendiente">Pendiente</a></li>
+          <li><a href="#historial">Historial</a></li>
+        </ol>
+      </nav>
+
+      <article class="doc-prose">
+        <h2 id="conclusion">Conclusión</h2>
+        <p>El lector lee, valida y guarda. Falta avisar cuando un sensor no responde (RS 02).</p>
+
+        <h2 id="como-funciona">Cómo funciona</h2>
+        <figure class="figwrap">
+          <svg viewBox="0 0 640 140" role="img" aria-labelledby="imp-title imp-desc">
+            <title id="imp-title">Una lectura</title>
+            <desc id="imp-desc">El lector pide la humedad al sensor, la valida y la guarda; si el valor está fuera de rango, la descarta y lo apunta.</desc>
+            <defs>
+              <marker id="imp-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="d-bar" points="0 0, 8 3, 0 6"/></marker>
+            </defs>
+            <line class="d-line" x1="152" y1="50" x2="208" y2="50" marker-end="url(#imp-arrow)"/>
+            <line class="d-line" x1="352" y1="50" x2="448" y2="50" marker-end="url(#imp-arrow)"/>
+            <rect class="d-mask" x="372" y="26" width="48" height="14"/>
+            <text class="d-tm d-mid" x="396" y="37">EN RANGO</text>
+            <path class="d-dash" d="M280 74 V110 H448" marker-end="url(#imp-arrow)"/>
+            <text class="d-tm" x="300" y="104">FUERA</text>
+            <rect class="d-box" x="8" y="26" width="144" height="48"/>
+            <text class="d-t d-mid" x="80" y="55">Pedir humedad</text>
+            <g class="g-warn">
+              <rect class="d-box" x="208" y="26" width="144" height="48"/>
+              <text class="d-tm d-mid" x="280" y="55">validate()</text>
+            </g>
+            <g class="g-ok">
+              <rect class="d-fill" x="448" y="26" width="184" height="48"/>
+              <text class="d-t d-mid" x="540" y="55">Guardar lectura</text>
+            </g>
+            <rect class="d-box" x="448" y="92" width="184" height="36"/>
+            <text class="d-tm d-mid" x="540" y="114">readings_rejected</text>
+          </svg>
+          <figcaption>Una lectura. La línea discontinua es el camino de un valor descartado.</figcaption>
+        </figure>
+
+        <h2 id="donde-esta">Dónde está en el código</h2>
+        <table>
+          <thead><tr><th>Parte</th><th>Fichero</th><th>Decisión</th></tr></thead>
+          <tbody>
+            <tr><td>Bucle de lectura</td><td><code>riego-controller:src/riego/reader.py</code></td><td>D03</td></tr>
+            <tr><td>Validación</td><td><code>riego-controller:src/riego/validate.py</code></td><td>D04</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="como-se-comprobo">Cómo se comprobó</h2>
+        <pre><code>uv run pytest tests/test_reader.py -q</code></pre>
+        <p>Ejemplo ficticio: no hay ejecución real que citar.</p>
+
+        <h2 id="pendiente">Pendiente</h2>
+        <div class="notice notice-pending">
+          <span class="notice-title">Pendiente · ficha RS 02</span>
+          <p>Aviso cuando un sensor no responde.</p>
+        </div>
+
+        <h2 id="historial">Historial</h2>
+        <p>2026-11-05: primera versión. Actualizó la <a href="../../../tecnica/lector-sensores/lector-sensores.html">página técnica</a>.</p>
+      </article>
+
+      <footer class="doc-footer">
+        <span>Fuente: registro/sensores/2026-11-05-implementacion-lector-sensores/README.md</span>
+        <span>asprog-design-system</span>
+      </footer>
+    </div>
+
+    <script>
+      document.querySelector('.doc-theme').addEventListener('click', function () {
+        var r = document.documentElement, t = r.getAttribute('data-theme');
+        var isDark = t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        var next = isDark ? 'light' : 'dark';
+        r.setAttribute('data-theme', next);
+        try { localStorage.setItem('tema', next); } catch (e) {}
+      });
+    </script>
+  </body>
+</html>

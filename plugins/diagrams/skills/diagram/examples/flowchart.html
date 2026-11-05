@@ -1,0 +1,32 @@
+<!-- Ejemplo de la skill diagram: flujo (type-flowchart.md) con un nodo focal en d-fill, una decisión y un estado stop. -->
+<figure class="figwrap">
+  <svg viewBox="0 0 640 220" role="img" aria-labelledby="publish-title publish-desc">
+    <title id="publish-title">Publicar un documento</title>
+    <desc id="publish-desc">Un documento escrito pasa por delphos-check; si falla vuelve a corregirse y si pasa se publica en la biblioteca.</desc>
+    <defs>
+      <marker id="publish-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="d-bar" points="0 0, 8 3, 0 6"/></marker>
+    </defs>
+    <!-- Flechas antes que cajas -->
+    <line class="d-line" x1="152" y1="60" x2="208" y2="60" marker-end="url(#publish-arrow)"/>
+    <line class="d-line" x1="352" y1="60" x2="448" y2="60" marker-end="url(#publish-arrow)"/>
+    <rect class="d-mask" x="372" y="36" width="36" height="14"/>
+    <text class="d-tm d-mid" x="390" y="47">PASA</text>
+    <!-- Retorno: baja, vuelve a la izquierda y sube hasta Escribir -->
+    <path class="d-dash" d="M280 84 V156 a8 8 0 0 1 -8 8 H88 a8 8 0 0 1 -8 -8 V92" marker-end="url(#publish-arrow)"/>
+    <rect class="d-mask" x="144" y="168" width="64" height="14"/>
+    <text class="d-tm d-mid" x="176" y="179">CORREGIR</text>
+    <!-- Nodos -->
+    <rect class="d-box" x="8" y="36" width="144" height="48"/>
+    <text class="d-t d-mid" x="80" y="65">Escribir .md</text>
+    <g class="g-warn">
+      <rect class="d-box" x="208" y="36" width="144" height="48"/>
+      <text class="d-tm d-mid" x="280" y="65">delphos-check</text>
+      <text class="d-sm" x="292" y="112">¿pasa?</text>
+    </g>
+    <g class="g-ok">
+      <rect class="d-fill" x="448" y="36" width="184" height="48"/>
+      <text class="d-t d-mid" x="540" y="65">Publicar en la biblioteca</text>
+    </g>
+  </svg>
+  <figcaption>El documento no se publica hasta que <strong>delphos-check</strong> pasa.</figcaption>
+</figure>

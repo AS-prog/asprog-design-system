@@ -1,0 +1,151 @@
+<!doctype html>
+<!--
+  Página técnica: cómo funciona hoy un componente. Vive en tecnica/<componente>/ y se
+  actualiza en la rama de cada ficha que cambia el componente.
+  Se crea con: site.py new technical <ruta.html> --title "…"
+  Lo que va entre {{…}} se rellena con el contenido del .md; delphos-check no
+  deja pasar la página mientras quede alguno. Guía: skill method, reference/technical-pages.md.
+-->
+<html lang="es" data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lector de sensores</title>
+    <meta name="description" content="Lee la humedad de cada parcela cada diez minutos y guarda las lecturas válidas." />
+    <meta name="theme-color" content="#F0EBDE" />
+    <link rel="stylesheet" href="../../docs/design-system/v0.7/tokens.css" />
+    <link rel="stylesheet" href="../../docs/design-system/v0.7/css/base.css" />
+    <link rel="stylesheet" href="../../docs/design-system/v0.7/css/document.css" />
+    <!-- site:css --><link rel="stylesheet" href="../../docs/design-system/v0.7/css/library.css" /><!-- /site:css -->
+    <script>
+      // Antes de pintar, para que no haya destello: el tema guardado manda sobre «auto».
+      try {
+        var t = localStorage.getItem('tema');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
+  </head>
+  <body class="lib">
+    <!-- site:nav -->
+    <nav class="lib-nav" aria-label="Sitio">
+    <details open>
+    <summary><a class="lib-home" href="../../index.html">Riego · ejemplo</a><span class="lib-menu">Índice</span></summary>
+    <h2>Método</h2>
+    <ul>
+    <li><a href="../../metodo/ciclo-de-desarrollo.html">El ciclo de desarrollo</a></li>
+    </ul>
+    <h2>Lectura de sensores</h2>
+    <ul>
+    <li><a href="lector-sensores.html" aria-current="page">Cómo funciona</a></li>
+    <li><a href="../../registro/sensores/2026-11-05-implementacion-lector-sensores/lector-sensores.html">RS 01 · Lector</a></li>
+    <li><a href="../../registro/sensores/2026-11-03-diseno-lector-sensores/lector-sensores.html">Diseño del lector</a></li>
+    </ul>
+    <h2>Programación del riego</h2>
+    <ul>
+    <li><span title="Aún sin página">Cómo funciona</span></li>
+    </ul>
+    </details>
+    </nav>
+    <script>(function () { var m = matchMedia('(max-width: 56rem)'), d = document.querySelector('.lib-nav details'); d.open = !m.matches; m.addEventListener('change', function () { d.open = !m.matches; }); })();</script>
+    <!-- /site:nav -->
+    <div class="doc">
+      <header class="doc-bar">
+        <span class="doc-brand">riego-management / técnica</span>
+        <button class="doc-theme" type="button" aria-label="Cambiar tema">Tema</button>
+      </header>
+
+      <header class="doc-header">
+        <h1>Lector de sensores</h1>
+        <p class="lede">Lee la humedad de cada parcela cada diez minutos y guarda las lecturas válidas.</p>
+        <dl class="doc-meta">
+          <div><dt>Vigente a</dt><dd><time datetime="2026-11-05">2026-11-05</time></dd></div>
+          <div><dt>Código</dt><dd><code>riego-controller@3f2a9c1</code></dd></div>
+          <div><dt>Diseño</dt><dd><code>diseno/nivel-1/3-lectura.md</code></dd></div>
+          <div><dt>Decisiones</dt><dd>D03, D04</dd></div>
+        </dl>
+      </header>
+
+      <nav class="doc-toc" aria-label="Índice">
+        <h2>Índice</h2>
+        <ol>
+          <li><a href="#en-una-frase">En una frase</a></li>
+          <li><a href="#como-funciona">Cómo funciona</a></li>
+          <li><a href="#como-se-opera">Cómo se opera</a></li>
+          <li><a href="#limites">Límites conocidos</a></li>
+          <li><a href="#historial">Historial</a></li>
+        </ol>
+      </nav>
+
+      <article class="doc-prose">
+        <h2 id="en-una-frase">En una frase</h2>
+        <p>El lector pide la humedad a cada sensor, descarta los valores fuera de rango y guarda el resto en <code>readings</code>. No decide cuándo regar: eso es de la programación del riego.</p>
+
+        <h2 id="como-funciona">Cómo funciona</h2>
+        <p>Cada diez minutos (<code>READ_INTERVAL = 600</code>) el lector recorre las parcelas de <code>config/plots.yaml</code>.</p>
+        <figure class="figwrap">
+          <svg viewBox="0 0 640 140" role="img" aria-labelledby="tec-title tec-desc">
+            <title id="tec-title">Una lectura</title>
+            <desc id="tec-desc">El lector pide la humedad al sensor, la valida y la guarda; si el valor está fuera de rango, la descarta y lo apunta.</desc>
+            <defs>
+              <marker id="tec-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="d-bar" points="0 0, 8 3, 0 6"/></marker>
+            </defs>
+            <line class="d-line" x1="152" y1="50" x2="208" y2="50" marker-end="url(#tec-arrow)"/>
+            <line class="d-line" x1="352" y1="50" x2="448" y2="50" marker-end="url(#tec-arrow)"/>
+            <rect class="d-mask" x="372" y="26" width="48" height="14"/>
+            <text class="d-tm d-mid" x="396" y="37">EN RANGO</text>
+            <path class="d-dash" d="M280 74 V110 H448" marker-end="url(#tec-arrow)"/>
+            <text class="d-tm" x="300" y="104">FUERA</text>
+            <rect class="d-box" x="8" y="26" width="144" height="48"/>
+            <text class="d-t d-mid" x="80" y="55">Pedir humedad</text>
+            <g class="g-warn">
+              <rect class="d-box" x="208" y="26" width="144" height="48"/>
+              <text class="d-tm d-mid" x="280" y="55">validate()</text>
+            </g>
+            <g class="g-ok">
+              <rect class="d-fill" x="448" y="26" width="184" height="48"/>
+              <text class="d-t d-mid" x="540" y="55">Guardar lectura</text>
+            </g>
+            <rect class="d-box" x="448" y="92" width="184" height="36"/>
+            <text class="d-tm d-mid" x="540" y="114">readings_rejected</text>
+          </svg>
+          <figcaption>Una lectura. La línea discontinua es el camino de un valor descartado.</figcaption>
+        </figure>
+
+        <h2 id="como-se-opera">Cómo se opera</h2>
+        <p class="code-title">Una lectura a mano, en local</p>
+        <pre><code>uv run riego read --plot norte --dry-run</code></pre>
+        <table>
+          <thead><tr><th>Síntoma</th><th>Qué pasa</th><th>Qué hacer</th></tr></thead>
+          <tbody><tr><td>Muchas filas en <code>readings_rejected</code></td><td>El sensor está fuera de rango</td><td>Revisar el sensor de la parcela</td></tr></tbody>
+        </table>
+
+        <h2 id="limites">Límites conocidos</h2>
+        <div class="notice notice-pending">
+          <span class="notice-title">Pendiente · ficha RS 02</span>
+          <p>Un sensor que no responde no deja rastro; la ficha RS 02 añade el aviso.</p>
+        </div>
+
+        <h2 id="historial">Historial</h2>
+        <table>
+          <thead><tr><th>Fecha</th><th>Ficha</th><th>Qué cambió</th></tr></thead>
+          <tbody><tr><td>2026-11-05</td><td>RS 01</td><td>Nace el componente (<a href="../../registro/sensores/2026-11-05-implementacion-lector-sensores/lector-sensores.html">implementación</a>)</td></tr></tbody>
+        </table>
+      </article>
+
+      <footer class="doc-footer">
+        <span>Fuente: tecnica/lector-sensores/README.md</span>
+        <span>asprog-design-system</span>
+      </footer>
+    </div>
+
+    <script>
+      document.querySelector('.doc-theme').addEventListener('click', function () {
+        var r = document.documentElement, t = r.getAttribute('data-theme');
+        var isDark = t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        var next = isDark ? 'light' : 'dark';
+        r.setAttribute('data-theme', next);
+        try { localStorage.setItem('tema', next); } catch (e) {}
+      });
+    </script>
+  </body>
+</html>
