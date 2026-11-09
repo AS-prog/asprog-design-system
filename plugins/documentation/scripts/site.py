@@ -8,7 +8,7 @@ Uso, desde la raíz del proyecto (o con --root):
 
 Todo sale de docs/site/site.toml (plantilla en templates/site/site.toml):
 
-- vendor copia las hojas, los tokens y las fuentes que trae el plugin a
+- vendor copia las hojas, los tokens, los scripts y las fuentes que trae el plugin a
   <system>/v<X.Y>/ dentro del proyecto. Las páginas las enlazan con rutas
   relativas, así que funcionan sin red y abriéndolas con doble clic.
 - new crea una página desde la plantilla de su tipo (implementation,
@@ -201,6 +201,8 @@ def nav(config: dict, page: str) -> str:
             "<script>(function () { var m = matchMedia('(max-width: 56rem)'), "
             "d = document.querySelector('.lib-nav details'); d.open = !m.matches; "
             "m.addEventListener('change', function () { d.open = !m.matches; }); })();</script>",
+            # Los niveles con páginas dentro (una solución, las secciones de la página) se pliegan.
+            f'<script src="{rel(system_dir(config) + "/js/library-fold.js", page)}"></script>',
             NAV_CLOSE]
     return "\n    ".join(out)
 
