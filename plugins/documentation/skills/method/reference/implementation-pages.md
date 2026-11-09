@@ -21,7 +21,7 @@ registro/<tema>/<AAAA-MM-DD>-implementacion-<objeto>/
 | Cabecera | Título con lo implementado y, debajo, las fichas (`p.eyebrow`). Una frase de entrada y la ficha técnica: fecha, estado, fichas, código (`<repo>@hash`) y diseño (`Dnn`) |
 | Conclusión | Qué quedó implementado y qué falta, en un párrafo |
 | Qué entra en el cambio | Tabla ficha → qué aporta → commits de código |
-| Arquitectura | Un diagrama de todas las piezas, configuración incluida, y la tabla de puertos y adaptadores por entorno si los hay |
+| Arquitectura | Un diagrama de todas las piezas, configuración incluida, y la tabla de puertos y adaptadores por entorno si los hay. Si el cambio es grande, antes y después; si es acotado, lo nuevo marcado ([change-figures.md](change-figures.md)) |
 | Configuración | Los ficheros de configuración que usa, comentados, con sus campos y lo que se valida |
 | Cómo funciona | Una subsección por parte, cada una con su diagrama: qué recibe, qué hace y qué deja |
 | Dónde está en el código | Tabla parte → `<repo>:<ruta>` → decisión |

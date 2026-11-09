@@ -15,7 +15,7 @@ El método `documentation` tiene una plantilla de PR (`plugins/documentation/tem
 
 ## Arquitectura: antes y después
 
-Es un cambio grande del recorrido de una ficha: las dos figuras tienen la misma disposición (issue, PR, fusión y rama base arriba; las páginas HTML debajo).
+Es un cambio grande del recorrido de una ficha: las dos figuras tienen la misma disposición (issue, PR, fusión y rama base arriba; las páginas HTML debajo). Las figuras siguen `change-figures.md`: el antes sin marcas y «CAMBIA» sobre la PR y la fusión en el después.
 
 - **Antes.** La PR es texto libre y cita las páginas como rutas, cuando las cita. Al fusionar no hay ningún paso, así que las páginas siguen en `borrador · PR abierta` y las decisiones de la issue quedan sin marcar.
 - **Después.** La PR sigue la plantilla: enseña la figura del cambio y enlaza cada página con su estado al fusionar. La lista «Al fusionar» pasa la implementación a `vigente`, pone al día la técnica y marca las decisiones.

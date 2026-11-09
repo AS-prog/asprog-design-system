@@ -1,0 +1,73 @@
+#!/usr/bin/env node
+// figure-png: guarda como PNG las figuras de una página, para enseñarlas en una PR
+// (GitHub no muestra un HTML). Guía: skills/method/reference/change-figures.md.
+//
+//   figure-png <página.html> <salida.png>                desde la primera figure.figwrap hasta la última
+//   figure-png <página.html> <salida.png> --figure N     solo la figura N, contando desde 1
+//
+// Abre la página en modo claro, a 1300 px de ancho y doble resolución.
+// Necesita Playwright con Chromium; sin él, lo dice y sale con 1.
+
+import { resolve } from 'node:path';
+import { existsSync, mkdirSync } from 'node:fs';
+import { dirname } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { createRequire } from 'node:module';
+
+const MARGIN = 16;
+
+function usage(msg) {
+  if (msg) console.error(`figure-png: ${msg}`);
+  console.error('uso: figure-png <página.html> <salida.png> [--figure N]');
+  process.exit(1);
+}
+
+const args = process.argv.slice(2);
+let only = null;
+const i = args.indexOf('--figure');
+if (i !== -1) {
+  only = Number(args[i + 1]);
+  if (!Number.isInteger(only) || only < 1) usage('--figure necesita un número desde 1');
+  args.splice(i, 2);
+}
+if (args.length !== 2) usage();
+const [page, out] = args.map((a) => resolve(a));
+if (!existsSync(page)) usage(`no existe ${page}`);
+
+// Playwright puede estar en el proyecto o instalado de forma global.
+let chromium;
+try {
+  ({ chromium } = createRequire(resolve('package.json'))('playwright'));
+} catch {
+  try {
+    ({ chromium } = await import('playwright'));
+  } catch {
+    console.error('figure-png: hace falta Playwright con Chromium (npm i -D playwright && npx playwright install chromium)');
+    process.exit(1);
+  }
+}
+
+const browser = await chromium.launch();
+try {
+  const tab = await browser.newPage({ viewport: { width: 1300, height: 900 }, deviceScaleFactor: 2, colorScheme: 'light' });
+  await tab.goto(pathToFileURL(page).href);
+  const figures = await tab.$$('figure.figwrap');
+  if (figures.length === 0) usage(`${page} no tiene ninguna figure.figwrap`);
+  if (only && only > figures.length) usage(`la página tiene ${figures.length} figura(s)`);
+  const first = await (only ? figures[only - 1] : figures[0]).boundingBox();
+  const last = await (only ? figures[only - 1] : figures[figures.length - 1]).boundingBox();
+  mkdirSync(dirname(out), { recursive: true });
+  await tab.screenshot({
+    path: out,
+    fullPage: true,
+    clip: {
+      x: Math.max(0, first.x - MARGIN),
+      y: Math.max(0, first.y - MARGIN),
+      width: Math.max(first.width, last.width) + 2 * MARGIN,
+      height: last.y + last.height - first.y + 2 * MARGIN,
+    },
+  });
+  console.log(out);
+} finally {
+  await browser.close();
+}

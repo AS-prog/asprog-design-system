@@ -28,11 +28,13 @@ GitHub la pone en cada PR nueva. Un agente que abre la PR con una herramienta qu
 
 ## Cómo se enseña el cambio
 
+El estándar completo, con las marcas, el texto que cabe en cada caja y la exportación a PNG, está en [change-figures.md](change-figures.md). En corto:
+
 - **Un cambio grande** (varias piezas, otra forma de conectarse) enseña el diagrama de antes y el de después con la misma disposición, uno encima del otro, en la página de implementación.
 - **Un cambio acotado** (una pieza nueva, sin conectar o en un solo sitio) enseña el mapa actual de la página técnica con lo nuevo marcado: relleno (`d-fill`) y la etiqueta «NUEVO» en `d-tm`. En la tinta: el verde de solución es solo para la barra lateral y las ramas.
 - **Sin diagrama** (documentación, configuración) basta la tabla de páginas.
 
-La figura va también en la PR como imagen, para verla sin salir de GitHub: una captura PNG en `figuras/` de la carpeta de la página, enlazada con `…/blob/<rama>/<ruta>.png?raw=true` (funciona en repos privados). GitHub no muestra un HTML: los enlaces a las páginas abren el código fuente, y por eso la PR dice cómo abrirlas.
+La figura va también en la PR como imagen, para verla sin salir de GitHub: un PNG en `figuras/` de la carpeta de la página, hecho con `scripts/figure-png`, enlazado con `…/blob/<rama>/<ruta>.png?raw=true` (funciona en repos privados). GitHub no muestra un HTML: los enlaces a las páginas abren el código fuente, y por eso la PR dice cómo abrirlas.
 
 ## El estado de cada página
 

@@ -6,9 +6,12 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y l
 
 ### Añadido
 - Plantilla de PR (`plugins/documentation/templates/pull_request_template.md`), que un proyecto copia a `.github/pull_request_template.md`. Lleva una sección «Cómo cambia el desarrollo» con la figura del cambio como imagen y la tabla de páginas con su estado al fusionar, y una lista «Al fusionar».
+- Guía `skills/method/reference/change-figures.md`: el estándar para dibujar un cambio. Qué forma según el tamaño (antes y después en vertical, lo nuevo marcado, tabla o architecture delta), las marcas NUEVO, CAMBIA y SE VA en la tinta, cuánto texto cabe en una caja (ancho ≥ caracteres × 8 + 16) y cómo llega la figura a la PR.
+- Script `scripts/figure-png`: guarda las figuras de una página como PNG a doble resolución, todas o una con `--figure N`. Necesita Playwright.
 - Guía `skills/method/reference/pull-requests.md`: qué lleva la PR, cómo se enseña un cambio grande (antes y después) y uno acotado (lo nuevo marcado), y en qué estado queda cada página al fusionar.
 
 ### Cambiado
+- `scripts/delphos-check` tiene permiso de ejecución.
 - `document-types.md` apunta a la plantilla de PR en lugar de a una plantilla «de abajo» que no existía. La skill `method` la enlaza en el paso 5 y en la lista final.
 
 ## 0.9.0 · 2026-11-09
