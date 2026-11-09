@@ -4,6 +4,13 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y l
 
 ## Sin publicar
 
+### Añadido
+- Plantilla de PR (`plugins/documentation/templates/pull_request_template.md`), que un proyecto copia a `.github/pull_request_template.md`. Lleva una sección «Cómo cambia el desarrollo» con la figura del cambio como imagen y la tabla de páginas con su estado al fusionar, y una lista «Al fusionar».
+- Guía `skills/method/reference/pull-requests.md`: qué lleva la PR, cómo se enseña un cambio grande (antes y después) y uno acotado (lo nuevo marcado), y en qué estado queda cada página al fusionar.
+
+### Cambiado
+- `document-types.md` apunta a la plantilla de PR en lugar de a una plantilla «de abajo» que no existía. La skill `method` la enlaza en el paso 5 y en la lista final.
+
 ## 0.9.0 · 2026-11-09
 
 ### Añadido

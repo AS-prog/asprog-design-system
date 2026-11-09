@@ -13,7 +13,7 @@ Cada proyecto se documenta igual: un **repo de gestión** con el diseño, las de
 2. **Elige el tipo** en [reference/document-types.md](reference/document-types.md). El tipo fija la carpeta, el nombre, si es vivo o fechado y sus secciones.
 3. **Escribe el `.md`** con las secciones del tipo, en su orden, y la voz de [reference/voice.md](reference/voice.md). El `.md` es siempre la fuente.
 4. **Si el tipo lleva página HTML**, hazla con la skill `document` y llévala al sitio con la skill `site`. Las páginas de implementación y las técnicas tienen guía propia: [reference/implementation-pages.md](reference/implementation-pages.md) y [reference/technical-pages.md](reference/technical-pages.md).
-5. **Si el cambio toca código**, cumple [reference/alignment.md](reference/alignment.md): el diseño y el código van en ramas con el mismo nombre, y cada commit de código tiene su reflejo en el diseño.
+5. **Si el cambio toca código**, cumple [reference/alignment.md](reference/alignment.md): el diseño y el código van en ramas con el mismo nombre, y cada commit de código tiene su reflejo en el diseño. La PR sigue [reference/pull-requests.md](reference/pull-requests.md): enseña cómo cambia el desarrollo y enlaza sus páginas.
 6. **Revisa** con la lista final.
 
 ## Dónde va cada cosa
@@ -48,3 +48,4 @@ La estructura entera, con el `AGENTS.md` de partida, está en [reference/folders
 - [ ] Voz: conclusión primero, cifras reales o marcadas con `≈`, comandos copiables.
 - [ ] Si lleva página: pasa `delphos-check`, está en el mapa del sitio y se ve bien en claro y en oscuro.
 - [ ] Si toca código: el diseño tiene su reflejo en la misma rama.
+- [ ] Si abre una PR: sigue la plantilla, enlaza sus páginas y dice en qué estado quedan al fusionar.

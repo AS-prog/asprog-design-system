@@ -36,7 +36,7 @@ Todos llevan arriba la ficha técnica: fecha, estado (`borrador` mientras su cam
 | Entrada | `entradas/<AAAA-MM-DD>-<origen>/` | El material tal cual llegó y `asimilacion.md`: qué cambió en `diseno/` o `decisiones/` por él |
 | Incidencia | `.scratch/<área>/incidencias/issues/INNNN-<slug>.md` | síntoma · causa · resolución · cómo evitarla |
 | Entrega | Donde pida el destinatario, autocontenida (skill `document`, entrega suelta) | resumen para negocio · cifras · detalle · nota de método |
-| Descripción de un PR | La plantilla de PR del repo; si no hay, la de abajo | qué y por qué · cambios · validación · riesgos · cómo revisarlo |
+| Descripción de un PR | `.github/pull_request_template.md` del repo, copiada de `templates/pull_request_template.md` ([pull-requests.md](pull-requests.md)) | qué y por qué · cambios · cómo cambia el desarrollo · validación · riesgos · pendiente · cómo revisarlo · al fusionar |
 
 ## Lo que generan otras skills
 

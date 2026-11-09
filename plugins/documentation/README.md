@@ -10,7 +10,7 @@ El método de documentación de los proyectos y su sistema de diseño (identidad
 | `skills/site/` | El sitio del proyecto: copia del sistema, páginas nuevas, portada y barra lateral |
 | `scripts/delphos-check` | Comprueba un HTML (Node, sin dependencias). El hook lo pasa a cada `.html` que Claude escribe |
 | `scripts/site.py` | `vendor`, `new` y `build` del sitio (Python 3.11+ con `markdown`, o `uv`) |
-| `templates/` | Plantillas de página (implementación, técnica, diseño, documento) y de `site.toml` y `home.md` |
+| `templates/` | Plantillas de página (implementación, técnica, diseño, documento), de `site.toml` y `home.md`, y de la descripción de una PR (`pull_request_template.md`) |
 | `system/` | Copia generada de `system/` del repo: no se edita aquí |
 
 Instalación y desarrollo: el README de la raíz del repo.
