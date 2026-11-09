@@ -11,7 +11,8 @@ El método `documentation` tiene una plantilla de PR (`plugins/documentation/tem
 | Ficha | Qué aporta | Commits |
 |---|---|---|
 | #3 | La plantilla, la guía y los enlaces desde el método, el README del plugin y el CHANGELOG | `a7296a1` |
-| #3 | Este sitio y esta página, con la figura en PNG | el siguiente commit de la PR |
+| #3 | Este sitio y esta página, con la figura en PNG | `bf28db8` |
+| #3 | El estándar para dibujar un cambio (`change-figures.md`) y el script `figure-png` | `154245b` |
 
 ## Arquitectura: antes y después
 
