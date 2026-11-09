@@ -1,0 +1,92 @@
+/*
+  css/library.css — la capa de biblioteca.
+  Se carga después de tokens.css, css/base.css y css/document.css (o
+  css/view.css), y solo usa sus tokens. Une las páginas de un proyecto en un
+  sitio: pone la barra lateral a la izquierda de cada página y da estilo a la
+  portada. El contenido de cada página sigue siendo document.css.
+
+  Anatomía (la pone scripts/site.py del plugin documentation):
+    body.lib
+      nav.lib-nav          marca · secciones con sus páginas    ← columna fija
+      div.doc              la página de siempre
+*/
+
+/* ---------- Dos columnas: barra y página ---------- */
+.lib {
+  display: grid;
+  grid-template-columns: var(--nav-width) minmax(0, 1fr);
+  align-items: start;
+}
+.lib > .doc, .lib > .view { margin-left: var(--s-9); margin-right: auto; }
+
+/* ---------- Barra lateral ---------- */
+.lib-nav {
+  position: sticky; top: 0;
+  height: 100vh; overflow-y: auto;
+  padding: var(--s-5) var(--s-5) var(--s-9);
+  border-right: var(--line-faint);
+  background: var(--ground);
+  font-size: var(--t-3);
+}
+.lib-nav summary { list-style: none; pointer-events: none; }
+.lib-nav summary a { pointer-events: auto; }
+.lib-nav summary::-webkit-details-marker { display: none; }
+.lib-home {
+  display: block;
+  font-family: var(--f-mono); font-size: var(--t-1); line-height: var(--lh-9);
+  text-transform: uppercase; letter-spacing: var(--ls-mono);
+  color: var(--ink); text-decoration: none;
+  border-top: var(--line-major); padding-top: var(--s-3);
+}
+.lib-nav h2 {
+  font-family: var(--f-mono); font-size: var(--t-1); font-weight: 400; line-height: var(--lh-9);
+  text-transform: uppercase; letter-spacing: var(--ls-mono); color: var(--muted);
+  margin: var(--s-7) 0 var(--s-2); padding-top: var(--s-2); border-top: var(--line-faint);
+}
+.lib-nav ul { list-style: none; margin: 0; padding: 0; }
+.lib-nav li a, .lib-nav li span {
+  display: block; padding: var(--s-1) 0 var(--s-1) var(--s-3);
+  border-left: 2px solid transparent;
+  line-height: var(--lh-8); text-decoration: none; color: var(--ink);
+}
+.lib-nav li a:hover { border-left-color: var(--rule); }
+.lib-nav li a[aria-current="page"] { border-left-color: var(--accent); background: var(--note-bg); color: var(--accent); font-weight: 600; }
+.lib-nav li a[href^="http"]::after { content: " ↗"; font-size: .8em; color: var(--muted); }
+.lib-nav li span { color: var(--muted); cursor: default; }
+.lib-nav .lib-home[aria-current="page"] { color: var(--accent); }
+.lib-menu { display: none; }
+
+/* ---------- Solución: las páginas de una solución implementada, sobre una sombra verde ----------
+   <li class="lib-solution"><a href="…">1. Nombre</a><ul><li><a>página</a></li>…</ul></li> */
+.lib-nav li.lib-solution { background: var(--solution-bg); border-left: 2px solid var(--solution); }
+.lib-nav li.lib-solution > a { color: var(--solution); font-weight: 600; }
+.lib-nav li.lib-solution ul { padding-left: var(--s-3); }
+.lib-nav li.lib-solution li a[aria-current="page"] { border-left-color: var(--solution); background: transparent; color: var(--solution); }
+.lib-nav li.lib-solution > a[aria-current="page"] { border-left-color: transparent; background: transparent; }
+
+/* ---------- Portada: una entrada por sección ---------- */
+.lib-sections { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--col-min), 1fr)); gap: var(--s-5); margin: 0; padding: 0; list-style: none; max-width: var(--doc-width); }
+.lib-sections > li { border-top: var(--line-minor); padding-top: var(--s-3); }
+.lib-sections h3 { font-size: var(--t-5); margin-bottom: var(--s-2); }
+.lib-sections ul { list-style: none; margin: 0; padding: 0; font-size: var(--t-3); }
+.lib-sections ul li { margin: 0; padding: var(--s-1) 0; border-bottom: var(--line-faint); display: flex; justify-content: space-between; gap: var(--s-3); }
+.lib-type { font-family: var(--f-mono); font-size: var(--t-1); color: var(--muted); white-space: nowrap; }
+.lib-pending { color: var(--muted); }
+
+/* ---------- Móvil: la barra se pliega arriba (56rem = --nav-break) ---------- */
+@media (max-width: 56rem) {
+  .lib { display: block; }
+  .lib > .doc, .lib > .view { margin: 0 auto; }
+  .lib-nav { position: static; height: auto; border-right: 0; padding: var(--s-3) var(--grid-margin) 0; }
+  .lib-nav > details > summary { pointer-events: auto; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+  .lib-menu {
+    display: inline-block; font-family: var(--f-mono); font-size: var(--t-1); text-transform: uppercase; letter-spacing: var(--ls-mono);
+    color: var(--muted); border: var(--line-faint); padding: var(--s-1) var(--s-3);
+  }
+  .lib-nav > details:not([open]) { padding-bottom: var(--s-3); }
+}
+
+@media print {
+  .lib { display: block; }
+  .lib-nav { display: none; }
+}

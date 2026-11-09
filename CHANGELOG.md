@@ -4,6 +4,12 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y l
 
 ## Sin publicar
 
+## 0.8.0 · 2026-11-09
+
+### Añadido
+- Tokens de color `solution` y `solution-bg` (verde y su sombra, con valores para claro, oscuro e impresión) y tres pares de contraste que `npm test` comprueba.
+- Clase `lib-solution` en `css/library.css`: marca en la barra lateral el grupo de páginas de una solución implementada, con una sombra verde y una línea verde a la izquierda. Es el único color que no es la tinta.
+
 ## 0.7.1 · 2026-11-05
 
 ### Cambiado
