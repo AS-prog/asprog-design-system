@@ -4,6 +4,18 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y l
 
 ## Sin publicar
 
+## 0.9.0 · 2026-11-09
+
+### Añadido
+- Tokens de color `pending-a` (ámbar) y `pending-b` (violeta) para las soluciones pendientes, con valores en claro, oscuro e impresión y sus pares de contraste sobre `ground` (5,52:1 y 6,08:1 en claro; 10,31:1 y 8,74:1 en oscuro).
+- Clases `d-solution`, `d-pending-a` y `d-pending-b` en `css/base.css`: fijan `color` para las ramas de un mapa de git, así que sirven con todo lo que usa `currentColor` y en un `<span>`.
+- Niveles plegables en la barra lateral: `js/library-fold.js` (viaja con el sistema y lo copia `site.py vendor`) y las clases `lib-foldable` y `lib-fold` en `css/library.css`. `site.py build` carga el script en la barra. Sin JavaScript todo queda desplegado.
+- Las secciones de la página abierta (`ul[aria-label="Secciones de esta página"]`) cuelgan un nivel por debajo de su enlace.
+- En móvil (por debajo de 56rem), la flecha de plegar crece a 28 px para el dedo, y la barra abierta deja aire antes de la página.
+
+### Cambiado
+- Grupo «Solución» en la barra lateral: la propuesta es una entrada normal y su solución cuelga de ella dentro de `ul.lib-solutions`, como `li.lib-solution` con una etiqueta `<span>Solución</span>` y sus páginas. El marcado anterior, con `li.lib-solution` como la propia entrada de la propuesta, deja de usarse.
+
 ## 0.8.0 · 2026-11-09
 
 ### Añadido

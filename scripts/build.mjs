@@ -2,7 +2,7 @@
 // Prepara el plugin documentation a partir de system/. Uso: npm run build
 //
 // El plugin no puede mirar fuera de su carpeta (Claude Code lo copia a su
-// caché), así que lleva una copia de las hojas, los tokens y las fuentes, y la
+// caché), así que lleva una copia de las hojas, los tokens, los scripts y las fuentes, y la
 // lista de clases que delphos-check admite. Las dos cosas se generan aquí;
 // npm test falla si se quedan atrás.
 import { cpSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -15,7 +15,7 @@ const SYSTEM = join(ROOT, 'system');
 const PLUGIN = join(ROOT, 'plugins', 'documentation');
 
 // Lo que viaja con el plugin y luego se copia a cada proyecto.
-export const SHIPPED = ['tokens.css', 'css', 'fonts'];
+export const SHIPPED = ['tokens.css', 'css', 'js', 'fonts'];
 
 // Prefijos de las clases que delphos-check vigila (regla 8).
 const WATCHED = /^(doc-|d-|hl-|g-|lib-|notice)/;

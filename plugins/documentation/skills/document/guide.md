@@ -54,13 +54,14 @@ La identidad es **Delphos** sobre **Cobalt Grid**: papel crema, una sola tinta (
 | Imagen | `img` con `alt`; con pie, `figure` + `figcaption` |
 | Diagrama | `figure.figwrap` + `svg` en línea con `.d-box`, `.d-fill`, `.d-line`, `.d-dash`, `.d-t`, `.d-tm`; en gráficos de datos, `.d-bar`, `.d-mask` y `.d-wash-1…4` |
 | Estado en una tabla | `.g-ok`, `.g-warn`, `.g-stop`, siempre con una palabra |
+| Rama en un mapa de git | `.d-solution` (implementada), `.d-pending-a`, `.d-pending-b` (pendientes), en el SVG o en un `<span>` de la leyenda, siempre con el nombre de la rama |
 
 Todo lo demás que produce un conversor (párrafos, listas, `hr`, `details`, `kbd`, `mark`, `abbr`, `dl`) ya tiene estilo sin clases.
 
 ## 4. Lo que no se hace
 
 1. **Ningún valor a mano.** Ni tamaños, ni distancias, ni colores, ni radios en `style=""` o en un `<style>` propio. Si falta un paso, se añade a `system/tokens.json`.
-2. **Ningún color nuevo.** El tipo de un aviso lo dice su etiqueta, no un rojo o un verde. `ok`/`warn`/`stop` son la misma tinta en tres coberturas y siempre van con una palabra o una forma.
+2. **Ningún color nuevo.** El tipo de un aviso lo dice su etiqueta, no un rojo o un verde. `ok`/`warn`/`stop` son la misma tinta en tres coberturas y siempre van con una palabra o una forma. Las únicas excepciones son el verde de una solución y los dos colores de rama pendiente (`.d-solution`, `.d-pending-a`, `.d-pending-b`), solo para el mapa de ramas y la barra lateral.
 3. **Sin antetítulos** encima del `h1`. Sin tarjetas como estructura, sin sombras, sin esquinas redondeadas, sin un aviso dentro de otro. La separación la hacen las reglas.
 4. **Mono solo para dato**: código, rutas, identificadores, fechas, etiquetas.
 5. **Sin logo ni iconos.** La marca es texto en mono. Las flechas son el carácter `→`. Los únicos SVG son los diagramas.

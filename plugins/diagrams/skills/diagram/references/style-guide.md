@@ -23,6 +23,7 @@ Todas están en `system/css/base.css` de este repo (`asprog-design-system`); `de
 | `d-tm` | Texto mono 12,5 px (DM Mono) | **Solo dato**: ruta, identificador, cifra, puerto, etiqueta de flecha en mayúsculas |
 | `d-mid`, `d-end` | `text-anchor` centro / fin | Se combinan con una clase de texto |
 | `g-ok`, `g-warn`, `g-stop` | Color del grupo: la misma tinta en tres coberturas | Estado de un nodo o de un camino; **siempre con una palabra o una forma**, nunca solo el color |
+| `d-solution`, `d-pending-a`, `d-pending-b` | Fijan `color`: verde (`--solution`), ámbar (`--pending-a`), violeta (`--pending-b`) | **Solo en el mapa de ramas de git**: la solución implementada y dos pendientes. Se combinan con lo que usa `currentColor` (`d-line d-solution`, `d-fill d-pending-a`, un `<tspan class="d-pending-b">`) y valen en un `<span>` del texto. Siempre con el nombre de la rama |
 
 Las clases de relleno (`d-bar`, `d-wash-N`) no fijan trazo: `d-wash-2 d-box` es una caja con trazo y lavado al 20 %.
 

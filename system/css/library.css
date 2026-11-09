@@ -57,12 +57,40 @@
 .lib-menu { display: none; }
 
 /* ---------- Solución: las páginas de una solución implementada, sobre una sombra verde ----------
-   <li class="lib-solution"><a href="…">1. Nombre</a><ul><li><a>página</a></li>…</ul></li> */
-.lib-nav li.lib-solution { background: var(--solution-bg); border-left: 2px solid var(--solution); }
+   Cuelga de la entrada de su propuesta, con una etiqueta:
+   <li><a href="…">1. Nombre</a>
+     <ul class="lib-solutions"><li class="lib-solution"><span>Solución</span><ul><li><a>página</a></li>…</ul></li></ul></li> */
+.lib-nav ul.lib-solutions { padding-left: var(--s-3); }
+.lib-nav li.lib-solution { background: var(--solution-bg); border-left: 2px solid var(--solution); margin-top: var(--s-1); }
+.lib-nav li.lib-solution > span {
+  font-family: var(--f-mono); font-size: var(--t-1); line-height: var(--lh-9);
+  text-transform: uppercase; letter-spacing: var(--ls-mono);
+  color: var(--solution); font-weight: 600;
+}
 .lib-nav li.lib-solution > a { color: var(--solution); font-weight: 600; }
 .lib-nav li.lib-solution ul { padding-left: var(--s-3); }
 .lib-nav li.lib-solution li a[aria-current="page"] { border-left-color: var(--solution); background: transparent; color: var(--solution); }
 .lib-nav li.lib-solution > a[aria-current="page"] { border-left-color: transparent; background: transparent; }
+
+/* Las secciones de la página abierta cuelgan un nivel por debajo de su enlace. */
+.lib-nav li > ul[aria-label="Secciones de esta página"] { padding-left: var(--s-3); }
+
+/* ---------- Niveles plegables (los activa js/library-fold.js) ----------
+   Sin JavaScript todo queda desplegado. El script pone un button.lib-fold en
+   cada li con un ul hijo, y .is-folded en el li cuando está plegado. */
+.lib-nav li.lib-foldable { position: relative; }
+.lib-nav li.lib-foldable > a, .lib-nav li.lib-foldable > span { padding-right: var(--s-6); }
+.lib-nav .lib-fold {
+  position: absolute; top: var(--s-1); right: 0;
+  width: var(--s-5); height: var(--s-5); padding: 0; border: 0; background: transparent;
+  font: inherit; line-height: 1; color: var(--muted); cursor: pointer;
+}
+.lib-nav .lib-fold::before { content: "▾"; }
+.lib-nav .lib-fold:hover { color: var(--ink); }
+.lib-nav .lib-fold:focus { outline: none; }
+.lib-nav .lib-fold:focus-visible { outline: var(--focus); outline-offset: calc(-1 * var(--focus-offset)); }
+.lib-nav li.is-folded > .lib-fold::before { content: "▸"; }
+.lib-nav li.is-folded > ul { display: none; }
 
 /* ---------- Portada: una entrada por sección ---------- */
 .lib-sections { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--col-min), 1fr)); gap: var(--s-5); margin: 0; padding: 0; list-style: none; max-width: var(--doc-width); }
@@ -83,7 +111,10 @@
     display: inline-block; font-family: var(--f-mono); font-size: var(--t-1); text-transform: uppercase; letter-spacing: var(--ls-mono);
     color: var(--muted); border: var(--line-faint); padding: var(--s-1) var(--s-3);
   }
-  .lib-nav > details:not([open]) { padding-bottom: var(--s-3); }
+  .lib-nav > details { padding-bottom: var(--s-3); }
+  /* La flecha de plegar, más grande para el dedo. */
+  .lib-nav .lib-fold { top: 0; width: var(--s-7); height: var(--s-7); }
+  .lib-nav li.lib-foldable > a, .lib-nav li.lib-foldable > span { padding-right: var(--s-8); }
 }
 
 @media print {

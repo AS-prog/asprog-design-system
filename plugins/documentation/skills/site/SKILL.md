@@ -35,5 +35,20 @@ Una página que regenera otro script entera pierde la barra: vuelve a ejecutar `
 
 - **Portada** (`index.html`): el texto de `home.md` y «Qué hay en el sitio», una entrada por sección con sus páginas y el tipo de cada una.
 - **Barra lateral**: fija a la izquierda; arriba, el enlace a la portada; debajo, las secciones. La página abierta va marcada con `aria-current="page"`. Una página anunciada sale atenuada y sin enlace, para que se vea qué falta.
-- **Móvil**: por debajo de 56rem la barra se pliega arriba tras un botón «Índice».
+- **Niveles plegables**: `build` pone en la barra `<script src="…/js/library-fold.js">`, que añade una flecha (`button.lib-fold`, con `aria-expanded`) a cada entrada con una lista dentro. Empiezan abiertos los niveles que contienen la página actual y el resto plegados; se alternan con la flecha, con una etiqueta (como «Solución») o con el enlace de la página actual. Sin JavaScript todo queda desplegado. Un generador propio que escriba la barra puede cargar el mismo script justo después de `nav.lib-nav`.
+- **Solución**: las páginas de una solución implementada cuelgan de la entrada de su propuesta, como un grupo con etiqueta sobre una sombra verde. La propuesta es una entrada normal:
+
+  ```html
+  <li><a href="propuesta.html">1. Nombre</a>
+    <ul class="lib-solutions">
+      <li class="lib-solution"><span>Solución</span>
+        <ul><li><a href="…">Página</a></li>…</ul>
+      </li>
+    </ul>
+  </li>
+  ```
+
+  Desde 0.9.0 `li.lib-solution` ya no es la entrada de la propuesta: es el grupo que cuelga de ella. `site.py build` aún no lo genera (`site.toml` no tiene cómo describirlo): lo usa un proyecto que escribe su barra con un generador propio en lugar de `build`.
+- **Secciones de la página abierta**: un `<ul aria-label="Secciones de esta página">` dentro del `li` de la página cuelga un nivel por debajo y se pliega como los demás.
+- **Móvil**: por debajo de 56rem la barra se pliega arriba tras un botón «Índice». Dentro, los niveles se pliegan igual que en escritorio.
 - Se abre con doble clic en `index.html`, o con `python -m http.server` desde la raíz.
