@@ -56,6 +56,14 @@
 .lib-nav .lib-home[aria-current="page"] { color: var(--accent); }
 .lib-menu { display: none; }
 
+/* ---------- Solución: las páginas de una solución implementada, sobre una sombra verde ----------
+   <li class="lib-solution"><a href="…">1. Nombre</a><ul><li><a>página</a></li>…</ul></li> */
+.lib-nav li.lib-solution { background: var(--solution-bg); border-left: 2px solid var(--solution); }
+.lib-nav li.lib-solution > a { color: var(--solution); font-weight: 600; }
+.lib-nav li.lib-solution ul { padding-left: var(--s-3); }
+.lib-nav li.lib-solution li a[aria-current="page"] { border-left-color: var(--solution); background: transparent; color: var(--solution); }
+.lib-nav li.lib-solution > a[aria-current="page"] { border-left-color: transparent; background: transparent; }
+
 /* ---------- Portada: una entrada por sección ---------- */
 .lib-sections { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--col-min), 1fr)); gap: var(--s-5); margin: 0; padding: 0; list-style: none; max-width: var(--doc-width); }
 .lib-sections > li { border-top: var(--line-minor); padding-top: var(--s-3); }

@@ -1,0 +1,208 @@
+/*
+  Delphos · css/view.css — la capa de vista.
+  Se carga después de document.css y solo en páginas generadas que se consultan
+  y no se leen de corrido: tableros y paneles. Reutiliza la barra, la cabecera y
+  el pie de document.css y añade el ancho, las columnas y las piezas de datos.
+
+  Anatomía:
+    .view
+      header.doc-bar      marca ··············· [ayuda] [tema]
+      header.doc-header   h1 · .lede
+      .view-signals       avisos de la vista, si los hay
+      .view-panels        paneles sueltos, separados por reglas
+      .view-columns       columnas de entradas
+      footer.doc-footer
+
+  No hay tarjetas: una entrada es texto entre reglas. Los estados van en cobertura
+  de la misma tinta y siempre con una palabra o una forma, nunca con un color.
+*/
+
+/* ---------- Página ---------- */
+.view {
+  width: min(100% - 2 * var(--grid-margin), var(--grid-max));
+  margin: 0 auto;
+  padding-bottom: var(--s-10);
+  font-size: var(--t-3);
+  line-height: var(--lh-9);
+}
+.view .doc-bar { padding-bottom: var(--s-6); }
+.view .doc-header { padding-bottom: var(--s-6); gap: var(--s-2); }
+.view .doc-header h1 { font-size: var(--t-step); line-height: var(--lh-5); max-width: none; }
+.view .doc-header .lede { max-width: none; font-size: var(--t-3); }
+.view .doc-bar-actions { display: flex; gap: var(--s-2); }
+.view code { font-size: var(--t-1); background: var(--note-bg); padding: 0 var(--s-1); }
+.view a { color: inherit; }
+.view [hidden] { display: none; }
+
+/* ---------- Paneles ---------- */
+.view-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(var(--col-min), 1fr)); gap: var(--s-6) var(--s-8); margin-bottom: var(--s-8); align-items: start; }
+.view-panels-wide { grid-template-columns: minmax(0, 1fr) minmax(0, 3fr); }
+.view-panel { border-top: var(--line-minor); padding-top: var(--s-3); min-width: 0; }
+.view-panel h2, .view-column h2 { font-family: var(--f-mono); font-size: var(--t-1); line-height: var(--lh-9); font-weight: 400; text-transform: uppercase; letter-spacing: var(--ls-mono); margin-bottom: var(--s-2); }
+.view-panel h3 { font-family: var(--f-mono); font-size: var(--t-1); line-height: var(--lh-9); text-transform: uppercase; letter-spacing: var(--ls-mono); color: var(--muted); margin: var(--s-3) 0 var(--s-1); }
+.view-panel h2 .view-hint { display: block; font-family: var(--f-body); text-transform: none; letter-spacing: 0; }
+.view-hint { font-size: var(--t-2); color: var(--muted); margin: 0 0 var(--s-2); max-width: var(--measure-wide); }
+.view-panel table { border-collapse: collapse; width: 100%; font-size: var(--t-2); }
+.view-panel th, .view-panel td { text-align: right; padding: var(--s-1) var(--s-2); border-bottom: var(--line-faint); font-weight: 400; }
+.view-panel th { font-family: var(--f-mono); font-size: var(--t-1); color: var(--muted); border-bottom: var(--line-minor); }
+.view-panel th:first-child, .view-panel td:first-child { text-align: left; padding-left: 0; }
+.view-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-2); }
+.view-list li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-1) var(--s-2); }
+.view-chips { display: flex; flex-wrap: wrap; gap: var(--s-1); margin-top: var(--s-1); }
+.view-key { font-family: var(--f-mono); font-size: var(--t-1); color: var(--muted); min-width: var(--s-9); }
+
+/* ---------- Señales ---------- */
+.view-signals { margin-bottom: var(--s-8); max-width: none; }
+.view-signals ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-2); }
+.view-signals li { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-1) var(--s-2); }
+.view-signals li.is-error { border-left: var(--line-major); padding-left: var(--s-2); }
+
+/* ---------- Controles: enlaces a fichas, temas y conmutadores ---------- */
+.view-chip { display: inline-flex; gap: var(--s-1); align-items: baseline; font-family: var(--f-mono); font-size: var(--t-1); padding: 0 var(--s-1); border: var(--line-faint); text-decoration: none; }
+.view-chip:hover, .view-chip:focus-visible { border-color: var(--ink); }
+.view-chip small { color: var(--muted); }
+.view-chip.is-high { border: var(--line-minor); }
+.view-toggle { font: inherit; background: none; color: inherit; border: var(--line-faint); padding: 0 var(--s-2); cursor: pointer; text-align: left; }
+.view-toggle:hover { border-color: var(--ink); }
+.view-toggle[aria-pressed="true"] { background: var(--ink); color: var(--ground); border-color: var(--ink); }
+.view-segment { display: inline-flex; border: var(--line-faint); }
+.view-segment button { font-family: var(--f-mono); font-size: var(--t-1); background: none; color: var(--muted); border: 0; padding: 0 var(--s-2); cursor: pointer; }
+.view-segment button[aria-pressed="true"] { background: var(--ink); color: var(--ground); }
+
+/* ---------- Etiquetas de una entrada ---------- */
+.view-badge { display: inline-block; font-family: var(--f-mono); font-size: var(--t-1); line-height: var(--lh-7); margin: var(--s-1) var(--s-1) 0 0; padding: 0 var(--s-1); color: var(--muted); border: var(--line-faint); }
+.view-badge.is-high { background: var(--ink); color: var(--ground); border-color: var(--ink); }
+.view-badge.is-medium { color: var(--ink); border-color: var(--ink); }
+.view-badge.is-open { border-style: dashed; }
+
+/* ---------- Filas: clave a la izquierda, texto a la derecha ---------- */
+.view-rows { list-style: none; margin: 0; padding: 0; }
+.view-rows li { display: grid; grid-template-columns: var(--s-10) 1fr; gap: var(--s-1) var(--s-3); align-items: baseline; padding: var(--s-2) 0; border-bottom: var(--line-faint); }
+.view-rows .view-key { white-space: nowrap; }
+.view-row-note { display: block; font-size: var(--t-2); color: var(--muted); overflow-wrap: anywhere; }
+.view .view-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(var(--s-13), 1fr)); gap: var(--s-4) var(--s-6); border-top: var(--line-minor); padding-top: var(--s-3); margin-bottom: var(--s-8); }
+.view-metrics dd { font-size: var(--t-8); }
+.view .collection { max-width: none; }
+
+/* ---------- Columnas y entradas ---------- */
+.view-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(var(--col-min), 1fr)); gap: var(--s-6); }
+.view-column { border-top: var(--line-major); padding-top: var(--s-2); min-width: 0; }
+.view-entry { position: relative; padding: var(--s-2) 0 var(--s-2) var(--s-2); border-bottom: var(--line-faint); border-left: 2px solid transparent; cursor: pointer; }
+.view-entry > a { font-family: var(--f-mono); font-size: var(--t-1); }
+.view-entry > small { font-family: var(--f-mono); font-size: var(--t-1); color: var(--muted); }
+.view-entry-title { margin: var(--s-1) 0 0; }
+.view-entry-note { font-size: var(--t-2); color: var(--muted); overflow-wrap: anywhere; }
+.view-entry-note code { background: none; padding: 0; color: var(--ink); }
+.view-entry-close { float: right; background: none; border: 0; color: inherit; font-size: var(--t-6); line-height: 1; padding: 0 var(--s-1); cursor: pointer; }
+
+/* Estado de una entrada al explorar el linaje: la regla izquierda cambia de forma. */
+.view-entry.is-focus { border-left-color: var(--ink); background: var(--note-bg); }
+.view-entry.is-selected { border-left: var(--line-major); background: var(--note-bg); }
+.view-entry.is-before { border-left: 2px solid var(--ink); }
+.view-entry.is-after { border-left: 2px dashed var(--ink); }
+.view-entry.is-related { border-left: 2px dotted var(--ink); }
+.view-entry.is-muted, .view-graph .is-muted { opacity: .35; }
+
+/* Detalle desplegado dentro de una entrada. */
+.view-detail { margin-top: var(--s-2); padding-top: var(--s-2); border-top: var(--line-faint); cursor: auto; overflow-wrap: anywhere; font-size: var(--t-2); }
+.view-detail dl { margin: 0; }
+.view-detail dt { font-family: var(--f-mono); font-size: var(--t-1); text-transform: uppercase; letter-spacing: var(--ls-mono); color: var(--muted); margin-top: var(--s-2); }
+.view-detail dd { margin: 0; }
+.view-detail ul { margin: 0; padding-left: var(--s-4); }
+.view-more { font-size: var(--t-2); color: var(--muted); margin-top: var(--s-2); }
+
+/* ---------- Cifras ---------- */
+.view-stats { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5); margin: 0; }
+.view-stats div { display: grid; }
+.view-stats dt { font-family: var(--f-mono); font-size: var(--t-1); text-transform: uppercase; letter-spacing: var(--ls-mono); color: var(--muted); }
+.view-stats dd { margin: 0; font-family: var(--f-display); font-size: var(--t-6); line-height: var(--lh-7); }
+.view-stats small { font-size: var(--t-1); color: var(--muted); }
+
+/* ---------- Gráfico de líneas ---------- */
+.view-chart { position: relative; }
+.view-chart svg { display: block; width: 100%; height: auto; overflow: visible; cursor: crosshair; }
+.view-chart .chart-grid { stroke: var(--rule-soft); }
+.view-chart .chart-base { stroke: var(--rule); }
+.view-chart .chart-label { fill: currentColor; font-family: var(--f-mono); font-size: var(--t-1); }
+.view-chart .chart-rest { fill: currentColor; fill-opacity: .04; }
+.view-chart .chart-area { fill: currentColor; fill-opacity: .08; }
+.view-chart .chart-line { fill: none; stroke: currentColor; stroke-width: 2; }
+.view-chart .chart-band { fill: currentColor; fill-opacity: .08; }
+.view-chart .chart-point { fill: currentColor; stroke: var(--ground); stroke-width: 2; }
+.view-chart .chart-peak { fill: var(--ground); stroke: currentColor; stroke-width: 2; }
+.view-tooltip { position: absolute; pointer-events: none; background: var(--ground); border: var(--line-minor); padding: var(--s-1) var(--s-2); font-size: var(--t-1); max-width: var(--measure-title); z-index: 1; }
+.view-tooltip ul { margin: var(--s-1) 0 0; padding-left: var(--s-4); }
+
+/* ---------- Grafo: la tinta en coberturas marca el estado del nodo ---------- */
+.view-graph { overflow-x: auto; }
+.view-graph svg { display: block; height: auto; }
+.view-graph text { fill: currentColor; font-family: var(--f-body); font-size: var(--t-1); }
+.view-graph .graph-id { font-family: var(--f-mono); }
+.view-graph .graph-edge { fill: none; stroke: currentColor; stroke-width: var(--diagram-stroke); }
+.view-graph .graph-edge.is-related { stroke-dasharray: 4 4; }
+.view-graph .graph-node { cursor: pointer; }
+.view-graph .graph-node rect { fill: var(--ground); stroke: var(--rule); stroke-width: var(--diagram-stroke); }
+.view-graph .graph-node .graph-state { stroke: none; fill: currentColor; }
+.view-graph .graph-node.is-external rect:first-of-type { stroke-dasharray: 4 4; stroke: currentColor; }
+.view-graph .graph-node:hover rect:first-of-type { stroke: currentColor; }
+.view-graph .graph-node.is-selected rect:first-of-type { stroke: currentColor; stroke-width: 3; }
+.view-graph .graph-node.is-before rect:first-of-type { fill: var(--note-bg); stroke: currentColor; }
+.view-graph .graph-node.is-after rect:first-of-type { fill: var(--note-bg); stroke: currentColor; stroke-dasharray: 4 4; }
+.view-graph .graph-node.is-related rect:first-of-type { fill: var(--note-bg); stroke: currentColor; stroke-dasharray: 1 3; }
+.state-backlog { --state: .2; }
+.state-doing { --state: 1; }
+.state-blocked { --state: .65; }
+.state-done { --state: .08; }
+.view-graph .graph-state { fill-opacity: var(--state); }
+.view-legend { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-4); font-size: var(--t-2); color: var(--muted); margin: 0 0 var(--s-2); list-style: none; padding: 0; }
+.view-legend li { display: inline-flex; align-items: center; gap: var(--s-1); }
+.view-legend svg { width: var(--s-3); height: var(--s-3); }
+.view-legend rect { fill: currentColor; fill-opacity: var(--state); }
+
+/* ---------- Ayuda en diálogo ---------- */
+.view-dialog { margin: var(--s-4) var(--s-4) auto auto; width: min(var(--doc-width), 100% - 2 * var(--s-4)); max-width: none; max-height: calc(100% - 2 * var(--s-4)); overflow: auto; background: var(--ground); color: var(--ink); border: var(--line-major); padding: var(--s-4) var(--s-5); font-size: var(--t-3); }
+.view-dialog::backdrop { background: var(--ground); opacity: .7; }
+.view-dialog > header { display: flex; justify-content: space-between; align-items: center; gap: var(--s-3); }
+.view-dialog h2 { font-size: var(--t-6); }
+.view-dialog section { border-top: var(--line-faint); padding-top: var(--s-3); margin-top: var(--s-3); }
+.view-dialog h3 { font-family: var(--f-mono); font-size: var(--t-1); text-transform: uppercase; letter-spacing: var(--ls-mono); color: var(--muted); margin-bottom: var(--s-2); }
+.view-dialog p { margin: 0 0 var(--s-2); }
+.view-dialog table { border-collapse: collapse; width: 100%; font-size: var(--t-2); }
+.view-dialog th, .view-dialog td { text-align: left; vertical-align: top; padding: var(--s-1) var(--s-2) var(--s-1) 0; border-bottom: var(--line-faint); font-weight: 400; }
+.view-dialog ul { margin: 0; padding-left: var(--s-5); }
+.view-dialog .view-list { padding-left: 0; }
+
+/* ---------- Franja de reparto ---------- */
+.view .view-strip { margin: 0 0 var(--s-8); padding: 0; background: none; max-width: none; }
+.view-strip svg { display: block; width: 100%; height: var(--s-4); }
+.view-strip rect { fill: currentColor; fill-opacity: var(--state); }
+.view-strip figcaption { margin-top: var(--s-2); max-width: none; }
+
+/* ---------- Grafo de ramas: cada carril se distingue por su trazo ---------- */
+.view-rails { overflow-x: auto; border-top: var(--line-faint); padding-top: var(--s-3); }
+.view-rails svg { display: block; width: 100%; min-width: var(--doc-width); height: auto; }
+.rail-line { fill: none; stroke: currentColor; stroke-width: 3; }
+.rail-tail { fill: none; stroke: currentColor; stroke-width: 2; stroke-dasharray: 2 6; }
+.rail-mr { fill: none; stroke: currentColor; stroke-width: 2; stroke-dasharray: 6 5; }
+.rail-int { stroke-width: 2; }
+.rail-2 { stroke-dasharray: 8 3; }
+.rail-3 { stroke-dasharray: 2 3; }
+.rail-node { fill: currentColor; stroke: var(--ground); stroke-width: 3; }
+.rail-hollow { fill: var(--ground); stroke: currentColor; stroke-width: 2.5; }
+.rail-tag { fill: var(--ground); font-family: var(--f-mono); font-size: var(--t-1); text-anchor: middle; }
+.view-legend .rail-key { width: var(--s-6); height: var(--s-2); }
+
+/* ---------- Prosa dentro de una vista: las tablas y figuras llegan al ancho completo ---------- */
+.view .doc-prose figure, .view .doc-prose table, .view .doc-prose pre, .view .table-wrap { max-width: none; }
+.view .mono { font-family: var(--f-mono); font-size: var(--t-1); }
+.view .nowrap { white-space: nowrap; }
+
+/* ---------- Pantalla estrecha e impresión ---------- */
+@media (max-width: 56rem) {
+  .view-panels-wide { grid-template-columns: 1fr; }
+}
+@media print {
+  .view { width: 100%; }
+  .doc-bar-actions, .view-tooltip { display: none; }
+  .view-entry { break-inside: avoid; }
+}
