@@ -34,7 +34,24 @@ El estándar completo, con las marcas, el texto que cabe en cada caja y la expor
 - **Un cambio acotado** (una pieza nueva, sin conectar o en un solo sitio) enseña el mapa actual de la página técnica con lo nuevo marcado: relleno (`d-fill`) y la etiqueta «NUEVO» en `d-tm`. En la tinta: el verde de solución es solo para la barra lateral y las ramas.
 - **Sin diagrama** (documentación, configuración) basta la tabla de páginas.
 
-La figura va también en la PR como imagen, para verla sin salir de GitHub: un PNG en `figuras/` de la carpeta de la página, hecho con `scripts/figure-png`, enlazado con `…/blob/<rama>/<ruta>.png?raw=true` (funciona en repos privados). GitHub no muestra un HTML: los enlaces a las páginas abren el código fuente, y por eso la PR dice cómo abrirlas.
+La figura va también en la PR como imagen, para verla sin salir de GitHub: un PNG en `figuras/` de la carpeta de la página, hecho con `scripts/figure-png`, enlazado con `…/blob/<rama>/<ruta>.png?raw=true` (funciona en repos privados). Un enlace a un `.html` del repo abre su código fuente; por eso la página llega como artefacto de la issue (abajo) y la PR lo enlaza.
+
+## La página como artefacto de la issue
+
+GitHub muestra un HTML como **artefacto de una issue** (`gh issue artifact`, gh 2.103.0 o posterior; en vista previa desde octubre de 2026): se ve renderizado, con su historial de versiones. Los artefactos cuelgan de la issue, no de la PR, así que la PR enlaza la issue que cierra y su artefacto.
+
+```bash
+node <plugin>/scripts/standalone-html <página.html> /tmp/<objeto>.html   # un solo HTML, sin barra lateral
+gh issue artifact create <N> /tmp/<objeto>.html                          # la primera vez
+gh issue artifact list <N>                                               # su número y su URL
+gh issue artifact edit <N> <número> --body-file /tmp/<objeto>.html       # cada vez que cambia la página
+```
+
+- `standalone-html` mete las hojas, las fuentes y las imágenes en la página y quita la barra lateral y los scripts externos: el artefacto se lee solo.
+- El nombre del fichero es el del artefacto: letras, números, puntos, guiones y guiones bajos.
+- El artefacto es una vista: la fuente sigue siendo la página del repo, y no se commitea.
+- Al fusionar, el artefacto se vuelve a subir con la página en `vigente`.
+- Si el repo no tiene artefactos (no está en la vista previa o gh es anterior), la PR enlaza la página en la rama, como hasta ahora.
 
 ## El estado de cada página
 

@@ -49,7 +49,7 @@ Regla: **ancho de la caja ≥ caracteres × 8 + 16**. Si no cabe, se acorta el t
 
 ## Cómo llega a la PR
 
-GitHub no muestra un HTML, así que la PR enseña la figura como imagen:
+La página entera llega como artefacto de la issue ([pull-requests.md](pull-requests.md)). La descripción de la PR no admite HTML, así que además enseña la figura como imagen:
 
 ```bash
 node <plugin>/scripts/figure-png <página.html> <carpeta>/figuras/antes-despues.png

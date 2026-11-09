@@ -28,11 +28,11 @@ Closes #{{N}}
 
 | Página | Tipo | Estado al fusionar |
 |---|---|---|
-| [{{Título}}](https://github.com/{{owner}}/{{repo}}/blob/{{rama}}/{{ruta}}.html) | implementación | borrador → vigente |
+| [{{Título}}](https://github.com/{{owner}}/{{repo}}/issues/{{N}}): artefacto `{{objeto}}.html` de la issue #{{N}} | implementación | borrador → vigente |
 | [{{Título}}](https://github.com/{{owner}}/{{repo}}/blob/{{rama}}/{{ruta}}.html) | técnica | actualizada en esta rama |
 | [{{Título}}](https://github.com/{{owner}}/{{repo}}/blob/{{rama}}/{{ruta}}.html) | diseño | aplicado |
 
-Para verlas: `git switch {{rama}}` y doble clic en `{{docs/index.html}}`.
+La página de implementación se lee en el artefacto de la issue (`standalone-html` y `gh issue artifact create`). Para verla con el resto del sitio: `git switch {{rama}}` y doble clic en `{{docs/index.html}}`.
 
 ## Validación
 
@@ -56,7 +56,7 @@ Para verlas: `git switch {{rama}}` y doble clic en `{{docs/index.html}}`.
 
 ## Al fusionar
 
-- [ ] La página de implementación pasa de `borrador` a `vigente` y tiene su línea en el Historial.
+- [ ] La página de implementación pasa de `borrador` a `vigente`, tiene su línea en el Historial y su artefacto en la issue está al día.
 - [ ] La página técnica del componente cuenta lo que entra aquí.
 - [ ] Las decisiones de la ficha están marcadas o pasan a otra ficha.
 - [ ] Las páginas pasan `delphos-check` y `site.py build` está al día.
