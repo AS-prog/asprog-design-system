@@ -114,7 +114,13 @@ import markdownCubes from 'asprog-design-system/astro/markdown-cubes.mjs';
 markdown: { processor: satteri({ hastPlugins: [markdownNotice, markdownCubes] }) },
 ```
 
-Solo cabe una figura por Nota, porque el SVG lleva los id `data-cubes` y `cube-field`.
+Con `::cubos[torre]` sale una torre de tres cubos, uno apilado sobre otro, con el mismo cubo y la misma rampa de color por capas (`figure/tower.js`). En reposo está hecha; al tocarla, se deshace en una fila sobre el suelo y otro toque la vuelve a apilar, un cubo tras otro. Si la variante no existe, el build se para con un error que dice cuáles hay.
+
+```md
+::cubos[torre] Cada capa se apoya en la de debajo.
+```
+
+Caben varias figuras en una Nota: el plugin quita los id del SVG y marca el grupo de los cubos con `data-cube-field`.
 
 ## La figura
 

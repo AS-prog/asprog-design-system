@@ -1,6 +1,6 @@
 {
   "name": "asprog-design-system",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "private": true,
   "description": "El sistema de diseño y el método de documentación de los proyectos de Andrés R. Sotelo, con sus plugins de Claude Code.",
   "license": "MIT",
