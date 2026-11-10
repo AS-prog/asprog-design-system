@@ -1,0 +1,32 @@
+---
+// Pasos numerados: regla fina arriba, número en mono (sale del contador, no de un texto) y
+// el cuerpo sangrado `--unit`. Vale para un catálogo de servicios o una lista de fases.
+// Estilo en css/site.css (Steps).
+interface Step {
+  title: string;
+  text: string;
+  href?: string;
+  linkLabel?: string;
+}
+interface Props {
+  items: Step[];
+  /** Nivel del titular: 2 cuando la lista cuelga de un h1, 3 bajo un h2 de sección. */
+  headingLevel?: 2 | 3;
+  /** Texto del enlace de un paso que no trae el suyo. Por defecto: «Ver la historia». */
+  linkLabel?: string;
+}
+const { items, headingLevel = 2, linkLabel = 'Ver la historia' } = Astro.props;
+const Heading = `h${headingLevel}`;
+---
+
+<ol class="steps">
+  {
+    items.map((item) => (
+      <li data-rule>
+        <Heading>{item.title}</Heading>
+        <p>{item.text}</p>
+        {item.href && <a class="more" href={item.href}>{item.linkLabel ?? linkLabel} →</a>}
+      </li>
+    ))
+  }
+</ol>

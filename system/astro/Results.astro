@@ -1,0 +1,24 @@
+---
+// Resultados de una historia: cada uno abre con una regla y se reparten solos según el
+// ancho. Sin tarjeta: la regla separa y el titular de paso hace la jerarquía.
+// Estilo en css/site.css (Results).
+interface Result {
+  title: string;
+  text: string;
+}
+interface Props {
+  items: Result[];
+}
+const { items } = Astro.props;
+---
+
+<div class="results">
+  {
+    items.map((item) => (
+      <article data-rule>
+        <h3>{item.title}</h3>
+        <p>{item.text}</p>
+      </article>
+    ))
+  }
+</div>

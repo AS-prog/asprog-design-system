@@ -1,0 +1,14 @@
+---
+// Sección del currículum (Experiencia, Herramientas, Formación): la regla fina de tinta la
+// abre y el titular de sección va solo. Dentro, una ResumeEntries o una ResumeTools.
+// Estilo en css/site.css (Resume).
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<section class="resume-section" data-rule>
+  <h2>{title}</h2>
+  <slot />
+</section>

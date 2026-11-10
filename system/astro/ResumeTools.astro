@@ -1,0 +1,24 @@
+---
+// Herramientas del currículum: lista de definición en dos columnas, el área en mono a la
+// izquierda (la misma columna que la fecha de las entradas) y los nombres a la derecha,
+// separados por «·». Estilo en css/site.css (Resume).
+interface Area {
+  area: string;
+  items: string[];
+}
+interface Props {
+  items: Area[];
+}
+const { items } = Astro.props;
+---
+
+<dl class="resume-tools">
+  {
+    items.map((t) => (
+      <div class="resume-tool">
+        <dt>{t.area}</dt>
+        <dd>{t.items.join(' · ')}</dd>
+      </div>
+    ))
+  }
+</dl>

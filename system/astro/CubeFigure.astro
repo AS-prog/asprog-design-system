@@ -1,0 +1,281 @@
+---
+// La figura de los catorce cubos: un lienzo WebGL con respaldo estático. Es la de la
+// portada de la web (sitio-personal, src/components/CubeFigure.astro), empaquetada:
+//
+//   - el respaldo es assets/figure/cubes-inline.svg pegado en línea, que sigue al tema
+//     (la web usa cubes.svg como <img>, que en oscuro pierde las aristas);
+//   - el motor (figure/engine.js) se importa de forma diferida, a idle, y trae Three.js
+//     como dependencia `three`; sin JavaScript, sin WebGL o si el módulo falla, el SVG se
+//     queda y no hay hueco;
+//   - admite varias instancias: cada .cube-figure monta su propio lienzo;
+//   - el motor no se pide hasta que la figura está cerca de verse (IntersectionObserver);
+//   - con `controls`, los botones de girar, restablecer y pausar, para quien no arrastra.
+//   - con `engine={false}` no se monta el motor y la figura es el SVG: con `animate` (por
+//     defecto) hace la misma entrada de los cubos sobre el propio dibujo (figure/flat.js),
+//     sin Three.js y sin giro; con `animate={false}` queda fijo. Tocar el dibujo (o Intro y
+//     Espacio) mientras se mueve lo pausa y otro toque lo reanuda; quieto, le da la vuelta
+//     a la animación: la pila se deshace y se rehace.
+//     Su reserva ocupa lo mismo aunque el motor falle, para que nada salte.
+//
+// La instancia montada queda en la propiedad `figure` del contenedor (rotate, resetView,
+// pause, resume, state…): la red de verificación de la web la usa para pedir instantes.
+//
+// El tamaño lo decide quien la coloca; la caja guarda la proporción 502 × 664.
+// Cómo está hecha la figura: docs/cube-figure.md. Necesita `three` instalado.
+import fallback from '../assets/figure/cubes-inline.svg?raw';
+
+interface Props {
+  /** Texto del lienzo para lectores de pantalla. */
+  label?: string;
+  /** id del contenedor; el lienzo lleva `<id>-canvas`. Por defecto: `figure`. */
+  id?: string;
+  /** Botones de girar, restablecer y pausar bajo la figura. Por defecto: sí. */
+  controls?: boolean;
+  /** Cómo encaja la pila en la caja. Por defecto: `contain`. */
+  fit?: 'contain' | 'cover';
+  /** Montar el motor WebGL. Con `false` la figura es el dibujo SVG. Por defecto: sí. */
+  engine?: boolean;
+  /** Con `engine={false}`, animar la entrada de los cubos sobre el SVG. Por defecto: sí. */
+  animate?: boolean;
+  class?: string;
+}
+const {
+  label = 'Catorce cubos organizados en tres capas. Puedes girar la figura con los controles inferiores o arrastrando.',
+  id = 'figure',
+  controls = true,
+  fit = 'contain',
+  engine = true,
+  animate = true,
+  class: className,
+} = Astro.props;
+const canvasId = `${id}-canvas`;
+---
+
+<div class:list={['cube-figure', className]} id={id} data-fit={fit} data-engine={engine ? undefined : 'off'} data-animate={!engine && animate ? '' : undefined}>
+  <Fragment set:html={fallback} />
+  <canvas id={canvasId} role="img" aria-label={label}></canvas>
+</div>
+{
+  controls && (
+    <div class="figure-controls" role="group" aria-label="Controles de la figura" hidden>
+      <div class="figure-directions" role="group" aria-label="Girar figura">
+        <button type="button" data-turn="left" aria-controls={canvasId}>Izquierda</button>
+        <button type="button" data-turn="right" aria-controls={canvasId}>Derecha</button>
+        <button type="button" data-turn="up" aria-controls={canvasId}>Arriba</button>
+        <button type="button" data-turn="down" aria-controls={canvasId}>Abajo</button>
+      </div>
+      <button type="button" data-reset aria-controls={canvasId}>Restablecer vista</button>
+      <button type="button" data-playback aria-controls={canvasId}>Pausar animación</button>
+    </div>
+  )
+}
+
+<script>
+  // La importación diferida parte el bundle: el chunk del motor no compite con el primer
+  // pintado. El catch es el respaldo, no un aviso para quien lee la página.
+  type Figure = {
+    rotate: (dx: number, dy: number) => void;
+    resetView: () => void;
+    pause: () => void;
+    resume: () => void;
+    state: () => { paused: boolean; completed: boolean; reduced: boolean };
+  };
+  const TURNS: Record<string, [number, number]> = {
+    left: [-0.2, 0], right: [0.2, 0], up: [0, 0.15], down: [0, -0.15],
+  };
+
+  // Los controles son el hermano siguiente del contenedor, si la figura los lleva.
+  const wire = (container: HTMLElement, figure: Figure, { turns = true } = {}) => {
+    const controls = container.nextElementSibling;
+    if (!(controls instanceof HTMLElement) || !controls.classList.contains('figure-controls')) return;
+    const playback = controls.querySelector<HTMLButtonElement>('[data-playback]');
+    // El dibujo plano no gira: sin motor, solo queda el botón de pausar y repetir.
+    if (!turns) {
+      controls.querySelector<HTMLElement>('.figure-directions')?.setAttribute('hidden', '');
+      controls.querySelector<HTMLElement>('[data-reset]')?.setAttribute('hidden', '');
+    }
+    controls.querySelectorAll<HTMLButtonElement>('[data-turn]').forEach((button) => {
+      button.addEventListener('click', () => figure.rotate(...TURNS[button.dataset.turn!]));
+    });
+    controls.querySelector('[data-reset]')?.addEventListener('click', () => figure.resetView());
+    playback?.addEventListener('click', () => {
+      const state = figure.state();
+      if (state.paused || state.completed) figure.resume();
+      else figure.pause();
+    });
+    controls.hidden = false;
+    return playback;
+  };
+
+  const mount = async (container: HTMLElement) => {
+    const canvas = container.querySelector('canvas');
+    if (!canvas || 'ready' in container.dataset) return;
+    // Con `engine={false}` el dibujo SVG es la figura: no se pide el motor. Si además anima,
+    // el vuelo lo hace figure/flat.js sobre el propio SVG; el botón de pausa sirve igual.
+    if (container.dataset.engine === 'off') {
+      if (!('animate' in container.dataset)) return;
+      const svg = container.querySelector('svg');
+      if (!svg) return;
+      try {
+        const { animateFlatFigure } = await import('./figure/flat.js');
+        let playback: HTMLButtonElement | null | undefined;
+        // El nombre accesible de la figura dice qué hará el siguiente toque.
+        const gesture = (state: ReturnType<typeof flat.state>) => {
+          if (state.reduced) return;
+          container.setAttribute('aria-label', state.paused ? 'Reanudar la animación de los cubos'
+            : state.moving ? 'Pausar la animación de los cubos'
+            : state.completed ? 'Deshacer la pila de cubos' : 'Rehacer la pila de cubos');
+        };
+        const label = (state: ReturnType<typeof flat.state>) => {
+          gesture(state);
+          if (!playback) return;
+          playback.disabled = state.reduced;
+          playback.textContent = state.reduced ? 'Movimiento reducido'
+            : state.completed ? 'Repetir animación'
+            : state.paused ? 'Reanudar animación' : 'Pausar animación';
+        };
+        const flat = animateFlatFigure(svg, { onStateChange: label });
+        if (!flat) return;
+        const figure: Figure = {
+          rotate: () => {}, resetView: () => {},
+          pause: flat.pause, resume: () => (flat.state().completed ? flat.replay() : flat.resume()),
+          state: flat.state,
+        };
+        playback = wire(container, figure, { turns: false });
+        label(flat.state());
+        // Tocar la figura mientras los cubos se mueven la pausa, y otro toque la reanuda: así
+        // la entrada, que dura más de cinco segundos, se puede parar sin botones (WCAG 2.2.2).
+        // Con la figura quieta en un extremo, el toque le da la vuelta: la pila se deshace por
+        // el mismo camino y, al tocarla otra vez, se rehace. Con teclado, Intro o Espacio.
+        if (!flat.state().reduced) {
+          container.tabIndex = 0;
+          container.setAttribute('role', 'button');
+          gesture(flat.state());
+          container.addEventListener('click', () => flat.toggle());
+          container.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            event.preventDefault();
+            flat.toggle();
+          });
+        }
+        (container as HTMLElement & { figure?: Figure }).figure = figure;
+      } catch {
+        /* sin el módulo: permanece el dibujo en reposo */
+      }
+      return;
+    }
+    try {
+      const { mountCubeFigure } = await import('./figure/engine.js');
+      let playback: HTMLButtonElement | null | undefined;
+      // El motor avisa de cada cambio de estado; puede hacerlo antes de que existan los
+      // botones, así que el texto se vuelve a poner en cuanto están cableados.
+      const label = (state: ReturnType<Figure['state']>) => {
+        if (!playback) return;
+        playback.disabled = state.reduced;
+        playback.textContent = state.reduced ? 'Movimiento reducido'
+          : state.completed ? 'Repetir animación'
+          : state.paused ? 'Reanudar animación' : 'Pausar animación';
+      };
+      const figure: Figure = mountCubeFigure({
+        canvas,
+        container,
+        fit: container.dataset.fit,
+        onStateChange: label,
+      });
+      playback = wire(container, figure);
+      label(figure.state());
+      (container as HTMLElement & { figure?: Figure }).figure = figure;
+    } catch {
+      /* sin WebGL o sin el módulo: permanece la figura SVG */
+    }
+  };
+
+  const schedule = (container: HTMLElement) => {
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => mount(container), { timeout: 2000 });
+    } else if (document.readyState === 'complete') {
+      mount(container);
+    } else {
+      addEventListener('load', () => mount(container), { once: true });
+    }
+  };
+
+  document.querySelectorAll<HTMLElement>('.cube-figure').forEach((container) => {
+    if (!('IntersectionObserver' in window)) return schedule(container);
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      observer.disconnect();
+      schedule(container);
+    }, { rootMargin: '100px' });
+    observer.observe(container);
+  });
+</script>
+
+<style>
+  /* El lienzo no se enseña hasta que el motor marca data-ready tras su primer render, para
+     que nunca se vea un lienzo vacío donde había dibujo. */
+  .cube-figure {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 502 / 664;
+    color: var(--ink);
+  }
+  .cube-figure :global(svg) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  /* La rampa por capas del motor, también en el dibujo: la planta con los tonos de --cube-*,
+     la cúspide con --cube-apex en las tres claridades del motor (68, 58 y 38 %) y la capa de en
+     medio a medio camino, mezclada en sRGB como en engine.js. */
+  .cube-figure :global([data-layer="1"] .cube-face-top) { fill: color-mix(in srgb, var(--cube-top), hsl(from var(--cube-apex) h s 68%)); }
+  .cube-figure :global([data-layer="1"] .cube-face-left) { fill: color-mix(in srgb, var(--cube-left), hsl(from var(--cube-apex) h s 58%)); }
+  .cube-figure :global([data-layer="1"] .cube-face-right) { fill: color-mix(in srgb, var(--cube-right), hsl(from var(--cube-apex) h s 38%)); }
+  .cube-figure :global([data-layer="2"] .cube-face-top) { fill: hsl(from var(--cube-apex) h s 68%); }
+  .cube-figure :global([data-layer="2"] .cube-face-left) { fill: hsl(from var(--cube-apex) h s 58%); }
+  .cube-figure :global([data-layer="2"] .cube-face-right) { fill: hsl(from var(--cube-apex) h s 38%); }
+  .cube-figure[role='button'] { cursor: pointer; }
+  .cube-figure canvas {
+    display: none;
+    max-width: 100%;
+    max-height: 100%;
+    cursor: grab;
+    touch-action: pan-y;
+  }
+  .cube-figure[data-ready] canvas { display: block; }
+  .cube-figure[data-ready] :global(svg) { display: none; }
+  .cube-figure :global(canvas.dragging) { cursor: grabbing; }
+
+
+  .figure-controls, .figure-directions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+  /* La reserva tiene la geometría de los controles reales, incluso si el motor falla.
+     visibility también los excluye del foco y del árbol de accesibilidad. */
+  .figure-controls { margin-top: var(--s-4); }
+  .figure-controls[hidden] { visibility: hidden; }
+  /* Sin motor no hay giro: los botones de dirección y de restablecer se quitan del todo. */
+  .figure-controls :is(.figure-directions, [data-reset])[hidden] { display: none; }
+  .figure-directions { width: 100%; }
+  /* Botones de texto, como los enlaces de la navegación: sin recuadro ni relleno. */
+  .figure-controls button {
+    min-height: var(--control);
+    padding: var(--s-1) 0;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--f-body);
+    font-size: var(--t-2);
+    text-underline-offset: .2em;
+    cursor: pointer;
+  }
+  .figure-controls button:hover:not(:disabled) { color: var(--ink); text-decoration: underline; }
+  .figure-controls button:disabled { color: var(--muted); cursor: default; }
+
+  @media print {
+    .cube-figure, .figure-controls { display: none; }
+  }
+</style>

@@ -1,0 +1,57 @@
+---
+// Entradas del currículum: cada una separada de la anterior por una regla fina (`rule`),
+// con la fecha y la duración en mono a la izquierda y el cuerpo a la derecha; en pantallas
+// estrechas, la fecha pasa encima. Vale para los puestos (fecha, titular, lugar, entradilla
+// y puntos), la formación (fecha, titular, centro) y los proyectos (titular, estado, texto).
+// Estilo en css/site.css (Resume).
+interface Point {
+  label: string;
+  text: string;
+}
+interface Entry {
+  /** «2024 →», «2022–2024». Sin fecha, la columna queda vacía y el cuerpo se alinea igual. */
+  when?: string;
+  /** «2 años 4 meses»: bajo la fecha, más apagada. */
+  duration?: string;
+  title: string;
+  /** El lugar, el centro o el estado: dato, en mono. */
+  meta?: string;
+  /** La entradilla o el texto corrido. */
+  lead?: string;
+  points?: Point[];
+}
+interface Props {
+  items: Entry[];
+  /** Nivel del titular de cada entrada: 3 bajo el h2 de una ResumeSection. */
+  headingLevel?: 2 | 3;
+}
+const { items, headingLevel = 3 } = Astro.props;
+const Heading = `h${headingLevel}`;
+---
+
+<ul class="resume-entries">
+  {
+    items.map((item) => (
+      <li class="resume-entry">
+        <div class="resume-when">
+          {item.when && <span class="when">{item.when}</span>}
+          {item.duration && <span class="duration">{item.duration}</span>}
+        </div>
+        <div class="resume-body">
+          <Heading>{item.title}</Heading>
+          {item.meta && <p class="meta">{item.meta}</p>}
+          {item.lead && <p class="lead">{item.lead}</p>}
+          {item.points && item.points.length > 0 && (
+            <ul class="resume-points">
+              {item.points.map((p) => (
+                <li>
+                  <strong>{p.label}</strong> {p.text}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </li>
+    ))
+  }
+</ul>

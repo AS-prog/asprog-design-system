@@ -1,0 +1,74 @@
+---
+// El botón de tema. Dos variantes con el mismo almacenamiento:
+//
+//   document  (por defecto) `button.doc-theme` con texto, el de los documentos
+//   site      `button.theme` con el sol y la luna, el de la web (css/site.css)
+//
+// El de documento. Escribe `data-theme` en <html> y lo recuerda en
+// localStorage con la clave `tema`, la misma que usa la web, para que un documento y el
+// sitio compartan la elección. Con `data-theme="auto"` en <html>, el documento sigue al
+// sistema hasta que alguien pulsa. No se imprime (lo oculta css/document.css).
+// La variante de la web parte del claro y no mira la preferencia del sistema: en la web
+// manda el `data-theme` de <html>, y sin él, el claro.
+import sun from '../assets/icons/sun.svg?raw';
+import moon from '../assets/icons/moon.svg?raw';
+
+interface Props {
+  variant?: 'document' | 'site';
+  /** Texto visible de la variante de documento. Por defecto: «Tema». */
+  label?: string;
+}
+const { variant = 'document', label = 'Tema' } = Astro.props;
+// Los iconos llegan sin clase ni tamaño (assets/icons/README.md): se los pone el contexto.
+const icon = (svg: string, name: string) =>
+  svg.replace('<svg ', `<svg class="${name}" width="17" height="17" aria-hidden="true" `);
+---
+
+{
+  variant === 'site' ? (
+    <button class="theme" type="button" aria-label="Cambiar a tema oscuro">
+      <Fragment set:html={icon(sun, 'sun') + icon(moon, 'moon')} />
+    </button>
+  ) : (
+    <button class="doc-theme" type="button" aria-label="Cambiar tema">{label}</button>
+  )
+}
+
+<script>
+  // Un solo listener por página aunque haya varios botones: todos hacen lo mismo.
+  const root = document.documentElement;
+  document.querySelectorAll<HTMLButtonElement>('.doc-theme').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const t = root.getAttribute('data-theme');
+      const isDark = t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+      const next = isDark ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try {
+        localStorage.setItem('tema', next);
+      } catch {
+        /* sin almacenamiento, el tema dura la visita */
+      }
+      // Avisa a quien lo necesite (el catálogo repinta sus iframes con esto).
+      root.dispatchEvent(new CustomEvent('delphos:theme', { detail: next }));
+    });
+  });
+
+  // La variante de la web: sin atributo, el tema es el claro.
+  document.querySelectorAll<HTMLButtonElement>('.theme').forEach((btn) => {
+    const isDark = () => root.getAttribute('data-theme') === 'dark';
+    const label = () =>
+      btn.setAttribute('aria-label', isDark() ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro');
+    btn.addEventListener('click', () => {
+      const next = isDark() ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try {
+        localStorage.setItem('tema', next);
+      } catch {
+        /* sin almacenamiento, el tema dura la visita */
+      }
+      label();
+      root.dispatchEvent(new CustomEvent('delphos:theme', { detail: next }));
+    });
+    label();
+  });
+</script>

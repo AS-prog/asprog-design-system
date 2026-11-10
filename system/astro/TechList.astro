@@ -1,0 +1,12 @@
+---
+// Tecnologías de un caso: dato, así que mono y una regla por encima. No son etiquetas ni
+// logotipos. Estilo en css/site.css (TechList).
+interface Props {
+  items: string[];
+}
+const { items } = Astro.props;
+---
+
+<ul class="tech">
+  {items.map((item) => <li>{item}</li>)}
+</ul>

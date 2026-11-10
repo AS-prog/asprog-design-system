@@ -1,9 +1,33 @@
 {
   "name": "asprog-design-system",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "private": true,
   "description": "El sistema de diseño y el método de documentación de los proyectos de Andrés R. Sotelo, con sus plugins de Claude Code.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AS-prog/asprog-design-system.git"
+  },
+  "files": [
+    "system/astro/",
+    "system/assets/",
+    "system/css/",
+    "system/fonts/",
+    "system/js/",
+    "system/tokens.css",
+    "system/tokens.json"
+  ],
+  "exports": {
+    ".": "./system/tokens.css",
+    "./astro": "./system/astro/index.js",
+    "./astro/*": "./system/astro/*",
+    "./tokens.css": "./system/tokens.css",
+    "./tokens.json": "./system/tokens.json",
+    "./css/*": "./system/css/*",
+    "./fonts/*": "./system/fonts/*",
+    "./assets/*": "./system/assets/*",
+    "./js/*": "./system/js/*"
+  },
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
@@ -12,5 +36,17 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "peerDependencies": {
+    "astro": ">=5",
+    "three": "0.181.2"
+  },
+  "peerDependenciesMeta": {
+    "astro": {
+      "optional": true
+    },
+    "three": {
+      "optional": true
+    }
   }
 }

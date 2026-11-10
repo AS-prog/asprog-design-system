@@ -4,6 +4,16 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y l
 
 ## Sin publicar
 
+### Cambiado
+- `CubeFigure` con `engine={false}`: tocar la figura (o Intro y Espacio) mientras los cubos se mueven pausa la animación y otro toque la reanuda; con la figura quieta, el toque le da la vuelta como antes. La entrada dura unos 12 s, así que se puede parar sin botones (WCAG 2.2.2). El nombre accesible de la figura dice qué hará el siguiente toque.
+
+## 0.10.0 · 2026-11-10
+
+### Añadido
+- La capa web vuelve desde `delphos-design-system` v0.5.0 (`62af94c`), que se archiva: `system/astro/` (componentes Astro: `SiteLayout`, `HomeIntro`, `CubeFigure`, `Resume` y el resto; `grid.js` y `figure/`), `system/assets/` (la figura de los cubos y los iconos del tema) y `system/css/site.css`. Es la capa de andresrsotelo.dev; sus clases siguen sin prefijo, como en Delphos.
+- El repo es un paquete npm: `npm install github:AS-prog/asprog-design-system#vX.Y.Z` y `import { SiteLayout } from 'asprog-design-system/astro'`. `exports` publica `./astro`, `./tokens.css`, `./tokens.json`, `./css/*`, `./fonts/*`, `./assets/*` y `./js/*`; `astro` y `three` son dependencias opcionales (`three` solo para el motor de `CubeFigure`).
+- CI en GitHub Actions: `npm run build` sin cambios pendientes y `npm test` en cada PR y en `main`.
+
 ## 0.9.0 · 2026-11-09
 
 ### Añadido
