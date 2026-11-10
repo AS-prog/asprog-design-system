@@ -9,7 +9,9 @@
 // dibujo plano, y en él la superposición es solo el orden de pintado.
 import { cubes, DURATION, flatPose, painterOrder } from './flat-model.js';
 
-const FIELD = '#cube-field';
+// El grupo de los cubos: `#cube-field` en el SVG de CubeFigure; en las Notas, que pueden llevar
+// varias figuras, markdown-cubes.mjs le quita el id y lo marca con `data-cube-field`.
+const FIELD = '#cube-field, [data-cube-field]';
 // El reloj arranca cuando sale el primer cubo, no en el cero de la coreografía: antes de
 // su `delay` nadie se mueve y la figura se quedaba ahí casi un segundo y medio, quieta y
 // desparramada. La escala apenas ha crecido en ese tramo, así que saltárselo no se nota.

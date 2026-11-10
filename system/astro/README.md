@@ -114,7 +114,13 @@ import markdownCubes from 'asprog-design-system/astro/markdown-cubes.mjs';
 markdown: { processor: satteri({ hastPlugins: [markdownNotice, markdownCubes] }) },
 ```
 
-Solo cabe una figura por Nota, porque el SVG lleva los id `data-cubes` y `cube-field`.
+Con `::cubos[antes-ahora]` salen dos fotogramas uno junto al otro, rotulados «Antes» y «Ahora»: los catorce cubos sueltos y torcidos, como empieza la animación, y la pila hecha. El primero es un dibujo fijo que se calcula al construir, con la misma pose que `figure/flat.js` pinta al arrancar; el segundo se puede tocar como la pila sola. Una variante que no existe para el build con un error que dice cuáles hay.
+
+```md
+::cubos[antes-ahora] Antes, copias sueltas; ahora, una cadena.
+```
+
+Caben varias figuras en una Nota: el plugin quita los id del SVG y marca el grupo de los cubos con `data-cube-field`.
 
 ## La figura
 

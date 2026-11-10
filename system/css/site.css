@@ -62,6 +62,12 @@
 .cube-note { display: flex; flex-direction: column; align-items: center; margin-block: var(--s-8); }
 .cube-note .cube-figure { height: calc(var(--s-13) * 3); max-width: 100%; }
 .cube-note figcaption { text-align: center; }
+/* ::cubos[antes-ahora]: dos fotogramas uno junto al otro, cada uno con su rótulo en mono, como
+   las etiquetas de la ficha de un caso. A cualquier ancho van en fila: comparar es el sentido. */
+.cube-note-frames { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6); width: 100%; }
+.cube-note-frame { display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.cube-note-frames .cube-figure { width: 100%; height: auto; }
+.cube-note-label { margin-top: var(--s-2); font-family: var(--f-mono); font-size: var(--t-1); text-transform: uppercase; letter-spacing: var(--ls-mono); color: var(--muted); }
 
 /* HomeIntro: la portada en una sola pantalla. La figura toma lo que deja la pantalla
    tras la navegación (--s-13), la regla de arriba (--s-7), sus controles
