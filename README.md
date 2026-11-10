@@ -8,7 +8,7 @@ La identidad visual es **Delphos** sobre **Cobalt Grid** (papel crema, una sola 
 
 | Ruta | Qué es |
 |---|---|
-| `system/` | La fuente del sistema: `tokens.json` (y `tokens.css`, generado), `fonts/` y las hojas `css/base.css`, `css/document.css`, `css/view.css` (vistas generadas) y `css/library.css` (sitio: barra lateral y portada) |
+| `system/` | La fuente del sistema: `tokens.json` (y `tokens.css`, generado), `fonts/` y las hojas `css/base.css`, `css/document.css`, `css/view.css` (vistas generadas) y `css/library.css` (sitio: barra lateral y portada); la capa web: `css/site.css`, `astro/` (componentes Astro) y `assets/` (figura e iconos) |
 | `plugins/documentation/` | El plugin: skills `method`, `document`, `check` y `site`; `scripts/delphos-check` y su hook; `scripts/site.py`; las plantillas de página; y una copia generada de `system/` |
 | `plugins/diagrams/` | Los 45 tipos de diagrama de diagram-design como SVG en línea con las clases `.d-*` |
 | `examples/sample-project/` | Un proyecto ficticio (un controlador de riego) con su sitio, para probar y como modelo |
@@ -16,6 +16,16 @@ La identidad visual es **Delphos** sobre **Cobalt Grid** (papel crema, una sola 
 | `.claude-plugin/marketplace.json` | El marketplace `asprog` |
 
 ## Instalar en un proyecto
+
+Una web en Astro instala el paquete por tag:
+
+```
+npm install github:AS-prog/asprog-design-system#v0.10.0 astro
+```
+
+y usa sus componentes (`import { SiteLayout } from 'asprog-design-system/astro'`); la guía está en `system/astro/README.md`.
+
+Para documentar un proyecto con Claude Code:
 
 ```
 /plugin marketplace add AS-prog/asprog-design-system

@@ -1,0 +1,33 @@
+---
+// Currículum: el documento imprimible de la web. La cabecera abre con la regla mayor, como
+// PageHead: nombre, lugar (dato, en mono), declaración y los canales de contacto en una línea.
+// Las secciones entran por el slot (ResumeSection, ResumeEntries, ResumeTools).
+// Estilo en css/site.css (Resume).
+interface Channel {
+  href: string;
+  label: string;
+}
+interface Props {
+  name: string;
+  /** Dónde y cómo: «Barcelona · híbrido o remoto». */
+  where?: string;
+  /** La declaración: qué hace y por qué importa. */
+  claim?: string;
+  contact?: Channel[];
+}
+const { name, where, claim, contact = [] } = Astro.props;
+---
+
+<article class="resume">
+  <header class="resume-head" data-rule>
+    <h1>{name}</h1>
+    {where && <p class="where">{where}</p>}
+    {claim && <p class="lede">{claim}</p>}
+    {contact.length > 0 && (
+      <ul class="resume-contact">
+        {contact.map((c) => <li><a href={c.href}>{c.label}</a></li>)}
+      </ul>
+    )}
+  </header>
+  <slot />
+</article>

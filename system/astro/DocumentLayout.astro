@@ -1,0 +1,71 @@
+---
+// La página completa de un documento: <html data-theme="auto">, <head> con el tema
+// guardado antes de pintar y las tres hojas en su orden (tokens → base → document), y el
+// esqueleto de Document dentro.
+//
+// Sirve de dos formas:
+//   - como componente, con las props de Document más `description`;
+//   - como `layout:` de un .md de Astro: entonces lee el frontmatter (title, description o
+//     summary, source, agent o author, date, status, tags) y arma el índice con los h2,
+//     tal como manda la tabla de AGENTS.md §3.
+import '../tokens.css';
+import '../css/base.css';
+import '../css/document.css';
+import Document, { type DocumentProps, type DocumentStatus } from './Document.astro';
+import ThemeScript from './ThemeScript.astro';
+
+interface MarkdownHeading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+interface Props extends Partial<DocumentProps> {
+  /** meta[name=description]; por defecto, la entradilla. */
+  description?: string;
+  lang?: string;
+  /** Lo que llega cuando el layout lo pone un .md. */
+  frontmatter?: Record<string, any>;
+  headings?: MarkdownHeading[];
+}
+
+const { frontmatter: fm, headings, lang = 'es', ...props } = Astro.props;
+
+// Del frontmatter a las props, sin pisar lo que se pase a mano.
+const fromMarkdown: Partial<DocumentProps> & { description?: string } = fm
+  ? {
+      title: fm.title,
+      lede: fm.description ?? fm.summary,
+      description: fm.description ?? fm.summary,
+      tags: fm.tags,
+      meta: {
+        source: fm.source,
+        agent: fm.agent ?? fm.author,
+        date: fm.date,
+        status: fm.status as DocumentStatus | undefined,
+      },
+      toc: headings?.filter((h) => h.depth === 2).map((h) => ({ id: h.slug, text: h.text })),
+    }
+  : {};
+const doc = { ...fromMarkdown, ...props } as DocumentProps & { description?: string };
+if (!doc.title) throw new Error('DocumentLayout: falta `title` (prop o frontmatter)');
+const description = doc.description ?? doc.lede;
+---
+
+<!doctype html>
+<html lang={lang} data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{doc.title}</title>
+    {description && <meta name="description" content={description} />}
+    <ThemeScript />
+    <slot name="head" />
+  </head>
+  <body>
+    <Document {...doc}>
+      <slot name="header" slot="header" />
+      <slot />
+      <slot name="footer" slot="footer" />
+    </Document>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+---
+// El índice de la biblioteca: una entrada por documento, la más reciente primero.
+// La línea de datos va en mono: fecha, tema o agente, estado.
+export interface CollectionEntry {
+  title: string;
+  href: string;
+  summary?: string;
+  /** AAAA-MM-DD. Ordena la lista. */
+  date?: string;
+  /** Datos después de la fecha: tema, agente, estado… */
+  meta?: string[];
+}
+interface Props {
+  items: CollectionEntry[];
+  /** `false` respeta el orden recibido. Por defecto ordena por fecha, descendente. */
+  sort?: boolean;
+}
+const { items, sort = true } = Astro.props;
+const list = sort ? [...items].sort((a, b) => (b.date ?? '').localeCompare(a.date ?? '')) : items;
+---
+
+<ul class="collection">
+  {
+    list.map((e) => (
+      <li>
+        <a class="collection-title" href={e.href}>
+          {e.title}
+        </a>
+        {e.summary && <p>{e.summary}</p>}
+        {(e.date || e.meta?.length) && (
+          <div class="meta">
+            {e.date && <time datetime={e.date}>{e.date}</time>}
+            {e.meta?.map((m) => (
+              <span>{m}</span>
+            ))}
+          </div>
+        )}
+      </li>
+    ))
+  }
+</ul>

@@ -1,0 +1,124 @@
+---
+// El esqueleto de un documento de la biblioteca, sin <html>: barra de marca, cabecera con
+// ficha, índice (solo con cuatro secciones o más), prosa y pie. Es lo mismo que
+// template.html, para cuando el documento lo pinta Astro. Para la página completa, con
+// <head> y hojas, está DocumentLayout.
+//
+//   .doc
+//     header.doc-bar      marca / biblioteca ······· [tema]
+//     header.doc-header   h1 · .lede · dl.doc-meta · ul.tags
+//     nav.doc-toc
+//     article.doc-prose   el slot por defecto
+//     footer.doc-footer   «Generado a partir de …»
+import Prose from './Prose.astro';
+import Tags from './Tags.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import Toc, { type TocItem } from './Toc.astro';
+
+export type DocumentStatus = 'borrador' | 'revisado' | 'vigente' | 'archivado';
+export interface DocumentMeta {
+  /** Ruta del .md original; enlaza a él. */
+  source?: string;
+  /** Href del enlace a la fuente, si no es la propia ruta. */
+  sourceHref?: string;
+  agent?: string;
+  /** AAAA-MM-DD, o una fecha. */
+  date?: string | Date;
+  status?: DocumentStatus;
+  /** Campos de más, siempre como pares término/valor. */
+  extra?: { term: string; value: string }[];
+}
+export interface DocumentProps {
+  title: string;
+  lede?: string;
+  meta?: DocumentMeta;
+  tags?: string[];
+  /** Los h2 de la prosa. Con menos de cuatro no se pinta el índice. */
+  toc?: TocItem[];
+  /** La marca, en mono. Por defecto: «Andrés R. Sotelo / Biblioteca». */
+  brand?: string;
+  brandHref?: string;
+  /** Texto de la derecha del pie. Por defecto: «Delphos · Cobalt Grid». */
+  credit?: string;
+}
+type Props = DocumentProps;
+
+const {
+  title,
+  lede,
+  meta = {},
+  tags,
+  toc = [],
+  brand = 'Andrés R. Sotelo / Biblioteca',
+  brandHref = '/',
+  credit = 'Delphos · Cobalt Grid',
+} = Astro.props;
+
+// Las fechas del frontmatter llegan como Date o como cadena ISO: en la ficha van como AAAA-MM-DD.
+const rawDate = meta.date instanceof Date ? meta.date.toISOString() : meta.date;
+const date = rawDate && /^\d{4}-\d{2}-\d{2}/.test(rawDate) ? rawDate.slice(0, 10) : rawDate;
+const hasMeta = meta.source || meta.agent || date || meta.status || meta.extra?.length;
+---
+
+<div class="doc">
+  <header class="doc-bar">
+    <a class="doc-brand" href={brandHref}>{brand}</a>
+    <ThemeToggle />
+  </header>
+
+  <header class="doc-header">
+    <h1>{title}</h1>
+    {lede && <p class="lede">{lede}</p>}
+    {
+      hasMeta && (
+        <dl class="doc-meta">
+          {meta.source && (
+            <div>
+              <dt>Fuente</dt>
+              <dd>
+                <a href={meta.sourceHref ?? meta.source}>{meta.source}</a>
+              </dd>
+            </div>
+          )}
+          {meta.agent && (
+            <div>
+              <dt>Agente</dt>
+              <dd>{meta.agent}</dd>
+            </div>
+          )}
+          {date && (
+            <div>
+              <dt>Fecha</dt>
+              <dd>
+                <time datetime={date}>{date}</time>
+              </dd>
+            </div>
+          )}
+          {meta.status && (
+            <div>
+              <dt>Estado</dt>
+              <dd>{meta.status}</dd>
+            </div>
+          )}
+          {meta.extra?.map((f) => (
+            <div>
+              <dt>{f.term}</dt>
+              <dd>{f.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )
+    }
+    {tags && tags.length > 0 && <Tags items={tags} />}
+    <slot name="header" />
+  </header>
+
+  <Toc items={toc} />
+
+  <Prose><slot /></Prose>
+
+  <footer class="doc-footer">
+    <span>{meta.source ? `Generado a partir de ${meta.source}` : <slot name="footer" />}</span>
+    <span>{credit}</span>
+  </footer>
+</div>

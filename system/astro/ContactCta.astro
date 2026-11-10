@@ -1,0 +1,28 @@
+---
+// El cierre de una página: la pregunta en serif, el botón al destino y, si se pide, la
+// dirección en mono. El texto admite marcado en línea; el slot deja un enlace propio de la
+// página. El nivel del titular sube a 1 cuando la pieza es la página entera.
+// Estilo en css/site.css (ContactCta) y css/base.css (.btn).
+interface Props {
+  title: string;
+  /** El destino del botón, normalmente un mailto:. */
+  href: string;
+  /** El texto del botón. */
+  label: string;
+  text?: string;
+  /** La dirección visible bajo el botón, en mono. */
+  email?: string;
+  /** 2 cuando cierra una página, 1 cuando es el contenido de la página. */
+  headingLevel?: 1 | 2;
+}
+const { title, href, label, text, email, headingLevel = 2 } = Astro.props;
+const Heading = `h${headingLevel}`;
+---
+
+<section class="close" data-rule>
+  <Heading>{title}</Heading>
+  {text && <p class="text" set:html={text} />}
+  <a class="btn" href={href}>{label}</a>
+  {email && <a class="mail" href={href}>{email}</a>}
+  <slot />
+</section>

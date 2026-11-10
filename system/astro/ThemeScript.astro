@@ -1,0 +1,11 @@
+---
+// Va en <head>, antes de las hojas: aplica el tema guardado antes de pintar para que no
+// haya destello. Si no hay nada guardado, manda el `data-theme` que traiga <html>.
+---
+
+<script is:inline>
+  try {
+    var t = localStorage.getItem('tema');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>

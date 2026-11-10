@@ -1,0 +1,58 @@
+---
+// Tarjeta de caso: antetítulo de contexto, titular enlazado, resumen y los detalles en un
+// `details` nativo, sin JavaScript (grid.js rehace el ajuste de reglas al abrirlo).
+// Estilo en css/site.css (CaseCard).
+import Eyebrow from './Eyebrow.astro';
+
+interface Detail {
+  term: string;
+  text: string;
+}
+interface Props {
+  context: string;
+  title: string;
+  summary: string;
+  href: string;
+  details: Detail[];
+  closing?: string;
+  /** Nivel del titular: 2 cuando la tarjeta cuelga de un h1, 3 bajo un h2 de sección. */
+  headingLevel?: 2 | 3;
+  /** Texto del desplegable. Por defecto: «Leer el caso». */
+  detailsLabel?: string;
+  /** Texto del enlace final. Por defecto: «Ver la historia completa». */
+  moreLabel?: string;
+}
+const {
+  context,
+  title,
+  summary,
+  href,
+  details,
+  closing,
+  headingLevel = 2,
+  detailsLabel = 'Leer el caso',
+  moreLabel = 'Ver la historia completa',
+} = Astro.props;
+const Heading = `h${headingLevel}`;
+---
+
+<article class="case" data-rule>
+  <Eyebrow>{context}</Eyebrow>
+  <Heading><a href={href}>{title}</a></Heading>
+  <p class="summary">{summary}</p>
+  <details>
+    <summary>{detailsLabel}</summary>
+    <dl>
+      {
+        details.map((detail) => (
+          <>
+            <dt>{detail.term}</dt>
+            <dd>{detail.text}</dd>
+          </>
+        ))
+      }
+    </dl>
+    {closing && <p class="closing">{closing}</p>}
+  </details>
+  <a class="more" href={href}>{moreLabel} →</a>
+</article>

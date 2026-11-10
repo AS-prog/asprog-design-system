@@ -1,0 +1,29 @@
+---
+// La portada de la web en una sola pantalla: el titular, la entradilla y lo que vaya
+// detrás (el enlace al currículum, en el slot por defecto) a un lado, y la figura al otro
+// (slot `figure`), con su botón alineado a la derecha. La figura toma la altura que deja
+// la pantalla, para que todo quepa sin desplazar.
+//
+// Desde 48rem, texto a la izquierda y figura a la derecha, juntos en un bloque centrado; en pantallas estrechas se
+// apilan. `align="start"` (por defecto) alinea el texto arriba; `align="center"`, a la
+// mitad de la figura.
+//
+// Estilo en css/site.css (HomeIntro).
+interface Props {
+  title: string;
+  lede?: string;
+  align?: 'start' | 'center';
+}
+const { title, lede, align = 'start' } = Astro.props;
+---
+
+<section class="home-intro" data-rule data-align={align}>
+  <div class="home-intro-text">
+    <h1>{title}</h1>
+    {lede && <p class="lede">{lede}</p>}
+    <slot />
+  </div>
+  <div class="home-intro-figure">
+    <slot name="figure" />
+  </div>
+</section>

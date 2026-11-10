@@ -10,13 +10,14 @@ Guía para cambiar este repo. Para **usar** el sistema en un proyecto, las regla
 | Añadir o cambiar una pieza visual | `system/css/<hoja>.css`, solo con tokens | `npm run build` (renueva `classes.json`) |
 | Cambiar qué lleva un tipo de documento | `plugins/documentation/skills/method/reference/` y, si tiene página, su plantilla en `plugins/documentation/templates/` | `npm run example` si cambia el ejemplo |
 | Cambiar una regla de comprobación | `plugins/documentation/scripts/delphos-check` y `skills/check/rules.md`, juntos | `npm test` |
+| Cambiar la web (Astro) | `system/astro/` y `system/css/site.css`, solo con tokens | `npm test`; en la web, subir al tag nuevo |
 | Cambiar el sitio | `plugins/documentation/scripts/site.py`, `system/css/library.css` y `skills/site/SKILL.md` | `npm run example` |
 
 Nunca se editan a mano: `system/tokens.css`, `plugins/documentation/system/`, `plugins/documentation/skills/check/classes.json` ni la `version` de los manifiestos. Los genera `npm run build`.
 
 ## Reglas
 
-- **Nada de un cliente o un proyecto concreto.** Los ejemplos son ficticios (`examples/sample-project/`, el controlador de riego). Un nombre real de cliente, servidor o tabla no entra.
+- **Nada de un cliente o un proyecto concreto.** La excepción es la capa web (`system/astro/`, `system/css/site.css`), que es la de andresrsotelo.dev y conserva sus clases sin prefijo de Delphos. Los ejemplos son ficticios (`examples/sample-project/`, el controlador de riego). Un nombre real de cliente, servidor o tabla no entra.
 - **El código va en inglés y los comentarios en español.** Carpetas, ficheros, clases, tokens, funciones y claves de configuración en inglés; README, skills, changelog, commits y todo texto visible, en español.
 - **Ningún valor a mano en las hojas.** `scripts/check-css.mjs` lo comprueba. Si falta un paso, se añade a `tokens.json`.
 - **Una clase nueva** lleva el prefijo de su capa: `doc-` documento, `lib-` sitio, `d-` diagrama, `hl-` resaltado, `g-` estado.

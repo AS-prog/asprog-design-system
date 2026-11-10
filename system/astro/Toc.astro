@@ -1,0 +1,31 @@
+---
+// El índice de un documento: los h2 de la prosa, numerados por el contador de
+// css/document.css. Solo aparece con cuatro secciones o más (AGENTS.md §2).
+export interface TocItem {
+  id: string;
+  text: string;
+}
+interface Props {
+  items: TocItem[];
+  /** Mínimo de secciones para que se pinte. Por defecto: 4. */
+  min?: number;
+  /** Título del índice. Por defecto: «Índice». */
+  title?: string;
+}
+const { items, min = 4, title = 'Índice' } = Astro.props;
+---
+
+{
+  items.length >= min && (
+    <nav class="doc-toc" aria-label={title}>
+      <h2>{title}</h2>
+      <ol>
+        {items.map((item) => (
+          <li>
+            <a href={`#${item.id}`}>{item.text}</a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}
