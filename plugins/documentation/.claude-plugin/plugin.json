@@ -1,7 +1,7 @@
 {
   "name": "documentation",
   "displayName": "Documentación",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "El método de documentación de los proyectos y su sistema de diseño (identidad Delphos): dónde va cada documento y qué lleva, las plantillas de página, el sitio con barra lateral y delphos-check, que revisa cada HTML.",
   "author": {
     "name": "Andrés R. Sotelo",

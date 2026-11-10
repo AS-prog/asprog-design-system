@@ -1,0 +1,196 @@
+/*
+  asprog-design-system · css/site.css — los componentes de la web andresrsotelo.dev
+  (AS-prog/sitio-personal@47f0c00, al día con develop@1451235): página,
+  cabeceras, casos, cierre, listas, nav, pie y conmutador. Los pinta
+  el marcado de los componentes de astro/ (SiteLayout, PageHead…). No forman parte del paquete de la biblioteca de
+  documentos; se cargan después de base.css solo en páginas del sitio.
+*/
+
+/* SiteLayout: la página y el enlace de salto */
+/* El ancho es un múltiplo exacto de la retícula: redondear hacia abajo deja el margen
+   simétrico. La primera línea es la reserva para quien no entienda `round()`. */
+.page { width: min(100%, var(--doc-width)); width: round(down, min(100%, var(--grid-max)) - 2 * var(--grid-margin), var(--unit)); max-width: 100%; margin: 0 auto; padding: 0 var(--s-6) var(--s-13); }
+/* El acceso de teclado evita repetir toda la navegación en cada página. */
+.skip-link { position: fixed; top: var(--s-3); left: var(--s-3); z-index: 10; padding: var(--s-3) var(--s-4); background: var(--ink); color: var(--ground); transform: translateY(calc(-100% - var(--s-6))); }
+.skip-link:focus { transform: translateY(0); }
+
+/* PageHead */
+.page-head { border-top: var(--line-accent); padding: var(--s-7) 0 var(--s-11); }
+.page-head h1 { font-size: var(--t-title); line-height: var(--lh-2); max-width: var(--measure-title); }
+.page-head .lede { margin-top: var(--s-6); }
+
+/* CubeFigure (astro/CubeFigure.astro) y la figura plana de una Nota (astro/markdown-cubes.mjs).
+   El lienzo no se enseña hasta que el motor marca data-ready tras su primer render, para que
+   nunca se vea un lienzo vacío donde había dibujo. */
+.cube-figure { display: flex; align-items: center; justify-content: center; aspect-ratio: 502 / 664; color: var(--ink); }
+.cube-figure svg { display: block; width: 100%; height: 100%; }
+/* La rampa por capas del motor, también en el dibujo: la planta con los tonos de --cube-*,
+   la cúspide con --cube-apex en las tres claridades del motor (68, 58 y 38 %) y la capa de en
+   medio a medio camino, mezclada en sRGB como en engine.js. */
+.cube-figure [data-layer="1"] .cube-face-top { fill: color-mix(in srgb, var(--cube-top), hsl(from var(--cube-apex) h s 68%)); }
+.cube-figure [data-layer="1"] .cube-face-left { fill: color-mix(in srgb, var(--cube-left), hsl(from var(--cube-apex) h s 58%)); }
+.cube-figure [data-layer="1"] .cube-face-right { fill: color-mix(in srgb, var(--cube-right), hsl(from var(--cube-apex) h s 38%)); }
+.cube-figure [data-layer="2"] .cube-face-top { fill: hsl(from var(--cube-apex) h s 68%); }
+.cube-figure [data-layer="2"] .cube-face-left { fill: hsl(from var(--cube-apex) h s 58%); }
+.cube-figure [data-layer="2"] .cube-face-right { fill: hsl(from var(--cube-apex) h s 38%); }
+.cube-figure[role='button'] { cursor: pointer; }
+.cube-figure canvas { display: none; max-width: 100%; max-height: 100%; cursor: grab; touch-action: pan-y; }
+.cube-figure[data-ready] canvas { display: block; }
+.cube-figure[data-ready] svg { display: none; }
+.cube-figure canvas.dragging { cursor: grabbing; }
+.figure-controls, .figure-directions { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+/* La reserva tiene la geometría de los controles reales, incluso si el motor falla.
+   visibility también los excluye del foco y del árbol de accesibilidad. */
+.figure-controls { margin-top: var(--s-4); }
+.figure-controls[hidden] { visibility: hidden; }
+/* Sin motor no hay giro: los botones de dirección y de restablecer se quitan del todo. */
+.figure-controls :is(.figure-directions, [data-reset])[hidden] { display: none; }
+.figure-directions { width: 100%; }
+/* Botones de texto, como los enlaces de la navegación: sin recuadro ni relleno. */
+.figure-controls button { min-height: var(--control); padding: var(--s-1) 0; border: 0; background: transparent; color: var(--muted); font-family: var(--f-body); font-size: var(--t-2); text-underline-offset: .2em; cursor: pointer; }
+.figure-controls button:hover:not(:disabled) { color: var(--ink); text-decoration: underline; }
+.figure-controls button:disabled { color: var(--muted); cursor: default; }
+/* Dentro de una Nota la figura es un fotograma del cuerpo: tres pasos grandes de alto, centrado,
+   con su pie debajo si lo lleva. */
+.cube-note { display: flex; flex-direction: column; align-items: center; margin-block: var(--s-8); }
+.cube-note .cube-figure { height: calc(var(--s-13) * 3); max-width: 100%; }
+.cube-note figcaption { text-align: center; }
+
+/* HomeIntro: la portada en una sola pantalla. La figura toma lo que deja la pantalla
+   tras la navegación (--s-13), la regla de arriba (--s-7), sus controles
+   (--s-4 + --control) y un respiro (--s-8), con un tope para pantallas muy altas. */
+.home-intro { border-top: var(--line-accent); padding-top: var(--s-7); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-8); align-items: start; }
+.home-intro h1 { font-size: var(--t-title); line-height: var(--lh-2); max-width: var(--measure-title); }
+.home-intro .lede { margin-top: var(--s-6); max-width: var(--measure); }
+.home-intro-text > :not(h1, .lede) { margin-top: var(--s-4); max-width: var(--measure); }
+.home-intro-figure { display: flex; flex-direction: column; align-items: flex-end; }
+.home-intro-figure .cube-figure { width: 100%; }
+.home-intro-figure .figure-controls { justify-content: flex-end; }
+@media (min-width: 48rem) { /* dos columnas desde 48rem */
+  .home-intro { grid-template-columns: minmax(0, var(--measure)) auto; justify-content: center; column-gap: var(--s-13); } /* texto y figura, un bloque centrado */
+  .home-intro-figure .cube-figure { width: auto; max-width: 100%; height: min(calc(var(--s-13) * 6), calc(100svh - var(--s-13) - var(--s-7) - var(--s-4) - var(--control) - var(--s-8))); }
+}
+.home-intro[data-align="center"] { align-items: center; }
+
+/* CaseCard */
+.case { border-top: 1px solid var(--ink); padding: var(--s-6) 0 var(--s-10); }
+.case :is(h2, h3) { font-size: var(--t-step); line-height: var(--lh-7); max-width: var(--measure-step); }
+.case :is(h2, h3) a { color: inherit; text-decoration: none; }
+.case :is(h2, h3) a:hover { text-decoration: underline; text-underline-offset: .2em; }
+.case .summary { margin-top: var(--s-4); font-size: var(--t-4); max-width: var(--measure); }
+.case details { margin-top: var(--s-6); }
+.case summary { cursor: pointer; padding: var(--s-3) 0; font-size: var(--t-2); text-decoration: underline; text-underline-offset: .2em; }
+.case dl { margin: var(--s-4) 0; }
+.case dt { font-family: var(--f-mono); font-size: var(--t-1); margin-top: var(--s-5); }
+.case dd { margin: var(--s-2) 0 0; font-size: var(--t-4); max-width: var(--measure); }
+.case .closing { margin-top: var(--s-4); font-size: var(--t-3); color: var(--muted); max-width: var(--measure); }
+.case .more { display: inline-block; margin-top: var(--s-5); font-size: var(--t-2); }
+
+/* CaseHeader */
+.back { display: inline-block; margin: var(--s-2) 0 var(--s-8); font-size: var(--t-2); color: var(--muted); }
+.case-head { border-top: var(--line-accent); padding: var(--s-7) 0 var(--s-10); }
+.case-head h1 { font-size: var(--t-title); line-height: var(--lh-2); max-width: var(--measure-case-title); }
+.case-head .meta { display: flex; flex-wrap: wrap; gap: var(--s-6) var(--s-9); margin: var(--s-8) 0 0; }
+.case-head .meta dt { font-family: var(--f-mono); font-size: var(--t-1); text-transform: uppercase; letter-spacing: var(--ls-mono); color: var(--muted); }
+.case-head .meta dd { margin: var(--s-2) 0 0; font-size: var(--t-3); }
+
+/* CaseSection */
+.case-section { border-top: 1px solid var(--ink); padding: var(--s-9) 0 var(--s-11); }
+.case-section h2 { font-size: var(--t-section); max-width: var(--measure-title); }
+.case-section .prose { margin-top: var(--s-5); color: var(--muted); font-size: var(--t-4); line-height: var(--lh-11); max-width: var(--measure); }
+.case-section .prose + .prose { margin-top: var(--s-4); }
+
+/* ContactCta */
+.close { border-top: var(--line-accent); padding: var(--s-11) 0 var(--s-12); }
+.close :is(h1, h2) { max-width: var(--measure-title); }
+.close h2 { font-size: var(--t-section); }
+.close h1 { font-size: var(--t-title); line-height: var(--lh-2); }
+.close .text { margin: var(--s-6) 0; color: var(--muted); max-width: var(--measure); }
+.close .mail { display: block; width: fit-content; margin-top: var(--s-5); font-family: var(--f-mono); font-size: var(--t-2); }
+
+/* NoteList */
+.note-list { list-style: none; margin: 0; padding: 0; }
+.note-list li { border-top: 1px solid var(--ink); }
+.note-list a { display: block; padding: var(--s-6) 0 var(--s-8); text-decoration: none; color: inherit; }
+.note-list a:hover .title { text-decoration: underline; text-underline-offset: .2em; }
+.note-list time { display: block; margin-bottom: var(--s-4); font-family: var(--f-mono); font-size: var(--t-1); text-transform: uppercase; letter-spacing: var(--ls-mono); }
+.note-list .title { font-size: var(--t-step); line-height: var(--lh-6); max-width: var(--measure-step); }
+.note-list p { margin-top: var(--s-3); color: var(--muted); font-size: var(--t-3); max-width: var(--measure); }
+.empty { padding-top: var(--s-8); color: var(--muted); font-style: italic; }
+
+/* Results */
+.results { display: grid; grid-template-columns: repeat(auto-fit, minmax(var(--col-min), 1fr)); gap: var(--s-6); margin-top: var(--s-8); }
+.results article { border-top: 1px solid var(--ink); padding: var(--s-5) 0 var(--s-6); }
+.results h3 { font-size: var(--t-step); line-height: var(--lh-4); }
+.results p { margin-top: var(--s-4); font-size: var(--t-3); max-width: var(--measure); }
+
+/* Steps */
+.steps { list-style: none; margin: 0; padding: 0; counter-reset: step; }
+.steps li { counter-increment: step; position: relative; border-top: 1px solid var(--rule); padding: var(--s-5) 0 var(--s-7) var(--unit); }
+.steps li::before { content: counter(step, decimal-leading-zero); position: absolute; left: 0; top: var(--s-6); font-family: var(--f-mono); font-size: var(--t-1); }
+.steps :is(h2, h3) { font-size: var(--t-step); line-height: var(--lh-3); }
+.steps p { margin-top: var(--s-3); font-size: var(--t-4); max-width: var(--measure); }
+.steps .more { display: inline-block; margin-top: var(--s-4); font-size: var(--t-2); }
+
+/* TechList */
+.tech { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-6); list-style: none; margin: var(--s-6) 0 0; padding: var(--s-4) 0 0; border-top: 1px solid var(--rule); font-family: var(--f-mono); font-size: var(--t-2); }
+
+/* Resume: cabecera, secciones, entradas y herramientas del currículum */
+.resume-head { border-top: var(--line-accent); padding: var(--s-7) 0 var(--s-10); }
+.resume-head h1 { font-size: var(--t-title); line-height: var(--lh-2); max-width: var(--measure-title); }
+.resume-head .where { margin-top: var(--s-5); font-family: var(--f-mono); font-size: var(--t-1); text-transform: uppercase; letter-spacing: var(--ls-mono); color: var(--muted); }
+.resume-head .lede { margin-top: var(--s-5); }
+.resume-contact { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-6); list-style: none; margin: var(--s-6) 0 0; padding: 0; font-family: var(--f-mono); font-size: var(--t-2); }
+.resume-section { border-top: 1px solid var(--ink); padding: var(--s-7) 0 var(--s-9); }
+.resume-section h2 { font-size: var(--t-h2); max-width: var(--measure-title); }
+/* La fecha vive en una columna de cuatro pasos de la retícula; el cuerpo, al lado. */
+.resume-entries { list-style: none; margin: var(--s-6) 0 0; padding: 0; }
+.resume-entry { display: grid; grid-template-columns: calc(4 * var(--unit)) minmax(0, 1fr); gap: var(--s-3) var(--s-6); padding: var(--s-6) 0 var(--s-7); }
+.resume-entry + .resume-entry { border-top: 1px solid var(--rule); }
+.resume-when { display: flex; flex-direction: column; gap: var(--s-1); font-family: var(--f-mono); font-size: var(--t-2); line-height: var(--lh-9); padding-top: var(--s-1); }
+.resume-when .duration { font-size: var(--t-1); color: var(--muted); }
+.resume-body h2, .resume-body h3 { font-size: var(--t-6); line-height: var(--lh-7); max-width: var(--measure); }
+.resume-body .meta { margin-top: var(--s-2); font-family: var(--f-mono); font-size: var(--t-1); color: var(--muted); }
+.resume-body .lead { margin-top: var(--s-4); font-size: var(--t-3); color: var(--muted); line-height: var(--lh-11); }
+.resume-points { margin: var(--s-4) 0 0; padding-left: var(--s-5); font-size: var(--t-3); line-height: var(--lh-11); max-width: var(--measure); }
+.resume-points li + li { margin-top: var(--s-2); }
+.resume-points strong { font-weight: 600; }
+.resume-tools { margin: var(--s-6) 0 0; }
+.resume-tool { display: grid; grid-template-columns: calc(4 * var(--unit)) minmax(0, 1fr); gap: var(--s-2) var(--s-6); padding: var(--s-3) 0; }
+.resume-tool + .resume-tool { border-top: 1px solid var(--rule-soft); }
+.resume-tool dt { font-family: var(--f-mono); font-size: var(--t-1); text-transform: uppercase; letter-spacing: var(--ls-mono); color: var(--muted); padding-top: var(--s-1); }
+.resume-tool dd { margin: 0; font-size: var(--t-3); }
+@media (max-width: 34rem) { /* = --bp-nav */
+  .resume-entry, .resume-tool { grid-template-columns: minmax(0, 1fr); }
+  .resume-when { flex-direction: row; flex-wrap: wrap; gap: var(--s-2) var(--s-4); }
+}
+
+/* ThemeToggle */
+.theme { width: var(--control); height: var(--control); display: grid; place-items: center end; padding: 0; background: transparent; cursor: pointer; color: var(--muted); border: 0; transition: color var(--dur) var(--ease); } /* solo el icono, sin recuadro */
+.theme:hover { color: var(--ink); }
+.theme svg { display: block; }
+.theme .moon { display: none; }
+:root[data-theme="dark"] .theme .moon { display: block; }
+:root[data-theme="dark"] .theme .sun  { display: none; }
+
+/* SiteNav y SiteFooter (astro/SiteLayout.astro) */
+.nav { display: flex; align-items: center; gap: var(--s-6); padding: var(--s-7) 0 var(--s-9); flex-wrap: wrap; }
+.nav nav { display: flex; flex-wrap: wrap; min-width: 0; gap: var(--s-2) var(--s-5); margin-right: auto; }
+.nav nav a { display: inline-flex; align-items: center; min-height: var(--control); min-width: var(--control); font-size: var(--t-3); color: var(--muted); text-decoration: none; padding: var(--s-1) 0; border-top: 2px solid transparent; }
+.nav nav a:hover { color: var(--ink); }
+.nav nav a[aria-current='page'] { color: var(--ink); border-top: var(--line-accent); }
+@media (max-width: 34rem) { .nav { gap: var(--s-4); } } /* = --bp-nav; var() no entra en @media */
+.site-footer { margin-top: var(--s-12); padding-top: var(--s-6); border-top: 1px solid var(--rule); font-size: var(--t-1); color: var(--muted); display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-8); justify-content: space-between; }
+
+/* ---------- Impresión: nav, pie y conmutador no se imprimen ---------- */
+@media print {
+  .nav, .site-footer, .theme, .back, .skip-link { display: none; }
+  /* La figura de la portada no se imprime; la de una Nota es parte del texto y sí. */
+  .cube-figure, .figure-controls { display: none; }
+  .cube-note .cube-figure { display: flex; }
+  .page { max-width: none; margin: 0; padding: 0; }
+  .resume-section, .resume-entry { break-inside: avoid; }
+  .resume-head { padding-bottom: var(--s-7); }
+  .resume-section { padding: var(--s-5) 0 var(--s-6); }
+  .resume-entry { padding: var(--s-4) 0 var(--s-5); }
+}
