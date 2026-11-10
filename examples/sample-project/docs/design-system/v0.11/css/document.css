@@ -1,0 +1,172 @@
+/*
+  Delphos · css/document.css — la capa de documento de la biblioteca.
+  Se carga después de tokens.css y css/base.css. Da estilo a lo que un
+  conversor de Markdown produce dentro de <article class="doc-prose"> (sin
+  clases) y a las piezas que Markdown no tiene: la barra de marca, la
+  cabecera con ficha, el índice, los avisos, las etiquetas, el título de un
+  bloque de código, la tabla ancha, la cita destacada, el índice de la
+  colección y el pie. Ninguna regla de la web vive aquí: eso es site.css.
+
+  Anatomía:
+    .doc
+      header.doc-bar      marca / biblioteca ······· [tema]   ← regla mayor
+      header.doc-header   h1 · .lede · dl.doc-meta
+      nav.doc-toc        solo con cuatro secciones o más
+      article.doc-prose     el cuerpo del .md, empieza en h2
+      footer.doc-footer        «generado a partir de …»           ← regla mayor
+*/
+
+/* ---------- Página ---------- */
+.doc {
+  width: min(100% - 2 * var(--grid-margin), var(--doc-width));
+  width: round(down, min(100% - 2 * var(--grid-margin), var(--doc-width)), var(--unit));
+  margin: 0 auto;
+  padding-bottom: var(--s-13);
+}
+
+/* ---------- Barra de marca ---------- */
+.doc-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); flex-wrap: wrap;
+  border-top: var(--line-major);
+  padding: var(--s-3) 0 var(--s-9);
+}
+.doc-brand { font-family: var(--f-mono); font-size: var(--t-1); line-height: var(--lh-9); text-transform: uppercase; letter-spacing: var(--ls-mono); color: var(--ink); text-decoration: none; }
+.doc-brand:hover { text-decoration: underline; }
+.doc-theme {
+  font-family: var(--f-mono); font-size: var(--t-1); text-transform: uppercase; letter-spacing: var(--ls-mono);
+  background: transparent; color: var(--muted); border: var(--line-faint); border-radius: var(--r-2);
+  padding: var(--s-1) var(--s-3); min-height: var(--control); cursor: pointer;
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.doc-theme:hover { color: var(--ink); border-color: var(--ink); }
+
+/* ---------- Cabecera ---------- */
+.doc-header { display: grid; gap: var(--s-5); padding-bottom: var(--s-9); }
+.doc-header h1 { font-size: var(--t-title); line-height: var(--lh-2); max-width: var(--measure-title); }
+.doc-header .lede { max-width: var(--measure); }
+.doc-meta { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-8); margin: 0; font-size: var(--t-3); max-width: var(--measure-wide); }
+.doc-meta > div { display: flex; gap: var(--s-2); align-items: baseline; }
+.doc-meta dt { font-family: var(--f-mono); font-size: var(--t-1); text-transform: uppercase; letter-spacing: var(--ls-mono); color: var(--muted); }
+.doc-meta dd { margin: 0; }
+.doc-meta time { font-family: var(--f-mono); font-size: var(--t-2); }
+
+/* ---------- Índice ---------- */
+.doc-toc { border-top: var(--line-minor); padding: var(--s-4) 0 var(--s-6); margin-bottom: var(--s-6); max-width: var(--measure-wide); }
+.doc-toc h2 { font-family: var(--f-mono); font-size: var(--t-1); font-weight: 400; letter-spacing: var(--ls-mono); text-transform: uppercase; color: var(--muted); margin-bottom: var(--s-3); }
+.doc-toc ol { list-style: none; margin: 0; padding: 0; counter-reset: doc-toc; font-size: var(--t-3); }
+.doc-toc li { counter-increment: doc-toc; display: flex; gap: var(--s-3); padding: var(--s-1) 0; border-bottom: var(--line-faint); }
+.doc-toc li::before { content: counter(doc-toc, decimal-leading-zero); font-family: var(--f-mono); font-size: var(--t-1); color: var(--muted); padding-top: .1em; }
+.doc-toc a { text-decoration: none; }
+.doc-toc a:hover { text-decoration: underline; }
+
+/* ---------- Prosa: lo que produce Markdown, sin clases ----------
+   El ritmo: cada bloque se separa del anterior con margen superior; las secciones abren con regla. */
+.doc-prose > * + * { margin-top: var(--s-5); }
+.doc-prose > h2 { border-top: var(--line-minor); padding-top: var(--s-6); margin-top: var(--section); font-size: var(--t-h2); max-width: var(--measure-title); }
+.doc-prose > h3 { margin-top: var(--s-9); }
+.doc-prose > h4 { font-family: var(--f-body); font-size: var(--t-4); font-weight: 600; margin: var(--s-7) 0 0; letter-spacing: var(--ls-entry); }
+.doc-prose > h5, .doc-prose > h6 { font-family: var(--f-mono); font-size: var(--t-1); font-weight: 400; text-transform: uppercase; letter-spacing: var(--ls-mono); color: var(--muted); margin: var(--s-6) 0 0; }
+.doc-prose > h2 + *, .doc-prose > h3 + *, .doc-prose > h4 + *, .doc-prose > h5 + *, .doc-prose > h6 + * { margin-top: var(--s-3); }
+.doc-prose p { max-width: var(--measure); }
+.doc-prose strong { font-weight: 600; }
+.doc-prose ul, .doc-prose ol { margin: 0; padding-left: var(--s-6); max-width: var(--measure); }
+.doc-prose li + li { margin-top: var(--s-2); }
+.doc-prose li > ul, .doc-prose li > ol { margin-top: var(--s-2); }
+.doc-prose li::marker { color: var(--muted); font-family: var(--f-mono); font-size: var(--t-2); }
+.doc-prose ul.contains-task-list, .doc-prose ul:has(> li > input[type="checkbox"]) { list-style: none; padding-left: 0; }
+.doc-prose li > input[type="checkbox"] { appearance: none; width: var(--s-4); height: var(--s-4); margin: 0 var(--s-2) 0 0; vertical-align: -.15em; border: var(--line-minor); border-radius: var(--r-1); background: transparent; }
+.doc-prose li > input[type="checkbox"]:checked { background: var(--ink); box-shadow: inset 0 0 0 2px var(--ground); }
+.doc-prose dl { max-width: var(--measure); margin: 0; }
+.doc-prose dt { font-family: var(--f-mono); font-size: var(--t-1); text-transform: uppercase; letter-spacing: var(--ls-mono); margin-top: var(--s-4); }
+.doc-prose dd { margin: var(--s-1) 0 0; }
+.doc-prose hr { margin: var(--s-11) 0 0; }
+.doc-prose img { display: block; max-width: 100%; height: auto; border-radius: var(--r-2); }
+.doc-prose kbd { font-family: var(--f-mono); font-size: var(--t-1); padding: 0 var(--s-1); border: var(--line-faint); border-bottom-width: 2px; border-radius: var(--r-1); }
+.doc-prose mark { background: var(--note-bg); color: var(--note-ink); padding: 0 var(--s-1); }
+.doc-prose abbr[title] { text-decoration: underline dotted; text-underline-offset: .2em; }
+.doc-prose sup, .doc-prose sub { font-size: .75em; line-height: 0; }
+.doc-prose a[href^="http"]:not([href*="andresrsotelo.dev"])::after { content: " ↗"; font-size: .8em; }
+
+/* Código: fondo de nota y regla, para separarse de la retícula (en la web era plano). */
+.doc-prose pre { margin-top: var(--s-5); background: var(--note-bg); color: var(--note-ink); border-top: var(--line-faint); max-width: var(--doc-width); }
+.doc-prose :not(pre) > code { background: var(--note-bg); padding: 0 var(--s-1); border-radius: var(--r-1); }
+.code-title { font-family: var(--f-mono); font-size: var(--t-1); color: var(--muted); margin: var(--s-5) 0 0; padding-bottom: var(--s-1); border-bottom: var(--line-faint); max-width: var(--doc-width); }
+.code-title + pre { margin-top: 0; border-top: 0; }
+
+/* Citas: compactas, con regla a la izquierda. */
+.doc-prose blockquote { font-size: var(--t-6); line-height: var(--lh-9); max-width: var(--measure); border-left: var(--line-minor); padding-left: var(--s-5); }
+.doc-prose blockquote > * + * { margin-top: var(--s-3); }
+.doc-prose blockquote p { font: inherit; }
+.pull-quote { font-size: var(--t-quote); line-height: var(--lh-8); max-width: var(--measure-quote); border-left: 0; padding-left: 0; }
+.pull-quote .attrib { font-family: var(--f-body); font-size: var(--t-2); color: var(--muted); font-style: normal; }
+
+/* Tablas: sin cebra ni fondo. Regla de tinta bajo la cabecera, reglas tenues entre filas. */
+.doc-prose table { border-collapse: collapse; width: 100%; max-width: var(--doc-width); font-size: var(--t-3); line-height: var(--lh-9); }
+.doc-prose caption { text-align: left; font-size: var(--t-2); color: var(--muted); padding-bottom: var(--s-2); caption-side: top; }
+.doc-prose th, .doc-prose td { text-align: left; vertical-align: top; padding: var(--s-2) var(--s-4) var(--s-2) 0; }
+.doc-prose th:last-child, .doc-prose td:last-child { padding-right: 0; }
+.doc-prose thead th { font-family: var(--f-mono); font-size: var(--t-1); font-weight: 400; text-transform: uppercase; letter-spacing: var(--ls-mono); color: var(--muted); border-bottom: var(--line-minor); }
+.doc-prose tbody td, .doc-prose tbody th { border-bottom: var(--line-faint); }
+.doc-prose tbody th { font-weight: 500; }
+.doc-prose td.num, .doc-prose th.num, .doc-prose td[align="right"], .doc-prose th[align="right"] { text-align: right; font-variant-numeric: tabular-nums; }
+.doc-prose td code { white-space: nowrap; }
+.table-wrap { overflow-x: auto; max-width: var(--doc-width); }
+.table-wrap table { min-width: var(--measure-wide); }
+
+/* Figuras: pie en muted, regla tenue arriba. */
+.doc-prose figure { max-width: var(--doc-width); }
+.doc-prose .figwrap { background: transparent; padding: var(--s-6) 0 0; border-top: var(--line-faint); }
+
+/* details: regla arriba y abajo, resumen subrayado. */
+.doc-prose details { border-top: var(--line-faint); border-bottom: var(--line-faint); padding: var(--s-3) 0; max-width: var(--measure); }
+.doc-prose summary { cursor: pointer; text-decoration: underline; text-underline-offset: .2em; font-size: var(--t-3); }
+.doc-prose details[open] summary { margin-bottom: var(--s-3); }
+.doc-prose details > * + * { margin-top: var(--s-3); }
+
+/* ---------- Avisos: el tipo lo dice la etiqueta, no un color ---------- */
+.notice {
+  background: var(--note-bg); color: var(--note-ink);
+  border-top: 2px solid var(--note-rule); border-radius: 0 0 var(--r-1) var(--r-1);
+  padding: var(--s-3) var(--s-4); font-size: var(--t-2); line-height: var(--lh-10); max-width: var(--measure-wide);
+}
+.notice > * + * { margin-top: var(--s-2); }
+.notice p { max-width: none; }
+.notice-title { display: block; font-family: var(--f-mono); font-size: var(--t-1); text-transform: uppercase; letter-spacing: var(--ls-mono); margin-bottom: var(--s-1); }
+/* Lo que pide acción lleva la regla en tinta plena. */
+.notice-important, .notice-risk { border-top-color: var(--ink); }
+.notice-risk .notice-title::before { content: "⚠ "; }
+/* Pendiente: la nota de trabajo de un documento, con el ticket; se borra cuando el ticket cierra. */
+.notice-pending { background: transparent; border: 1px dashed var(--rule); border-top: 2px dashed var(--ink); }
+
+/* ---------- Etiquetas ---------- */
+.tags { display: flex; flex-wrap: wrap; gap: var(--s-2); margin: 0; padding: 0; list-style: none; }
+.tag { display: inline-block; font-family: var(--f-mono); font-size: var(--t-1); line-height: var(--lh-9); letter-spacing: var(--ls-mono); text-transform: uppercase; padding: var(--s-1) var(--s-2); border: var(--line-faint); border-radius: var(--r-2); color: var(--muted); text-decoration: none; }
+a.tag:hover { color: var(--ink); border-color: var(--ink); }
+.tag-solid { background: var(--ink); color: var(--ground); border-color: var(--ink); }
+
+/* ---------- Índice de la colección (la portada de la biblioteca) ---------- */
+.collection { list-style: none; margin: 0; padding: 0; border-top: var(--line-minor); max-width: var(--doc-width); }
+.collection li { border-bottom: var(--line-faint); padding: var(--s-4) 0; display: grid; gap: var(--s-1); }
+.collection .collection-title { font-family: var(--f-display); font-size: var(--t-6); line-height: var(--lh-7); letter-spacing: var(--ls-headline); text-decoration: none; }
+.collection .collection-title:hover { text-decoration: underline; }
+.collection p { font-size: var(--t-3); color: var(--muted); }
+.collection .meta { font-family: var(--f-mono); font-size: var(--t-1); color: var(--muted); display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5); }
+
+/* ---------- Pie ---------- */
+.doc-footer { border-top: var(--line-major); margin-top: var(--s-12); padding-top: var(--s-4); display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s-2) var(--s-8); font-size: var(--t-1); color: var(--muted); }
+
+/* ---------- Móvil ---------- */
+@media (max-width: 37.5rem) {
+  .doc-meta { flex-direction: column; gap: var(--s-2); }
+  .doc-prose table { font-size: var(--t-2); }
+}
+
+/* ---------- Impresión ---------- */
+@media print {
+  .doc { width: 100%; padding-bottom: 0; }
+  .doc-bar .doc-theme, .doc-toc, .notice-pending { display: none; }
+  .doc-prose pre, .doc-prose table, .doc-prose figure, .notice, .doc-prose blockquote { break-inside: avoid; }
+  .doc-prose pre, .notice, .doc-prose :not(pre) > code, .doc-prose mark { background: transparent; }
+  .doc-prose pre { border: var(--line-faint); padding: var(--s-3); }
+  .tag-solid { background: transparent; color: var(--ink); }
+}

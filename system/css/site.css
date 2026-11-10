@@ -26,6 +26,43 @@
 .page-head h1 { font-size: var(--t-title); line-height: var(--lh-2); max-width: var(--measure-title); }
 .page-head .lede { margin-top: var(--s-6); }
 
+/* CubeFigure (astro/CubeFigure.astro) y la figura plana de una Nota (astro/markdown-cubes.mjs).
+   El lienzo no se enseña hasta que el motor marca data-ready tras su primer render, para que
+   nunca se vea un lienzo vacío donde había dibujo. */
+.cube-figure { display: flex; align-items: center; justify-content: center; aspect-ratio: 502 / 664; color: var(--ink); }
+.cube-figure svg { display: block; width: 100%; height: 100%; }
+/* La rampa por capas del motor, también en el dibujo: la planta con los tonos de --cube-*,
+   la cúspide con --cube-apex en las tres claridades del motor (68, 58 y 38 %) y la capa de en
+   medio a medio camino, mezclada en sRGB como en engine.js. */
+.cube-figure [data-layer="1"] .cube-face-top { fill: color-mix(in srgb, var(--cube-top), hsl(from var(--cube-apex) h s 68%)); }
+.cube-figure [data-layer="1"] .cube-face-left { fill: color-mix(in srgb, var(--cube-left), hsl(from var(--cube-apex) h s 58%)); }
+.cube-figure [data-layer="1"] .cube-face-right { fill: color-mix(in srgb, var(--cube-right), hsl(from var(--cube-apex) h s 38%)); }
+.cube-figure [data-layer="2"] .cube-face-top { fill: hsl(from var(--cube-apex) h s 68%); }
+.cube-figure [data-layer="2"] .cube-face-left { fill: hsl(from var(--cube-apex) h s 58%); }
+.cube-figure [data-layer="2"] .cube-face-right { fill: hsl(from var(--cube-apex) h s 38%); }
+.cube-figure[role='button'] { cursor: pointer; }
+.cube-figure canvas { display: none; max-width: 100%; max-height: 100%; cursor: grab; touch-action: pan-y; }
+.cube-figure[data-ready] canvas { display: block; }
+.cube-figure[data-ready] svg { display: none; }
+.cube-figure canvas.dragging { cursor: grabbing; }
+.figure-controls, .figure-directions { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+/* La reserva tiene la geometría de los controles reales, incluso si el motor falla.
+   visibility también los excluye del foco y del árbol de accesibilidad. */
+.figure-controls { margin-top: var(--s-4); }
+.figure-controls[hidden] { visibility: hidden; }
+/* Sin motor no hay giro: los botones de dirección y de restablecer se quitan del todo. */
+.figure-controls :is(.figure-directions, [data-reset])[hidden] { display: none; }
+.figure-directions { width: 100%; }
+/* Botones de texto, como los enlaces de la navegación: sin recuadro ni relleno. */
+.figure-controls button { min-height: var(--control); padding: var(--s-1) 0; border: 0; background: transparent; color: var(--muted); font-family: var(--f-body); font-size: var(--t-2); text-underline-offset: .2em; cursor: pointer; }
+.figure-controls button:hover:not(:disabled) { color: var(--ink); text-decoration: underline; }
+.figure-controls button:disabled { color: var(--muted); cursor: default; }
+/* Dentro de una Nota la figura es un fotograma del cuerpo: tres pasos grandes de alto, centrado,
+   con su pie debajo si lo lleva. */
+.cube-note { display: flex; flex-direction: column; align-items: center; margin-block: var(--s-8); }
+.cube-note .cube-figure { height: calc(var(--s-13) * 3); max-width: 100%; }
+.cube-note figcaption { text-align: center; }
+
 /* HomeIntro: la portada en una sola pantalla. La figura toma lo que deja la pantalla
    tras la navegación (--s-13), la regla de arriba (--s-7), sus controles
    (--s-4 + --control) y un respiro (--s-8), con un tope para pantallas muy altas. */
@@ -155,6 +192,9 @@
 /* ---------- Impresión: nav, pie y conmutador no se imprimen ---------- */
 @media print {
   .nav, .site-footer, .theme, .back, .skip-link { display: none; }
+  /* La figura de la portada no se imprime; la de una Nota es parte del texto y sí. */
+  .cube-figure, .figure-controls { display: none; }
+  .cube-note .cube-figure { display: flex; }
   .page, .page > main { max-width: none; margin: 0; padding: 0; }
   .resume-section, .resume-entry { break-inside: avoid; }
   .resume-head { padding-bottom: var(--s-7); }

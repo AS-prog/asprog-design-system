@@ -1,6 +1,6 @@
 // Los componentes Astro de Delphos. Cada uno pinta el marcado que estilan tokens.css,
 // css/base.css y css/document.css (documentos) o css/site.css (la web): no traen estilos
-// propios (salvo CubeFigure). DocumentLayout y SiteLayout importan sus tres hojas; si usas
+// propios. DocumentLayout y SiteLayout importan sus tres hojas; si usas
 // las piezas sueltas, impórtalas tú.
 export { default as CaseCard } from './CaseCard.astro';
 export { default as CaseHeader } from './CaseHeader.astro';
