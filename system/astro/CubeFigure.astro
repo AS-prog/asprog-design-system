@@ -13,7 +13,8 @@
 //   - con `engine={false}` no se monta el motor y la figura es el SVG: con `animate` (por
 //     defecto) hace la misma entrada de los cubos sobre el propio dibujo (figure/flat.js),
 //     sin Three.js y sin giro; con `animate={false}` queda fijo. Tocar el dibujo (o Intro y
-//     Espacio) le da la vuelta a la animación: la pila se deshace y se rehace.
+//     Espacio) mientras se mueve lo pausa y otro toque lo reanuda; quieto, le da la vuelta
+//     a la animación: la pila se deshace y se rehace.
 //     Su reserva ocupa lo mismo aunque el motor falle, para que nada salte.
 //
 // La instancia montada queda en la propiedad `figure` del contenedor (rotate, resetView,
@@ -118,7 +119,15 @@ const canvasId = `${id}-canvas`;
       try {
         const { animateFlatFigure } = await import('./figure/flat.js');
         let playback: HTMLButtonElement | null | undefined;
-        const label = (state: ReturnType<Figure['state']>) => {
+        // El nombre accesible de la figura dice qué hará el siguiente toque.
+        const gesture = (state: ReturnType<typeof flat.state>) => {
+          if (state.reduced) return;
+          container.setAttribute('aria-label', state.paused ? 'Reanudar la animación de los cubos'
+            : state.moving ? 'Pausar la animación de los cubos'
+            : state.completed ? 'Deshacer la pila de cubos' : 'Rehacer la pila de cubos');
+        };
+        const label = (state: ReturnType<typeof flat.state>) => {
+          gesture(state);
           if (!playback) return;
           playback.disabled = state.reduced;
           playback.textContent = state.reduced ? 'Movimiento reducido'
@@ -134,17 +143,19 @@ const canvasId = `${id}-canvas`;
         };
         playback = wire(container, figure, { turns: false });
         label(flat.state());
-        // Tocar la figura le da la vuelta a la animación: la pila se deshace por el mismo
-        // camino y, al tocarla otra vez, se rehace. Con teclado, Intro o Espacio.
+        // Tocar la figura mientras los cubos se mueven la pausa, y otro toque la reanuda: así
+        // la entrada, que dura más de cinco segundos, se puede parar sin botones (WCAG 2.2.2).
+        // Con la figura quieta en un extremo, el toque le da la vuelta: la pila se deshace por
+        // el mismo camino y, al tocarla otra vez, se rehace. Con teclado, Intro o Espacio.
         if (!flat.state().reduced) {
           container.tabIndex = 0;
           container.setAttribute('role', 'button');
-          container.setAttribute('aria-label', 'Deshacer o rehacer la pila de cubos');
-          container.addEventListener('click', () => flat.reverse());
+          gesture(flat.state());
+          container.addEventListener('click', () => flat.toggle());
           container.addEventListener('keydown', (event) => {
             if (event.key !== 'Enter' && event.key !== ' ') return;
             event.preventDefault();
-            flat.reverse();
+            flat.toggle();
           });
         }
         (container as HTMLElement & { figure?: Figure }).figure = figure;

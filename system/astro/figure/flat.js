@@ -40,7 +40,7 @@ export function animateFlatFigure(svg, { onStateChange = () => {} } = {}) {
   let elapsed = LEAD, last = 0, frame = 0, paused = false, direction = 1;
   // `done`: el reloj ha llegado al extremo hacia el que va. `completed`: la pila está hecha.
   const done = () => (direction > 0 ? elapsed >= DURATION : elapsed <= LEAD);
-  const state = () => ({ elapsed, paused, direction, reduced: motion.matches, completed: elapsed >= DURATION });
+  const state = () => ({ elapsed, paused, direction, reduced: motion.matches, completed: elapsed >= DURATION, moving: !paused && !done() });
   const sync = () => onStateChange(state());
 
   // Un fotograma: la pose de cada cubo y, si el orden del pintor ha cambiado, los grupos
@@ -76,6 +76,14 @@ export function animateFlatFigure(svg, { onStateChange = () => {} } = {}) {
     direction = -direction;
     paused = false; sync(); play();
   };
+  // El gesto de tocar la figura: en marcha, pausa; en pausa, reanuda; quieta en un extremo
+  // (la pila hecha o deshecha), da la vuelta.
+  const toggle = () => {
+    if (motion.matches) return;
+    if (paused) resume();
+    else if (!done()) pause();
+    else reverse();
+  };
   const seek = (seconds) => { elapsed = Math.max(0, Math.min(DURATION, seconds)); draw(elapsed); sync(); };
 
   // Con movimiento reducido no hay vuelo: el dibujo se queda en reposo, que es como venía.
@@ -85,5 +93,5 @@ export function animateFlatFigure(svg, { onStateChange = () => {} } = {}) {
   sync();
   play();
 
-  return { play, pause, resume, replay, reverse, seek, state };
+  return { play, pause, resume, replay, reverse, toggle, seek, state };
 }
