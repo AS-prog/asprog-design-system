@@ -33,7 +33,7 @@ import { DocumentLayout, Notice, Table } from 'asprog-design-system/astro';
 | `Collection` | `ul.collection` | `items` (`title`, `href`, `summary`, `date`, `meta`), `sort` |
 | `ThemeToggle` | `button.doc-theme` (documento) o `button.theme` con sol y luna (web) | `variant` (`document`, `site`), `label` |
 | `ThemeScript` | el `<script>` que aplica el tema guardado antes de pintar | — |
-| `CubeFigure` | la figura de los catorce cubos: SVG en línea, lienzo WebGL y, debajo, los botones de girar, restablecer y pausar; la instancia montada queda en la propiedad `figure` del contenedor | `label`, `id` (el lienzo lleva `<id>-canvas`), `controls`, `fit`, `engine` (con `false`, la figura es el SVG), `animate` (con `engine={false}`, la entrada de los cubos sobre el SVG; por defecto sí), `class` |
+| `CubeFigure` | la figura de los catorce cubos: SVG en línea, lienzo WebGL y, debajo, los botones de girar, restablecer y pausar; la instancia montada queda en la propiedad `figure` del contenedor | `label`, `id` (el lienzo lleva `<id>-canvas`), `controls`, `fit`, `engine` (con `false`, la figura es el SVG), `animate` (con `engine={false}`, la entrada de los cubos sobre el SVG; por defecto sí), `autoplay` (con `false`, la pila queda hecha hasta que alguien la toca), `class` |
 
 ### La web
 
@@ -96,10 +96,30 @@ export default defineConfig({
 
 `syntaxHighlight: false` porque Delphos no tiene colores de lenguaje.
 
+### La figura de los cubos en una Nota
+
+Una Nota en Markdown puede llevar la figura de los cubos sin pasar a MDX. Un párrafo que solo tenga el marcador la pone, y lo que siga al marcador es el pie:
+
+```md
+::cubos Catorce piezas sueltas acaban en una sola pila.
+```
+
+Sale como fotograma fijo, con la pila hecha. Es lo que se ve sin JavaScript, con `prefers-reduced-motion` y al imprimir, así que nunca queda un hueco. Al tocarla (o con Intro y Espacio), la pila se deshace por el camino de la portada, y otro toque la rehace; si está en marcha, el toque la pausa. Sigue el tema claro y oscuro, porque el dibujo usa `currentColor` y los tokens `--cube-*`.
+
+Para activarlo, añade el plugin junto al de los avisos. `Prose` monta las figuras que encuentre en su cuerpo, y `css/site.css` las estila (`.cube-note`):
+
+```js
+import markdownCubes from 'asprog-design-system/astro/markdown-cubes.mjs';
+// …
+markdown: { processor: satteri({ hastPlugins: [markdownNotice, markdownCubes] }) },
+```
+
+Solo cabe una figura por Nota, porque el SVG lleva los id `data-cubes` y `cube-field`.
+
 ## La figura
 
 `CubeFigure` es el componente de la portada de la web (`sitio-personal`, `src/components/CubeFigure.astro`) empaquetado. `figure/engine.js` y `figure/trajectories.js` son copias de `docs/cube-figure/` con un solo cambio: Three.js se importa como `three` (0.181.2). Si la web cambia el motor, se copian de nuevo. Cómo está hecha: [`docs/cube-figure.md`](../docs/cube-figure.md).
 
 ## Reglas
 
-Las de `AGENTS.md` §4 valen igual: los componentes no aceptan `style` ni colores, y lo que falte se añade a `tokens.json` o a `css/`, nunca a un componente. La única hoja propia es la de `CubeFigure`, que solo coloca el lienzo y el respaldo.
+Las de `AGENTS.md` §4 valen igual: los componentes no aceptan `style` ni colores, y lo que falte se añade a `tokens.json` o a `css/`, nunca a un componente. `CubeFigure` ya no tiene hoja propia: lo que coloca el lienzo y el respaldo está en `css/site.css`.

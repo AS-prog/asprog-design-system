@@ -1,6 +1,17 @@
 ---
 // El cuerpo de un documento: lo que produce un conversor de Markdown ya tiene estilo
 // dentro de article.doc-prose, sin clases. Empieza en h2: el h1 es el título.
+//
+// Si el cuerpo trae la figura de los cubos (el marcador `::cubos` de markdown-cubes.mjs), el
+// script la monta; si no, no se pide nada más.
 ---
 
 <article class="doc-prose"><slot /></article>
+
+<script>
+  if (document.querySelector('.doc-prose .cube-figure[data-animate]')) {
+    import('./figure/flat-mount.js')
+      .then(({ mountFlatFigures }) => mountFlatFigures(document))
+      .catch(() => { /* sin el módulo: queda el fotograma fijo */ });
+  }
+</script>

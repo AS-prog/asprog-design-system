@@ -4,7 +4,15 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y l
 
 ## Sin publicar
 
+### Añadido
+- `astro/markdown-cubes.mjs`: plugin de Markdown (Sätteri) que convierte un párrafo `::cubos` en la figura de los cubos dentro de una Nota, sin pasar a MDX; lo que sigue al marcador es el pie. Sale como fotograma fijo, la pila hecha, que es lo que se ve sin JavaScript, con `prefers-reduced-motion` y al imprimir; tocarla la deshace y la rehace. Sigue el tema claro y oscuro. Es la primera fase de #7.
+- `Prose` monta las figuras de cubos que trae su cuerpo (con `figure/flat-mount.js`, que solo se pide si las hay).
+- `CubeFigure` acepta `autoplay`: con `engine={false}` y `autoplay={false}`, la figura empieza quieta y solo se mueve al tocarla.
+- Clases `cube-note` (la figura dentro de una Nota) en `css/site.css`.
+
 ### Cambiado
+- Los estilos de `CubeFigure` pasan de su `<style>` a `css/site.css`, para que valgan también en la figura que no pinta el componente. Los valores no cambian.
+- El montaje de la figura plana y su gesto de tocar salen de `CubeFigure.astro` a `figure/flat-mount.js`, que comparten el componente y las Notas.
 - `CubeFigure` con `engine={false}`: tocar la figura (o Intro y Espacio) mientras los cubos se mueven pausa la animación y otro toque la reanuda; con la figura quieta, el toque le da la vuelta como antes. La entrada dura unos 12 s, así que se puede parar sin botones (WCAG 2.2.2). El nombre accesible de la figura dice qué hará el siguiente toque.
 
 ## 0.10.0 · 2026-11-10

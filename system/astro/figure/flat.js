@@ -30,8 +30,11 @@ const pose = (i, seconds) => {
  * `reverse` da la vuelta al reloj: con la pila hecha, los cubos se desordenan por el mismo
  * camino por el que llegaron; desordenados, vuelven a apilarse; a medio vuelo, se dan la
  * vuelta donde están.
+ *
+ * Con `autoplay: false` la figura empieza quieta con la pila hecha, que es el dibujo tal cual
+ * viene, y no se mueve hasta que alguien la toca: es el fotograma fijo de una Nota.
  */
-export function animateFlatFigure(svg, { onStateChange = () => {} } = {}) {
+export function animateFlatFigure(svg, { onStateChange = () => {}, autoplay = true } = {}) {
   const field = svg.querySelector(FIELD);
   const groups = field ? [...field.children].filter((node) => node.tagName === 'g') : [];
   if (groups.length !== cubes.length) return null;
@@ -87,7 +90,9 @@ export function animateFlatFigure(svg, { onStateChange = () => {} } = {}) {
   const seek = (seconds) => { elapsed = Math.max(0, Math.min(DURATION, seconds)); draw(elapsed); sync(); };
 
   // Con movimiento reducido no hay vuelo: el dibujo se queda en reposo, que es como venía.
-  if (motion.matches) draw(DURATION); else draw(LEAD);
+  // Sin autoplay tampoco se dibuja nada: el reloj se pone al final y el SVG no se toca.
+  if (!autoplay) elapsed = DURATION;
+  else if (motion.matches) draw(DURATION); else draw(LEAD);
   motion.addEventListener('change', () => { if (motion.matches) { seek(DURATION); } else sync(); });
   document.addEventListener('visibilitychange', () => { if (!document.hidden) play(); });
   sync();
