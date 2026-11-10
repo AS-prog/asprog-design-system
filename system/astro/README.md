@@ -114,10 +114,10 @@ import markdownCubes from 'asprog-design-system/astro/markdown-cubes.mjs';
 markdown: { processor: satteri({ hastPlugins: [markdownNotice, markdownCubes] }) },
 ```
 
-Con `::cubos[antes-ahora]` salen dos fotogramas uno junto al otro, rotulados «Antes» y «Ahora»: los catorce cubos sueltos y torcidos, como empieza la animación, y la pila hecha. El primero es un dibujo fijo que se calcula al construir, con la misma pose que `figure/flat.js` pinta al arrancar; el segundo se puede tocar como la pila sola. Una variante que no existe para el build con un error que dice cuáles hay.
+Con `::cubos[torre]` sale una torre de tres cubos, uno apilado sobre otro, con el mismo cubo y la misma rampa de color por capas (`figure/tower.js`). En reposo está hecha; al tocarla, se deshace en una fila sobre el suelo y otro toque la vuelve a apilar, un cubo tras otro. Si la variante no existe, el build se para con un error que dice cuáles hay.
 
 ```md
-::cubos[antes-ahora] Antes, copias sueltas; ahora, una cadena.
+::cubos[torre] Cada capa se apoya en la de debajo.
 ```
 
 Caben varias figuras en una Nota: el plugin quita los id del SVG y marca el grupo de los cubos con `data-cube-field`.

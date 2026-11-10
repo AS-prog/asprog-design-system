@@ -5,7 +5,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y l
 ## Sin publicar
 
 ### Añadido
-- `::cubos[antes-ahora]` en `markdown-cubes.mjs`: dos fotogramas rotulados, los cubos sueltos (la pose con la que arranca la animación, calculada al construir) y la pila hecha, que se puede tocar. Clases `cube-note-frames`, `cube-note-frame` y `cube-note-label` en `css/site.css`. Fase 2 de #7, para la Nota sobre APM.
+- `::cubos[torre]` en `markdown-cubes.mjs`: tres cubos apilados uno sobre otro (`figure/tower.js`), con la rampa de color de la pila. En reposo, la torre hecha; al tocarla, se deshace en una fila y se vuelve a apilar. Fase 2 de #7, para la Nota sobre APM.
+- `figure/timeline.js`: el reloj que comparten la pila (`flat.js`) y la torre.
 
 ### Cambiado
 - Las figuras de `markdown-cubes.mjs` salen sin los id del SVG, así que caben varias en una Nota; `figure/flat.js` encuentra el grupo de los cubos por `#cube-field` o por `[data-cube-field]`.

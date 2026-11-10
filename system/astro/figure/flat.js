@@ -8,6 +8,7 @@
 // Lo que no hace: ni gira al arrastrar ni evita que dos cubos se crucen en el vuelo. Es un
 // dibujo plano, y en él la superposición es solo el orden de pintado.
 import { cubes, DURATION, flatPose, painterOrder } from './flat-model.js';
+import { timeline } from './timeline.js';
 
 // El grupo de los cubos: `#cube-field` en el SVG de CubeFigure; en las Notas, que pueden llevar
 // varias figuras, markdown-cubes.mjs le quita el id y lo marca con `data-cube-field`.
@@ -41,13 +42,6 @@ export function animateFlatFigure(svg, { onStateChange = () => {}, autoplay = tr
   const groups = field ? [...field.children].filter((node) => node.tagName === 'g') : [];
   if (groups.length !== cubes.length) return null;
 
-  const motion = matchMedia('(prefers-reduced-motion: reduce)');
-  let elapsed = LEAD, last = 0, frame = 0, paused = false, direction = 1;
-  // `done`: el reloj ha llegado al extremo hacia el que va. `completed`: la pila está hecha.
-  const done = () => (direction > 0 ? elapsed >= DURATION : elapsed <= LEAD);
-  const state = () => ({ elapsed, paused, direction, reduced: motion.matches, completed: elapsed >= DURATION, moving: !paused && !done() });
-  const sync = () => onStateChange(state());
-
   // Un fotograma: la pose de cada cubo y, si el orden del pintor ha cambiado, los grupos
   // se recolocan. `append` sobre un hijo existente lo mueve, no lo duplica.
   function draw(seconds) {
@@ -59,46 +53,5 @@ export function animateFlatFigure(svg, { onStateChange = () => {}, autoplay = tr
     }
   }
 
-  function tick(now) {
-    frame = 0;
-    if (paused || motion.matches || document.hidden) return;
-    elapsed = Math.max(LEAD, Math.min(DURATION, elapsed + (direction > 0 ? 1 : -BACK) * (now - last) / 1000));
-    last = now;
-    draw(elapsed);
-    if (done()) { sync(); return; }
-    frame = requestAnimationFrame(tick);
-  }
-  function play() {
-    if (frame || paused || motion.matches || done()) return;
-    last = performance.now();
-    frame = requestAnimationFrame(tick);
-  }
-  const pause = () => { paused = true; if (frame) cancelAnimationFrame(frame); frame = 0; sync(); };
-  const resume = () => { paused = false; sync(); play(); };
-  const replay = () => { elapsed = LEAD; direction = 1; paused = false; draw(LEAD); sync(); play(); };
-  const reverse = () => {
-    if (motion.matches) return;
-    direction = -direction;
-    paused = false; sync(); play();
-  };
-  // El gesto de tocar la figura: en marcha, pausa; en pausa, reanuda; quieta en un extremo
-  // (la pila hecha o deshecha), da la vuelta.
-  const toggle = () => {
-    if (motion.matches) return;
-    if (paused) resume();
-    else if (!done()) pause();
-    else reverse();
-  };
-  const seek = (seconds) => { elapsed = Math.max(0, Math.min(DURATION, seconds)); draw(elapsed); sync(); };
-
-  // Con movimiento reducido no hay vuelo: el dibujo se queda en reposo, que es como venía.
-  // Sin autoplay tampoco se dibuja nada: el reloj se pone al final y el SVG no se toca.
-  if (!autoplay) elapsed = DURATION;
-  else if (motion.matches) draw(DURATION); else draw(LEAD);
-  motion.addEventListener('change', () => { if (motion.matches) { seek(DURATION); } else sync(); });
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) play(); });
-  sync();
-  play();
-
-  return { play, pause, resume, replay, reverse, toggle, seek, state };
+  return timeline({ start: LEAD, end: DURATION, back: BACK, draw, autoplay, onStateChange });
 }
