@@ -10,6 +10,13 @@
 /* El ancho es un múltiplo exacto de la retícula: redondear hacia abajo deja el margen
    simétrico. La primera línea es la reserva para quien no entienda `round()`. */
 .page { width: min(100%, var(--doc-width)); width: round(down, min(100%, var(--grid-max)) - 2 * var(--grid-margin), var(--unit)); max-width: 100%; margin: 0 auto; padding: 0 var(--s-6) var(--s-13); }
+/* La columna de lectura: en las páginas interiores (una Nota, el índice de Notas) el
+   contenido va centrado, como el bloque de la portada; la navegación y el pie siguen a
+   todo el ancho. La portada centra ella misma sus dos columnas y el currículum necesita
+   el ancho de documento para la columna de fechas. */
+.page > main { max-width: var(--measure-wide); margin-inline: auto; }
+.page > main:has(> .home-intro) { max-width: none; }
+.page > main:has(> .resume) { max-width: var(--doc-width); }
 /* El acceso de teclado evita repetir toda la navegación en cada página. */
 .skip-link { position: fixed; top: var(--s-3); left: var(--s-3); z-index: 10; padding: var(--s-3) var(--s-4); background: var(--ink); color: var(--ground); transform: translateY(calc(-100% - var(--s-6))); }
 .skip-link:focus { transform: translateY(0); }
@@ -188,7 +195,7 @@
   /* La figura de la portada no se imprime; la de una Nota es parte del texto y sí. */
   .cube-figure, .figure-controls { display: none; }
   .cube-note .cube-figure { display: flex; }
-  .page { max-width: none; margin: 0; padding: 0; }
+  .page, .page > main { max-width: none; margin: 0; padding: 0; }
   .resume-section, .resume-entry { break-inside: avoid; }
   .resume-head { padding-bottom: var(--s-7); }
   .resume-section { padding: var(--s-5) 0 var(--s-6); }

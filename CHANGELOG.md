@@ -11,6 +11,7 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y l
 - Clases `cube-note` (la figura dentro de una Nota) en `css/site.css`.
 
 ### Cambiado
+- Las páginas interiores de la web (una Nota, el índice de Notas, el currículum) centran su contenido como la portada, en vez de quedarse pegadas a la izquierda (#6). `main` dentro de `.page` es una columna de `--measure-wide` centrada; el currículum toma `--doc-width` para la columna de fechas y la portada sigue centrando su propio bloque. La navegación y el pie siguen a todo el ancho.
 - Los estilos de `CubeFigure` pasan de su `<style>` a `css/site.css`, para que valgan también en la figura que no pinta el componente. Los valores no cambian.
 - El montaje de la figura plana y su gesto de tocar salen de `CubeFigure.astro` a `figure/flat-mount.js`, que comparten el componente y las Notas.
 - `CubeFigure` con `engine={false}`: tocar la figura (o Intro y Espacio) mientras los cubos se mueven pausa la animación y otro toque la reanuda; con la figura quieta, el toque le da la vuelta como antes. La entrada dura unos 12 s, así que se puede parar sin botones (WCAG 2.2.2). El nombre accesible de la figura dice qué hará el siguiente toque.
