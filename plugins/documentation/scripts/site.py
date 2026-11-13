@@ -213,12 +213,14 @@ def css(config: dict, page: str) -> str:
 
 def sections(config: dict) -> str:
     """El índice de la portada: una entrada por sección con sus páginas y su tipo."""
+    index = config["project"]["index"]
     out = ['<ul class="lib-sections">']
     for section in config["section"]:
         out.append(f"<li><h3>{html.escape(section['title'])}</h3><ul>")
         for p in section.get("page", []):
             title, kind = html.escape(p["title"]), html.escape(p.get("type", ""))
-            href = p.get("path") or p.get("url")
+            # Las rutas del mapa van desde la raíz del repo; en la portada, relativas a ella.
+            href = rel(p["path"], index) if "path" in p else p.get("url")
             label = f'<a href="{html.escape(href, quote=True)}">{title}</a>' if href else f'<span class="lib-pending">{title}</span>'
             out.append(f'<li>{label}<span class="lib-type">{kind if href else "pendiente"}</span></li>')
         out.append("</ul></li>")
