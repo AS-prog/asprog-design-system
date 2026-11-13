@@ -6,7 +6,9 @@
 //   standalone-html <página.html> <salida.html>
 //
 // - Mete en la página las hojas que enlaza (<link rel="stylesheet">), con sus fuentes
-//   como data: URI, y las imágenes locales (<img src>).
+//   como data: URI, y las imágenes locales (<img src>). Las hojas del sistema en jsDelivr
+//   (…/asprog-design-system@vX.Y.Z/system/…) salen de la copia del plugin si es la misma
+//   versión, y si no, se descargan.
 // - Quita la barra lateral (<!-- site:nav --> … <!-- /site:nav -->) y la hoja del sitio:
 //   el artefacto se lee solo, sin el resto del sitio.
 // - Quita los <script src> externos y deja los scripts en línea (el botón de tema).
@@ -17,7 +19,12 @@
 // que es lo que admite un artefacto.
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
-import { dirname, resolve, extname, basename } from 'node:path';
+import { dirname, resolve, extname, basename, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const PLUGIN_SYSTEM = join(dirname(fileURLToPath(import.meta.url)), '..', 'system');
+const CDN_SYSTEM = /^https:\/\/cdn\.jsdelivr\.net\/gh\/AS-prog\/asprog-design-system@v?(\d+\.\d+\.\d+)\/system\/(.+)$/;
+const pluginVersion = existsSync(join(PLUGIN_SYSTEM, 'VERSION')) ? readFileSync(join(PLUGIN_SYSTEM, 'VERSION'), 'utf8').trim() : '';
 
 const MIME = {
   '.woff2': 'font/woff2', '.woff': 'font/woff', '.ttf': 'font/ttf',
@@ -37,19 +44,46 @@ if (!/^[A-Za-z0-9._-]+$/.test(basename(out))) fail(`el nombre ${basename(out)} s
 const here = dirname(resolve(src));
 let html = readFileSync(src, 'utf8');
 
-const dataUri = (file) => {
+// Un fichero local o del sistema en jsDelivr: de la copia del plugin si es su versión; si no, de la red.
+async function load(ref) {
+  const cdn = ref.match(CDN_SYSTEM);
+  if (!cdn) return readFileSync(ref);
+  if (cdn[1] === pluginVersion) return readFileSync(join(PLUGIN_SYSTEM, cdn[2]));
+  const res = await fetch(ref).catch(() => null);
+  if (!res?.ok) fail(`no pude descargar ${ref}`);
+  return Buffer.from(await res.arrayBuffer());
+}
+
+const dataUri = async (file) => {
   const type = MIME[extname(file).toLowerCase()];
   if (!type) fail(`no sé meter ${file} en la página`);
-  return `data:${type};base64,${readFileSync(file).toString('base64')}`;
+  return `data:${type};base64,${(await load(file)).toString('base64')}`;
 };
 
+const isCdn = (ref) => CDN_SYSTEM.test(ref);
+const join2 = (base, ref) => (/^https?:/.test(base) ? new URL(ref, base + '/').href : resolve(base, ref));
+
 // Una hoja, con sus url(...) relativas pasadas a data: URI.
-function inlineCss(file) {
-  const base = dirname(file);
-  return readFileSync(file, 'utf8').replace(/url\((['"]?)([^'")]+)\1\)/g, (m, q, ref) => {
-    if (/^(data:|https?:|#)/.test(ref)) return m;
-    return `url("${dataUri(resolve(base, ref))}")`;
-  });
+async function inlineCss(file) {
+  const base = isCdn(file) ? file.replace(/\/[^/]*$/, '') : dirname(file);
+  const css = (await load(file)).toString('utf8');
+  const out = [];
+  let last = 0;
+  for (const m of css.matchAll(/url\((['"]?)([^'")]+)\1\)/g)) {
+    out.push(css.slice(last, m.index));
+    out.push(/^(data:|https?:|#)/.test(m[2]) ? m[0] : `url("${await dataUri(join2(base, m[2]))}")`);
+    last = m.index + m[0].length;
+  }
+  out.push(css.slice(last));
+  return out.join('');
+}
+
+async function replaceAsync(text, re, fn) {
+  const parts = [];
+  let last = 0;
+  for (const m of text.matchAll(re)) { parts.push(text.slice(last, m.index), await fn(...m)); last = m.index + m[0].length; }
+  parts.push(text.slice(last));
+  return parts.join('');
 }
 
 // 1. Fuera la barra lateral, la hoja del sitio y los scripts externos.
@@ -58,15 +92,15 @@ html = html.replace(/<!-- site:css -->[\s\S]*?<!-- \/site:css -->/g, '');
 html = html.replace(/<script\b[^>]*\bsrc=["'][^"']+["'][^>]*><\/script>\s*/g, '');
 
 // 2. Hojas en línea.
-html = html.replace(/<link\b[^>]*rel=["']stylesheet["'][^>]*>/g, (tag) => {
+html = await replaceAsync(html, /<link\b[^>]*rel=["']stylesheet["'][^>]*>/g, async (tag) => {
   const href = tag.match(/href=["']([^"']+)["']/)?.[1];
-  if (!href || /^https?:/.test(href)) fail(`hoja externa ${href}: la página no debe pedir nada fuera del repo`);
-  return `<style>\n${inlineCss(resolve(here, href))}\n</style>`;
+  if (!href || (/^https?:/.test(href) && !isCdn(href))) fail(`hoja externa ${href}: la página no debe pedir nada fuera del repo, salvo el sistema en jsDelivr`);
+  return `<style>\n${await inlineCss(isCdn(href) ? href : resolve(here, href))}\n</style>`;
 });
 
 // 3. Imágenes locales en línea.
-html = html.replace(/(<img\b[^>]*\bsrc=)(["'])([^"']+)\2/g, (m, pre, q, ref) =>
-  /^(data:|https?:)/.test(ref) ? m : `${pre}${q}${dataUri(resolve(here, ref))}${q}`);
+html = await replaceAsync(html, /(<img\b[^>]*\bsrc=)(["'])([^"']+)\2/g, async (m, pre, q, ref) =>
+  /^(data:|https?:)/.test(ref) ? m : `${pre}${q}${await dataUri(resolve(here, ref))}${q}`);
 
 if (/<link\b[^>]*rel=["']stylesheet["']/.test(html)) fail('quedó una hoja sin meter');
 mkdirSync(dirname(resolve(out)), { recursive: true });

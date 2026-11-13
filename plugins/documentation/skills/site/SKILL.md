@@ -1,6 +1,6 @@
 ---
 name: site
-description: Prepara y mantiene el sitio de la documentación de un proyecto: copia el sistema de diseño al repo, crea páginas desde sus plantillas y genera la portada y la barra lateral desde docs/site/site.toml. Úsala al montar la documentación de un proyecto nuevo, al añadir una página al sitio, al subir de versión el sistema o cuando pidan «regenera el sitio» o «la barra lateral».
+description: Prepara y mantiene el sitio de la documentación de un proyecto: enlaza el sistema de diseño (copia en el repo o jsDelivr), crea páginas desde sus plantillas y genera la portada y la barra lateral desde docs/site/site.toml. Úsala al montar la documentación de un proyecto nuevo, al añadir una página al sitio, al subir de versión el sistema o cuando pidan «regenera el sitio» o «la barra lateral».
 ---
 
 # site
@@ -14,7 +14,7 @@ S="uv run --no-project --with markdown python ${CLAUDE_PLUGIN_ROOT}/scripts/site
 ## Un proyecto nuevo
 
 1. Copia `${CLAUDE_PLUGIN_ROOT}/templates/site/site.toml` y `home.md` a `docs/site/` y rellena lo que va entre `{{…}}`: el nombre, la marca, las secciones (una por parte del sistema, en el orden en que fluyen los datos; «Método» primero) y la portada.
-2. `$S vendor`: copia el sistema a `docs/design-system/vX.Y/`. Entra en git: las páginas lo enlazan con rutas relativas.
+2. Elige cómo llega el sistema (abajo, «Copia o jsDelivr»). Con copia, `$S vendor` lo deja en `docs/design-system/vX.Y/`, que entra en git. Con jsDelivr, `system` en `site.toml` es la URL fijada a un tag y no hay nada que copiar.
 3. `$S build`: escribe `index.html` y pone la barra en las páginas del mapa.
 
 ## Una página nueva
@@ -27,9 +27,20 @@ S="uv run --no-project --with markdown python ${CLAUDE_PLUGIN_ROOT}/scripts/site
 
 Una página que regenera otro script entera pierde la barra: vuelve a ejecutar `build` después.
 
-## Subir de versión el sistema
+## Copia o jsDelivr
 
-`$S vendor` deja la versión nueva junto a la vieja (`docs/design-system/v0.7/`, `v0.8/`…). Las páginas nuevas usan la nueva; las viejas se quedan en la suya hasta que alguien las regenere. Cuando ninguna página enlaza ya una versión, su carpeta se borra en un commit propio.
+`[project] system` en `site.toml` decide de dónde salen las hojas, los tokens, las fuentes y `library-fold.js`:
+
+| | Copia (por defecto) | jsDelivr |
+|---|---|---|
+| `system` | `docs/design-system` | `https://cdn.jsdelivr.net/gh/AS-prog/asprog-design-system@v0.14.0/system` |
+| En el repo | `docs/design-system/vX.Y/`, ≈ 0,6 MB por versión | Nada |
+| Sin red | Se ve igual, con doble clic | El contenido sin estilos |
+| Subir de versión | `$S vendor` y regenerar las páginas | Cambiar el tag y `$S build` |
+
+Con copia, cada versión queda junto a la anterior (`v0.12/`, `v0.13/`…): las páginas viejas siguen en la suya y la carpeta que nadie enlaza se borra en un commit propio. Con jsDelivr, `build` lleva las hojas de cada página del mapa al tag de `site.toml` (también las que enlazaban una copia), así que el repo nunca tiene dos versiones. Conviene jsDelivr cuando hay varias páginas o artefactos sueltos que se quedarían atrás; la copia, cuando la documentación se lee sin red.
+
+Para pasar un proyecto de la copia a jsDelivr: pon la URL en `system`, ejecuta `$S build`, comprueba con `delphos-check` que ninguna página del mapa enlaza ya la copia y borra `docs/design-system/` en el mismo commit. `delphos-check` valida las clases contra el `classes.json` del tag que enlaza la página.
 
 ## Cómo se ve
 
@@ -51,4 +62,4 @@ Una página que regenera otro script entera pierde la barra: vuelve a ejecutar `
   Desde 0.9.0 `li.lib-solution` ya no es la entrada de la propuesta: es el grupo que cuelga de ella. `site.py build` aún no lo genera (`site.toml` no tiene cómo describirlo): lo usa un proyecto que escribe su barra con un generador propio en lugar de `build`.
 - **Secciones de la página abierta**: un `<ul aria-label="Secciones de esta página">` dentro del `li` de la página cuelga un nivel por debajo y se pliega como los demás.
 - **Móvil**: por debajo de 56rem la barra se pliega arriba tras un botón «Índice». Dentro, los niveles se pliegan igual que en escritorio.
-- Se abre con doble clic en `index.html`, o con `python -m http.server` desde la raíz.
+- Se abre con doble clic en `index.html`, o con `python -m http.server` desde la raíz. Con jsDelivr hace falta red para los estilos.

@@ -5,9 +5,11 @@
 //   2. las hojas no llevan valores a mano;
 //   3. la copia del sistema y classes.json del plugin están al día;
 //   4. las páginas del ejemplo y los fragmentos de diagrams pasan delphos-check;
-//   5. el sitio del ejemplo está generado con la versión actual de site.py.
+//   5. el sitio del ejemplo está generado con la versión actual de site.py;
+//   6. site.py funciona con el sistema en jsDelivr (system como URL): ni copia ni rutas a una copia.
 import { execFileSync } from 'node:child_process';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { cpSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { classes, SHIPPED, version } from './build.mjs';
@@ -63,6 +65,36 @@ catch { errors.push('delphos-check encuentra fallos (arriba)'); }
 try {
   run('uv', ['run', '--quiet', '--no-project', '--with', 'markdown', 'python', join(PLUGIN, 'scripts', 'site.py'), 'build', '--root', 'examples/sample-project', '--check'], { stdio: ['inherit', 'ignore', 'inherit'] });
 } catch { errors.push('el sitio del ejemplo no está al día: ejecuta npm run example'); }
+
+// 6. El sistema desde jsDelivr: el ejemplo, sin su copia y con system como URL.
+{
+  const CDN = `https://cdn.jsdelivr.net/gh/AS-prog/asprog-design-system@v${version()}/system`;
+  const tmp = mkdtempSync(join(tmpdir(), 'site-cdn-'));
+  try {
+    cpSync(join(ROOT, 'examples', 'sample-project'), tmp, { recursive: true, filter: (f) => !f.includes(join('docs', 'design-system')) });
+    const toml = join(tmp, 'docs', 'site', 'site.toml');
+    const text = readFileSync(toml, 'utf8');
+    writeFileSync(toml, /^system\s*=/m.test(text) ? text.replace(/^system\s*=.*$/m, `system = "${CDN}"`) : text.replace(/^\[project\]$/m, `[project]\nsystem = "${CDN}"`));
+    const site = (...a) => execFileSync('uv', ['run', '--quiet', '--no-project', '--with', 'markdown', 'python', join(PLUGIN, 'scripts', 'site.py'), ...a, '--root', tmp], { cwd: ROOT, stdio: ['ignore', 'pipe', 'pipe'] });
+    site('vendor');
+    if (files(tmp).some((f) => f.includes('design-system'))) errors.push('site.py vendor con system como URL ha copiado el sistema');
+    site('build');
+    site('new', 'document', 'registro/prueba/nueva.html', '--title', 'Nueva');
+    const mapped = files(tmp, (f) => f.endsWith('.html'));
+    for (const f of mapped) {
+      const src = readFileSync(f, 'utf8');
+      if (/design-system\/v\d/.test(src)) errors.push(`con system como URL, ${relative(tmp, f)} aún enlaza una copia del sistema`);
+    }
+    const index = readFileSync(join(tmp, 'index.html'), 'utf8');
+    for (const want of ['/tokens.css', '/css/base.css', '/css/document.css', '/css/library.css', '/js/library-fold.js']) {
+      if (!index.includes(CDN + want)) errors.push(`con system como URL, index.html no enlaza ${CDN + want}`);
+    }
+    if (!readFileSync(join(tmp, 'registro', 'prueba', 'nueva.html'), 'utf8').includes(`${CDN}/tokens.css`)) errors.push('site.py new no pone la URL del sistema en la plantilla');
+    try { run('node', [join(PLUGIN, 'scripts', 'delphos-check'), join(tmp, 'index.html')], { stdio: ['inherit', 'ignore', 'inherit'] }); }
+    catch { errors.push('delphos-check no acepta la portada con el sistema en jsDelivr'); }
+  } catch (e) { errors.push(`site.py con system como URL falla: ${e.stderr?.toString().trim() || e.message}`); }
+  finally { rmSync(tmp, { recursive: true, force: true }); }
+}
 
 if (errors.length) { console.error('\n' + errors.map((e) => '✗ ' + e).join('\n')); process.exit(1); }
 console.log(`✓ sistema v${version()}: tokens, hojas, plugin, ejemplo y diagramas correctos (${pages.length} páginas revisadas)`);
