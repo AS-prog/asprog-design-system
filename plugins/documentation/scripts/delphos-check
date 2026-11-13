@@ -7,8 +7,12 @@
 //   delphos-check --library-dir <dir>    con --hook, solo revisa los .html dentro de <dir>;
 //                                        sin el argumento, lee la opción libraryDir del plugin
 //                                        por la variable CLAUDE_PLUGIN_OPTION_libraryDir
-//   delphos-check --allow-host <host>    admite un host externo (por defecto, ninguno: las
-//                                        hojas van copiadas en el repo, con rutas relativas)
+//   delphos-check --allow-host <host>    admite un host externo (por defecto, ninguno)
+//
+// El sistema puede ir copiado en el repo (rutas relativas) o enlazado desde jsDelivr,
+// fijado a un tag (https://cdn.jsdelivr.net/gh/AS-prog/asprog-design-system@vX.Y.Z/…).
+// Esa URL no cuenta como tercero, y las clases se comprueban contra las hojas de ese tag:
+// su classes.json, que se descarga de jsDelivr. Sin red, se usan las del plugin y se avisa.
 //
 // En modo hook, un .html que no es de la biblioteca (sin .doc-prose ni .figwrap)
 // se deja pasar en silencio: el hook no debe molestar con páginas ajenas.
@@ -24,11 +28,35 @@ const VIEW_SHEET = 'css/view.css';
 const LIBRARY_SHEET = 'css/library.css';
 const COLOR_ATTRS = ['fill', 'stroke', 'color', 'stop-color', 'flood-color', 'lighting-color', 'bgcolor'];
 const COLOR_OK = new Set(['currentcolor', 'none', 'inherit', 'transparent', '']);
+// El propio sistema servido por jsDelivr, fijado a un tag: no es un tercero.
+const CDN = 'https://cdn.jsdelivr.net/gh/AS-prog/asprog-design-system@';
+const CDN_TAG = /https:\/\/cdn\.jsdelivr\.net\/gh\/AS-prog\/asprog-design-system@(v?\d+\.\d+\.\d+)\//;
 
 // Clases que existen en las hojas: las genera `npm run build` desde system/css/.
 function knownClasses() {
   const f = join(HERE, '..', 'skills', 'check', 'classes.json');
   try { return new Set(JSON.parse(readFileSync(f, 'utf8'))); } catch { return null; }
+}
+
+function pluginVersion() {
+  try { return readFileSync(join(HERE, '..', 'system', 'VERSION'), 'utf8').trim(); } catch { return ''; }
+}
+
+// Las clases de las hojas de un tag, del classes.json de ese tag. Una vez por tag y ejecución.
+const tagClasses = new Map();
+async function classesFor(src) {
+  const tag = src.match(CDN_TAG)?.[1];
+  if (!tag || tag.replace(/^v/, '') === pluginVersion()) return knownClasses();
+  if (!tagClasses.has(tag)) {
+    let set = null;
+    try {
+      const res = await fetch(`${CDN}${tag}/plugins/documentation/skills/check/classes.json`, { signal: AbortSignal.timeout(10000) });
+      if (res.ok) set = new Set(await res.json());
+    } catch { /* sin red: abajo */ }
+    if (!set) console.error(`aviso: no pude descargar las clases de ${tag}; uso las del plugin (v${pluginVersion()})`);
+    tagClasses.set(tag, set ?? knownClasses());
+  }
+  return tagClasses.get(tag);
 }
 
 // --- utilidades de texto -------------------------------------------------
@@ -84,7 +112,8 @@ export function check(src, { fragment = false, allowHosts = ALLOWED_HOSTS, class
     const src2 = name === 'link' ? attr(t[0], 'href') : ['script', 'img', 'iframe', 'source', 'video', 'audio'].includes(name) ? attr(t[0], 'src') : null;
     if (src2 == null) continue;
     const host = hostOf(src2);
-    if (host && !allowHosts.has(host)) fail(3, lineOf(body, t.index), `<${name}> carga ${host}: ningún documento pide nada fuera del repo`);
+    if (src2.startsWith(CDN)) continue;
+    if (host && !allowHosts.has(host)) fail(3, lineOf(body, t.index), `<${name}> carga ${host}: ningún documento pide nada fuera del repo, salvo el propio sistema en jsDelivr`);
   }
   for (const m of body.matchAll(/@import\b|url\(\s*['"]?(https?:)?\/\/([^/'")]+)/gi)) {
     const host = m[2]?.toLowerCase();
@@ -177,7 +206,7 @@ function report(file, errors) {
 
 function isLibraryHtml(src) { return /\bdoc-prose\b|\bfigwrap\b|class="view"|\blib-nav\b/.test(src); }
 
-function main() {
+async function main() {
   const argv = process.argv.slice(2);
   const files = [];
   let hook = false, libraryDir = '', allow = new Set(ALLOWED_HOSTS);
@@ -199,7 +228,7 @@ function main() {
     if (libraryDir && !resolve(file).startsWith(resolve(libraryDir) + sep)) return 0;
     const src = readFileSync(file, 'utf8');
     if (!isLibraryHtml(src)) return 0;
-    const errors = check(src, { allowHosts: allow });
+    const errors = check(src, { allowHosts: allow, classes: await classesFor(src) });
     if (!errors.length) return 0;
     report(file, errors);
     console.error('Corrige estos fallos antes de seguir: el documento debe cumplir las reglas del sistema de diseño.');
@@ -209,11 +238,12 @@ function main() {
   if (!files.length) { console.error('uso: delphos-check <ruta.html> … | --hook'); return 1; }
   let bad = 0;
   for (const f of files) {
-    const errors = check(readFileSync(f, 'utf8'), { allowHosts: allow });
+    const src = readFileSync(f, 'utf8');
+    const errors = check(src, { allowHosts: allow, classes: await classesFor(src) });
     report(f, errors);
     if (errors.length) bad++;
   }
   return bad ? 2 : 0;
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) process.exit(main());
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main().then((code) => process.exit(code));

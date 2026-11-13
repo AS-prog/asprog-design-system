@@ -11,6 +11,9 @@ Todo sale de docs/site/site.toml (plantilla en templates/site/site.toml):
 - vendor copia las hojas, los tokens, los scripts y las fuentes que trae el plugin a
   <system>/v<X.Y>/ dentro del proyecto. Las páginas las enlazan con rutas
   relativas, así que funcionan sin red y abriéndolas con doble clic.
+  Si system es una URL (el sistema desde jsDelivr, fijado a un tag:
+  https://cdn.jsdelivr.net/gh/AS-prog/asprog-design-system@vX.Y.Z/system),
+  vendor no copia nada y las páginas enlazan esa URL tal cual.
 - new crea una página desde la plantilla de su tipo (implementation,
   technical, design, document) con las rutas al sistema ya calculadas para
   su profundidad. Lo que queda entre {{…}} lo rellena quien escribe;
@@ -128,14 +131,29 @@ def load(root: Path) -> dict:
     return config
 
 
+def is_url(target: str) -> bool:
+    return bool(re.match(r"https?://", target))
+
+
 def system_dir(config: dict) -> str:
-    """La carpeta de la copia del sistema, relativa a la raíz: <system>/vX.Y."""
+    """Dónde está el sistema: la copia, relativa a la raíz (<system>/vX.Y), o la URL tal cual."""
+    system = config["project"]["system"].rstrip("/")
+    if is_url(system):
+        return system
     major, minor = system_version().split(".")[:2]
-    return f"{config['project']['system'].rstrip('/')}/v{major}.{minor}"
+    return f"{system}/v{major}.{minor}"
+
+
+def page_version(config: dict) -> str:
+    """La versión que enlazan las páginas: la del tag de la URL o la que trae el plugin."""
+    m = re.search(r"@v?(\d+\.\d+\.\d+)", config["project"]["system"])
+    return m.group(1) if is_url(config["project"]["system"]) and m else system_version()
 
 
 def rel(target: str, page: str) -> str:
-    """Ruta de target vista desde page, las dos relativas a la raíz."""
+    """Ruta de target vista desde page, las dos relativas a la raíz. Una URL se queda como está."""
+    if is_url(target):
+        return target
     return os.path.relpath(target, os.path.dirname(page) or ".").replace(os.sep, "/")
 
 
@@ -148,6 +166,9 @@ def slug(text: str) -> str:
 
 
 def vendor(root: Path, config: dict) -> list[Path]:
+    if is_url(system_dir(config)):
+        print(f"system es una URL ({system_dir(config)}): no hay nada que copiar", file=sys.stderr)
+        return []
     target = root / system_dir(config)
     if target.exists():
         shutil.rmtree(target)
@@ -254,7 +275,7 @@ def home(root: Path, config: dict) -> tuple[str, str]:
         sections=sections(config),
         home=project["home"],
         config=CONFIG,
-        version=system_version(),
+        version=page_version(config),
     )
     return index, out
 
@@ -272,8 +293,20 @@ def replace_block(text: str, start: str, end: str, block: str, anchor: str, befo
     return text[:at] + block + "\n    " + text[at:] if before else text[:at] + "\n    " + block + text[at:]
 
 
+# Una hoja del sistema enlazada desde una copia (…/vX.Y/) o desde jsDelivr (…@vX.Y.Z/system/).
+SYSTEM_SHEET = re.compile(
+    r'(<link rel="stylesheet" href=")'
+    r'((?:[^"]*/v\d+\.\d+|https://cdn\.jsdelivr\.net/gh/AS-prog/asprog-design-system@[^/"]+/system))'
+    r'/(tokens\.css|css/(?:base|document|view)\.css)(" />)'
+)
+
+
 def page(root: Path, config: dict, path: str) -> tuple[str, str]:
     text = (root / path).read_text(encoding="utf-8")
+    # Con el sistema en jsDelivr, las hojas de cada página siguen al tag de site.toml:
+    # cambiar de versión es cambiar la URL y volver a ejecutar build.
+    if is_url(system_dir(config)):
+        text = SYSTEM_SHEET.sub(lambda m: f"{m[1]}{system_dir(config)}/{m[3]}{m[4]}", text)
     # La capa de biblioteca va detrás de la última hoja del sistema (document.css o view.css).
     text = replace_block(text, CSS_OPEN, CSS_CLOSE, css(config, path),
                          r'<link rel="stylesheet" href="[^"]*css/(?:document|view)\.css" />', before=False)

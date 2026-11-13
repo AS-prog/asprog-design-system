@@ -9,12 +9,19 @@
 // Necesita Playwright con Chromium; sin él, lo dice y sale con 1.
 
 import { resolve } from 'node:path';
-import { existsSync, mkdirSync } from 'node:fs';
-import { dirname } from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { existsSync, mkdirSync, readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { pathToFileURL, fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 
 const MARGIN = 16;
+
+// Una página que pide el sistema a jsDelivr lo recibe de la copia del plugin si es la misma
+// versión: la captura sale igual sin red. Otra versión se descarga.
+const PLUGIN_SYSTEM = join(dirname(fileURLToPath(import.meta.url)), '..', 'system');
+const CDN_SYSTEM = /^https:\/\/cdn\.jsdelivr\.net\/gh\/AS-prog\/asprog-design-system@v?(\d+\.\d+\.\d+)\/system\/([^?#]+)/;
+const pluginVersion = existsSync(join(PLUGIN_SYSTEM, 'VERSION')) ? readFileSync(join(PLUGIN_SYSTEM, 'VERSION'), 'utf8').trim() : '';
+const TYPES = { '.css': 'text/css', '.js': 'text/javascript', '.woff2': 'font/woff2', '.svg': 'image/svg+xml' };
 
 function usage(msg) {
   if (msg) console.error(`figure-png: ${msg}`);
@@ -50,6 +57,13 @@ try {
 const browser = await chromium.launch();
 try {
   const tab = await browser.newPage({ viewport: { width: 1300, height: 900 }, deviceScaleFactor: 2, colorScheme: 'light' });
+  await tab.route(CDN_SYSTEM, (route) => {
+    const [, version, path] = route.request().url().match(CDN_SYSTEM);
+    const file = join(PLUGIN_SYSTEM, path);
+    if (version !== pluginVersion || !existsSync(file)) return route.continue();
+    const type = TYPES[path.slice(path.lastIndexOf('.'))] ?? 'application/octet-stream';
+    return route.fulfill({ body: readFileSync(file), contentType: type, headers: { 'access-control-allow-origin': '*' } });
+  });
   await tab.goto(pathToFileURL(page).href);
   const figures = await tab.$$('figure.figwrap');
   if (figures.length === 0) usage(`${page} no tiene ninguna figure.figwrap`);

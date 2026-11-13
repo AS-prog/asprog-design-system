@@ -2,6 +2,16 @@
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y la versión, [SemVer](https://semver.org/lang/es/).
 
+## 0.14.0 · 2026-11-13
+
+### Añadido
+- El sistema se puede importar desde jsDelivr fijado a un tag, en lugar de copiarlo en el repo (#13). En `site.toml`, `system = "https://cdn.jsdelivr.net/gh/AS-prog/asprog-design-system@v0.14.0/system"`: `vendor` no copia nada, la barra lateral y `library.css` salen de esa URL, `new` escribe las plantillas con ella y `build` lleva a ese tag las hojas del sistema de cada página del mapa. Sin red no hay estilos; la copia sigue siendo el modo por defecto. El README del plugin y la skill `site` explican cuándo usar cada uno.
+- `delphos-check` acepta el sistema en jsDelivr y comprueba las clases contra el `classes.json` del tag de la página; si no puede descargarlo, avisa y usa las del plugin.
+- `standalone-html` y `figure-png` sirven páginas que piden el sistema a jsDelivr: las hojas de la misma versión que el plugin salen de su copia, sin red, y las demás se descargan.
+
+### Cambiado
+- `scripts/test.mjs` construye el ejemplo con el sistema como URL y comprueba que no queda copia ni ruta local.
+
 ## 0.13.0 · 2026-11-13
 
 ### Añadido
