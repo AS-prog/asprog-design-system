@@ -1,0 +1,34 @@
+---
+// Cabecera de una historia de caso: vuelta al índice, antetítulo con el sector, titular y
+// la ficha en mono. Estilo en css/site.css (CaseHeader).
+import Eyebrow from './Eyebrow.astro';
+
+interface Meta {
+  term: string;
+  text: string;
+}
+interface Props {
+  context: string;
+  title: string;
+  meta: Meta[];
+  backHref: string;
+  backLabel: string;
+}
+const { context, title, meta, backHref, backLabel } = Astro.props;
+---
+
+<a class="back" href={backHref}>← {backLabel}</a>
+<header class="case-head" data-rule>
+  <Eyebrow>{context}</Eyebrow>
+  <h1>{title}</h1>
+  <dl class="meta">
+    {
+      meta.map((item) => (
+        <div>
+          <dt>{item.term}</dt>
+          <dd>{item.text}</dd>
+        </div>
+      ))
+    }
+  </dl>
+</header>

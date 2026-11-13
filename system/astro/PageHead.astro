@@ -1,0 +1,17 @@
+---
+// Cabecera de una página interior de la web: la regla mayor la abre y el titular va solo,
+// sin antetítulo, porque el nivel ya dice qué es. El slot `meta` es para el dato que abre
+// la página sin ser titular (la fecha de una publicación): va en mono y lo pone la página.
+// Estilo en css/site.css (PageHead).
+interface Props {
+  title: string;
+  lede?: string;
+}
+const { title, lede } = Astro.props;
+---
+
+<header class="page-head" data-rule>
+  <slot name="meta" />
+  <h1>{title}</h1>
+  {lede && <p class="lede">{lede}</p>}
+</header>

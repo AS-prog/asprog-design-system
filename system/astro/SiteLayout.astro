@@ -1,0 +1,85 @@
+---
+// La página completa de la web: <html> sin `data-theme` (la web parte del claro), <head>
+// con el tema guardado antes de pintar y las tres hojas en su orden (tokens → base → site),
+// el enlace de salto, la navegación con el conmutador, el contenido y el pie. Carga grid.js,
+// que ajusta a la retícula los bloques marcados con `data-rule`: las páginas no lo importan.
+//
+// Los destinos de la navegación y el texto del pie son del proyecto, no del sistema: llegan
+// por `links` y por el slot `footer`.
+import '../tokens.css';
+import '../css/base.css';
+import '../css/site.css';
+import ThemeScript from './ThemeScript.astro';
+import ThemeToggle from './ThemeToggle.astro';
+
+export interface SiteLink {
+  href: string;
+  label: string;
+}
+interface Props {
+  title: string;
+  description: string;
+  /** Los destinos de la navegación principal. */
+  links?: SiteLink[];
+  /** false en una página que lleva su propia cabecera (la portada). Por defecto: true. */
+  nav?: boolean;
+  lang?: string;
+  /** Texto del enlace de salto. Por defecto: «Saltar al contenido». */
+  skipLabel?: string;
+}
+const { title, description, links = [], nav = true, lang = 'es', skipLabel = 'Saltar al contenido' } = Astro.props;
+
+// Un destino está activo en su propia ruta y en todo lo que cuelga de ella; la raíz, solo en sí.
+const path = Astro.url.pathname;
+const current = (href: string) => {
+  const base = href.replace(/\/$/, '');
+  return path === href || (base !== '' && path.startsWith(base + '/')) ? 'page' : undefined;
+};
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <ThemeScript />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{skipLabel}</a>
+    <div class="page">
+      {
+        nav && (
+          <header class="nav">
+            <nav aria-label="Principal">
+              {links.map((link) => (
+                <a href={link.href} aria-current={current(link.href)}>
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+            <ThemeToggle variant="site" />
+          </header>
+        )
+      }
+
+      <main id="main" tabindex="-1">
+        <slot />
+      </main>
+
+      {
+        Astro.slots.has('footer') && (
+          <footer class="site-footer">
+            <slot name="footer" />
+          </footer>
+        )
+      }
+    </div>
+
+    <script>
+      import './grid.js';
+    </script>
+  </body>
+</html>

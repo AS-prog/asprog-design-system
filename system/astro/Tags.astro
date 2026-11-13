@@ -1,0 +1,31 @@
+---
+// La lista de etiquetas de un documento (las `tags` del frontmatter).
+import Tag from './Tag.astro';
+
+export interface TagItem {
+  label: string;
+  href?: string;
+  solid?: boolean;
+}
+interface Props {
+  items: (TagItem | string)[];
+  /** Si se da, cada etiqueta de texto enlaza a `${hrefBase}${etiqueta}`. */
+  hrefBase?: string;
+}
+const { items, hrefBase } = Astro.props;
+const tags = items.map((t) =>
+  typeof t === 'string' ? { label: t, href: hrefBase ? `${hrefBase}${encodeURIComponent(t)}` : undefined } : t,
+);
+---
+
+<ul class="tags">
+  {
+    tags.map((t) => (
+      <li>
+        <Tag href={t.href} solid={t.solid}>
+          {t.label}
+        </Tag>
+      </li>
+    ))
+  }
+</ul>

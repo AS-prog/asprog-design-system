@@ -1,0 +1,17 @@
+---
+// Sección de una historia de caso: la regla fina la abre, el titular de sección y la prosa.
+// Titular y párrafos admiten marcado en línea (`<em>`, `<code>`) y entran con `set:html`:
+// los escribe el proyecto, no un usuario. Lo que no es prosa (un diagrama) entra por el slot.
+// Estilo en css/site.css (CaseSection).
+interface Props {
+  title: string;
+  paragraphs?: string[];
+}
+const { title, paragraphs = [] } = Astro.props;
+---
+
+<section class="case-section" data-rule>
+  <h2 set:html={title} />
+  {paragraphs.map((paragraph) => <p class="prose" set:html={paragraph} />)}
+  <slot />
+</section>

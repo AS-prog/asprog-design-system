@@ -1,0 +1,31 @@
+---
+// Aviso de documento: la nota de trabajo de la web llevada a los callouts de Markdown.
+// El tipo lo dice la etiqueta en mono, nunca un color. No se anida uno dentro de otro.
+//
+//   note       > [!NOTE], > [!TIP]           «Nota»
+//   important  > [!IMPORTANT]                «Importante»
+//   risk       > [!WARNING], > [!CAUTION]    «Riesgo»
+//   pending    un hueco sin decidir           «Pendiente · ticket NNN» (no se imprime)
+export type NoticeType = 'note' | 'important' | 'risk' | 'pending';
+interface Props {
+  type?: NoticeType;
+  /** Etiqueta; por defecto la del tipo. */
+  title?: string;
+  /** Solo para `pending`: el ticket que resuelve el hueco. */
+  ticket?: string;
+}
+const { type = 'note', title, ticket } = Astro.props;
+
+const LABELS: Record<NoticeType, string> = {
+  note: 'Nota',
+  important: 'Importante',
+  risk: 'Riesgo',
+  pending: 'Pendiente',
+};
+const label = title ?? (type === 'pending' && ticket ? `${LABELS.pending} · ticket ${ticket}` : LABELS[type]);
+---
+
+<div class:list={['notice', type !== 'note' && `notice-${type}`]}>
+  <span class="notice-title">{label}</span>
+  <slot />
+</div>

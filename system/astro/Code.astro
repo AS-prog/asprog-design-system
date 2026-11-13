@@ -1,0 +1,20 @@
+---
+// Bloque de código de documento, con el nombre de fichero opcional encima (p.code-title).
+// Dos entradas:
+//   - `code`: texto plano; se escapa tal cual;
+//   - `html`: marcado ya escapado con las cuatro clases de resaltado de Delphos
+//     (.hl-k palabra clave, .hl-s cadena, .hl-n número, .hl-c comentario).
+// No hay colores de lenguaje, así que el resaltador de Astro (Shiki) no se usa aquí.
+interface Props {
+  code?: string;
+  html?: string;
+  /** Nombre del fichero, en mono, pegado al bloque. */
+  title?: string;
+  /** Lenguaje, solo como dato: va en `data-lang`. */
+  lang?: string;
+}
+const { code = '', html, title, lang } = Astro.props;
+---
+
+{title && <p class="code-title">{title}</p>}
+{html ? <pre data-lang={lang}><code set:html={html} /></pre> : <pre data-lang={lang}><code>{code}</code></pre>}

@@ -1,0 +1,26 @@
+name: CI
+
+# Comprueba el sistema en cada PR y en main: lo generado está al día y npm test pasa.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: astral-sh/setup-uv@v6
+      - name: lo generado está al día
+        run: |
+          npm run build
+          git diff --exit-code || { echo "Ejecuta npm run build y sube lo generado"; exit 1; }
+      - name: npm test
+        run: npm test

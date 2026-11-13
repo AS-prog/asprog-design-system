@@ -1,0 +1,53 @@
+---
+// Tabla de documento: sin cebra ni fondo. Dos formas de usarla:
+//   - con datos: `columns` y `rows`, y la tabla se escribe sola;
+//   - con marcado: el <thead>/<tbody> va en el slot, tal como lo emite un conversor.
+// `wide` la envuelve en div.table-wrap para que se desplace en móvil en vez de romper la página.
+export interface TableColumn {
+  label: string;
+  /** Alinea a la derecha con cifras tabulares (td.num). */
+  numeric?: boolean;
+}
+interface Props {
+  caption?: string;
+  columns?: (TableColumn | string)[];
+  rows?: (string | number)[][];
+  /** La primera celda de cada fila es su cabecera (th). */
+  rowHeader?: boolean;
+  wide?: boolean;
+}
+const { caption, columns = [], rows, rowHeader = false, wide = false } = Astro.props;
+const cols = columns.map((c) => (typeof c === 'string' ? { label: c } : c));
+const num = (i: number) => (cols[i]?.numeric ? 'num' : undefined);
+const Wrap = wide ? 'div' : Fragment;
+---
+
+<Wrap class={wide ? 'table-wrap' : undefined}>
+  <table>
+    {caption && <caption>{caption}</caption>}
+    {
+      rows ? (
+        <>
+          <thead>
+            <tr>
+              {cols.map((c, i) => (
+                <th class={num(i)}>{c.label}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr>
+                {row.map((cell, i) =>
+                  rowHeader && i === 0 ? <th class={num(i)}>{cell}</th> : <td class={num(i)}>{cell}</td>,
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </>
+      ) : (
+        <slot />
+      )
+    }
+  </table>
+</Wrap>

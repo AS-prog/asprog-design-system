@@ -1,0 +1,12 @@
+---
+// Una etiqueta: dato en mono. Con `href` es un enlace; `solid` invierte para un estado
+// (vigente, borrador). Sin iconos ni colores por categoría.
+interface Props {
+  href?: string;
+  solid?: boolean;
+}
+const { href, solid = false } = Astro.props;
+const Tag = href ? 'a' : 'span';
+---
+
+<Tag class:list={['tag', solid && 'tag-solid']} href={href}><slot /></Tag>
