@@ -72,10 +72,6 @@ figcaption strong { color: var(--ink); font-weight: 600; }
 .d-solution  { color: var(--solution); }
 .d-pending-a { color: var(--pending-a); }
 .d-pending-b { color: var(--pending-b); }
-/* Lo que añade una propuesta, en la columna de la derecha de una comparación (.doc-compare).
-   Fija color, como los de rama; una caja nueva lleva además stroke-dasharray="5 4",
-   y siempre hay un número de issue o una nota al lado. */
-.d-new { color: var(--proposal); }
 .d-tm   { fill: currentColor; font-family: var(--f-mono); font-size: 12.5px; }
 .d-sm   { fill: currentColor; font-family: var(--f-body); font-size: 12.5px; } /* sin opacidad: con .82 el texto en .g-stop bajaba a 3,5:1 */
 .d-mid  { text-anchor: middle; }

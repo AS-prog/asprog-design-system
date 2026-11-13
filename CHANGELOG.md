@@ -2,7 +2,7 @@
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y la versión, [SemVer](https://semver.org/lang/es/).
 
-## Sin publicar
+## 0.13.0 · 2026-11-13
 
 ### Añadido
 - Plantilla de PR (`plugins/documentation/templates/pull_request_template.md`), que un proyecto copia a `.github/pull_request_template.md`, con el formato de nano-harness: qué cambia, cómo se comprobó, avisos, cómo revisarlo y `Closes #N`. «Cómo cambia el desarrollo» (la figura y la tabla de páginas con su estado al fusionar) es opcional, para las PR que tocan páginas.
