@@ -1,0 +1,76 @@
+<!doctype html>
+<!-- Generada desde docs/site/home.md y docs/site/site.toml con site.py build. No se edita a mano. -->
+<html lang="es" data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>asprog-design-system</title>
+    <meta name="description" content="El sistema de diseño Delphos y el método de documentación de los proyectos, con sus plugins de Claude Code. Este sitio guarda la evidencia de los cambios del propio repo, hecha con el mismo método que enseña." />
+    <meta name="theme-color" content="#F0EBDE" />
+    <link rel="stylesheet" href="design-system/v0.9/tokens.css" />
+    <link rel="stylesheet" href="design-system/v0.9/css/base.css" />
+    <link rel="stylesheet" href="design-system/v0.9/css/document.css" />
+    <!-- site:css --><link rel="stylesheet" href="design-system/v0.9/css/library.css" /><!-- /site:css -->
+    <script>
+      // Antes de pintar, para que no haya destello: el tema guardado manda sobre «auto».
+      try {
+        var t = localStorage.getItem('tema');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
+  </head>
+  <body class="lib">
+    <!-- site:nav -->
+    <nav class="lib-nav" aria-label="Sitio">
+    <details open>
+    <summary><a class="lib-home" href="index.html" aria-current="page">asprog-design-system</a><span class="lib-menu">Índice</span></summary>
+    <h2>Método</h2>
+    <ul>
+    <li><a href="registro/metodo/2026-11-09-implementacion-plantilla-pr/plantilla-pr.html">Implementación: plantilla de PR</a></li>
+    </ul>
+    </details>
+    </nav>
+    <script>(function () { var m = matchMedia('(max-width: 56rem)'), d = document.querySelector('.lib-nav details'); d.open = !m.matches; m.addEventListener('change', function () { d.open = !m.matches; }); })();</script>
+    <script src="design-system/v0.9/js/library-fold.js"></script>
+    <!-- /site:nav -->
+    <div class="doc">
+      <header class="doc-bar">
+        <span class="doc-brand">asprog-design-system</span>
+        <button class="doc-theme" type="button" aria-label="Cambiar tema">Tema</button>
+      </header>
+
+      <header class="doc-header">
+        <h1>asprog-design-system</h1>
+        <p class="lede">El sistema de diseño Delphos y el método de documentación de los proyectos, con sus plugins de Claude Code. Este sitio guarda la evidencia de los cambios del propio repo, hecha con el mismo método que enseña.</p>
+      </header>
+
+      <article class="doc-prose">
+<h2 id="de-que-va">De qué va</h2>
+<p>Cada cambio del método o del sistema deja una página fechada en <code>docs/registro/&lt;tema&gt;/</code>, que enseña cómo cambia el desarrollo y cómo se comprobó, y la enlaza desde su issue y su PR.</p>
+<h2 id="como-leer-el-sitio">Cómo leer el sitio</h2>
+<p>Por ahora hay una sección, <strong>Método</strong>, con las páginas de implementación de los cambios en <code>plugins/documentation/skills/method/</code>.</p>
+        <h2 id="que-hay-en-el-sitio">Qué hay en el sitio</h2>
+<ul class="lib-sections">
+<li><h3>Método</h3><ul>
+<li><a href="docs/registro/metodo/2026-11-09-implementacion-plantilla-pr/plantilla-pr.html">Implementación: plantilla de PR</a><span class="lib-type">implementación</span></li>
+</ul></li>
+</ul>
+      </article>
+
+      <footer class="doc-footer">
+        <span>Fuente: docs/site/home.md y docs/site/site.toml</span>
+        <span>asprog-design-system v0.9.0</span>
+      </footer>
+    </div>
+
+    <script>
+      document.querySelector('.doc-theme').addEventListener('click', function () {
+        var r = document.documentElement, t = r.getAttribute('data-theme');
+        var isDark = t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        var next = isDark ? 'light' : 'dark';
+        r.setAttribute('data-theme', next);
+        try { localStorage.setItem('tema', next); } catch (e) {}
+      });
+    </script>
+  </body>
+</html>

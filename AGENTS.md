@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Guía para cambiar este repo. Para **usar** el sistema en un proyecto, las reglas están en el plugin: `plugins/documentation/skills/` (`method` para qué documento y dónde, `document` para la regla visual, `site` para el sitio, `check` para las reglas que se comprueban).
+Guía para cambiar este repo. Para **usar** el sistema en un proyecto, las reglas están en el plugin: `plugins/documentation/skills/` (`method` para qué documento y dónde, `change` para la issue, la comparación y la PR de un cambio, `document` para la regla visual, `site` para el sitio, `check` para las reglas que se comprueban).
 
 ## Qué se toca y dónde
 

@@ -1,0 +1,210 @@
+<!doctype html>
+<!--
+  Página de implementación: qué hizo una ficha y cómo se comprobó. Va junto a su .md
+  en registro/<tema>/<AAAA-MM-DD>-implementacion-<objeto>/ y, una vez integrada, no se reescribe.
+  Se crea con: site.py new implementation <ruta.html> --title "…"
+  Lo que va entre {{…}} se rellena con el contenido del .md; delphos-check no
+  deja pasar la página mientras quede alguno. Guía: skill method, reference/implementation-pages.md.
+-->
+<html lang="es" data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Implementación: plantilla de PR</title>
+    <meta name="description" content="Plantilla de PR del método documentation: la PR enseña cómo cambia el desarrollo, con su comparativo antes y después." />
+    <meta name="theme-color" content="#F0EBDE" />
+    <link rel="stylesheet" href="../../../design-system/v0.9/tokens.css" />
+    <link rel="stylesheet" href="../../../design-system/v0.9/css/base.css" />
+    <link rel="stylesheet" href="../../../design-system/v0.9/css/document.css" />
+    <!-- site:css --><link rel="stylesheet" href="../../../design-system/v0.9/css/library.css" /><!-- /site:css -->
+    <script>
+      // Antes de pintar, para que no haya destello: el tema guardado manda sobre «auto».
+      try {
+        var t = localStorage.getItem('tema');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
+  </head>
+  <body class="lib">
+    <!-- site:nav -->
+    <nav class="lib-nav" aria-label="Sitio">
+    <details open>
+    <summary><a class="lib-home" href="../../../index.html">asprog-design-system</a><span class="lib-menu">Índice</span></summary>
+    <h2>Método</h2>
+    <ul>
+    <li><a href="plantilla-pr.html" aria-current="page">Implementación: plantilla de PR</a></li>
+    </ul>
+    </details>
+    </nav>
+    <script>(function () { var m = matchMedia('(max-width: 56rem)'), d = document.querySelector('.lib-nav details'); d.open = !m.matches; m.addEventListener('change', function () { d.open = !m.matches; }); })();</script>
+    <script src="../../../design-system/v0.9/js/library-fold.js"></script>
+    <!-- /site:nav -->
+    <div class="doc">
+      <header class="doc-bar">
+        <span class="doc-brand">asprog-design-system / registro</span>
+        <button class="doc-theme" type="button" aria-label="Cambiar tema">Tema</button>
+      </header>
+
+      <header class="doc-header">
+        <h1>Implementación: plantilla de PR</h1>
+        <p class="eyebrow">Issue #3 · PR #2</p>
+        <p class="lede">El método tiene ahora una plantilla de PR que enseña cómo cambia el desarrollo: la figura del cambio, las páginas enlazadas con su estado al fusionar y una lista para cerrar la ficha sin dejar nada en borrador.</p>
+        <dl class="doc-meta">
+          <div><dt>Fecha</dt><dd><time datetime="2026-11-09">2026-11-09</time></dd></div>
+          <div><dt>Estado</dt><dd>borrador: PR #2 abierta</dd></div>
+          <div><dt>Fichas</dt><dd>Issue #3</dd></div>
+          <div><dt>Código</dt><dd>asprog-design-system@a7296a1</dd></div>
+          <div><dt>Diseño</dt><dd>skill method, <code>reference/pull-requests.md</code></dd></div>
+        </dl>
+      </header>
+
+      <nav class="doc-toc" aria-label="Índice">
+        <h2>Índice</h2>
+        <ol>
+          <li><a href="#conclusion">Conclusión</a></li>
+          <li><a href="#que-entra">Qué entra en el cambio</a></li>
+          <li><a href="#arquitectura">Arquitectura: antes y después</a></li>
+          <li><a href="#como-funciona">Cómo funciona</a></li>
+          <li><a href="#donde-esta">Dónde está en el código</a></li>
+          <li><a href="#como-se-comprobo">Cómo se comprobó</a></li>
+          <li><a href="#pendiente">Pendiente</a></li>
+          <li><a href="#historial">Historial</a></li>
+        </ol>
+      </nav>
+
+      <article class="doc-prose">
+        <h2 id="conclusion">Conclusión</h2>
+        <p>El método <code>documentation</code> tiene una plantilla de PR (<code>templates/pull_request_template.md</code>) y una guía (<code>skills/method/reference/pull-requests.md</code>). Sigue el formato de nano-harness: qué cambia, cómo se comprobó (con cifras reales), avisos, cómo revisarlo y la issue que cierra. Si la PR toca páginas, enseña además la figura del cambio y la tabla de páginas con su estado al fusionar. Hay también dos plantillas de issue, construir y diseñar. Falta publicarla como 0.10.0 y copiarla a nano-harness.</p>
+
+        <h2 id="que-entra">Qué entra en el cambio</h2>
+        <table>
+          <thead><tr><th>Ficha</th><th>Qué aporta</th><th>Commits</th></tr></thead>
+          <tbody>
+            <tr><td>#3</td><td>La plantilla, la guía y los enlaces desde el método, el README del plugin y el CHANGELOG</td><td><code>a7296a1</code></td></tr>
+            <tr><td>#3</td><td>Este sitio y esta página, con la figura en PNG para la PR</td><td><code>bf28db8</code></td></tr>
+            <tr><td>#3</td><td>El estándar para dibujar un cambio (<code>change-figures.md</code>) y el script <code>figure-png</code>; la figura de esta página lo aplica</td><td><code>154245b</code></td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="arquitectura">Arquitectura: antes y después</h2>
+        <p>Es un cambio grande del recorrido de una ficha, así que se comparan las dos versiones con la misma disposición: arriba la issue, la PR, la fusión y la rama base; debajo, las páginas HTML que lo documentan. Las figuras siguen <a href="https://github.com/AS-prog/asprog-design-system/blob/main/plugins/documentation/skills/method/reference/change-figures.md">change-figures.md</a>: el antes sin marcas y, en el después, «CAMBIA» sobre las dos piezas que cambian.</p>
+
+        <figure class="figwrap">
+          <svg viewBox="0 0 720 232" role="img" aria-labelledby="pr-before-title pr-before-desc">
+            <title id="pr-before-title">Antes: la PR cita las páginas como texto</title>
+            <desc id="pr-before-desc">La issue abre una PR de texto libre que cita las páginas HTML como rutas sin enlace. La fusión no tiene pasos, así que en la rama base las páginas quedan en borrador.</desc>
+            <defs>
+              <marker id="pr-before-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="d-bar" points="0 0, 8 3, 0 6"/></marker>
+            </defs>
+            <line class="d-line" x1="160" y1="60" x2="198" y2="60" marker-end="url(#pr-before-arrow)"/>
+            <line class="d-line" x1="336" y1="60" x2="374" y2="60" marker-end="url(#pr-before-arrow)"/>
+            <line class="d-line" x1="512" y1="60" x2="550" y2="60" marker-end="url(#pr-before-arrow)"/>
+            <line class="d-dash" x1="268" y1="88" x2="268" y2="158" marker-end="url(#pr-before-arrow)"/>
+            <text class="d-tm" x="278" y="128">RUTA EN TEXTO</text>
+            <rect class="d-box" x="24" y="32" width="136" height="56"/>
+            <text class="d-t d-mid" x="92" y="56">Issue</text>
+            <text class="d-tm d-mid" x="92" y="74">la ficha</text>
+            <rect class="d-box" x="200" y="32" width="136" height="56"/>
+            <text class="d-t d-mid" x="268" y="56">PR</text>
+            <text class="d-tm d-mid" x="268" y="74">texto libre</text>
+            <rect class="d-box" x="376" y="32" width="136" height="56"/>
+            <text class="d-t d-mid" x="444" y="56">Fusión</text>
+            <text class="d-tm d-mid" x="444" y="74">sin pasos</text>
+            <rect class="d-box" x="552" y="32" width="144" height="56"/>
+            <text class="d-t d-mid" x="624" y="56">Rama base</text>
+            <text class="d-tm d-mid" x="624" y="74">en borrador</text>
+            <rect class="d-box" x="200" y="160" width="136" height="56"/>
+            <text class="d-t d-mid" x="268" y="184">Páginas HTML</text>
+            <text class="d-tm d-mid" x="268" y="202">la evidencia</text>
+          </svg>
+          <figcaption><strong>Antes.</strong> La PR cita las páginas como rutas, cuando las cita, y la fusión no tiene ningún paso: las páginas siguen en «borrador · PR abierta» y las decisiones de la issue quedan sin marcar.</figcaption>
+        </figure>
+
+        <figure class="figwrap">
+          <svg viewBox="0 0 720 232" role="img" aria-labelledby="pr-after-title pr-after-desc">
+            <title id="pr-after-title">Después: la PR sigue la plantilla</title>
+            <desc id="pr-after-desc">La issue abre una PR con la plantilla, que enseña la figura del cambio y enlaza las páginas HTML. La lista Al fusionar actualiza las páginas, así que en la rama base quedan vigentes.</desc>
+            <defs>
+              <marker id="pr-after-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="d-bar" points="0 0, 8 3, 0 6"/></marker>
+            </defs>
+            <line class="d-line" x1="160" y1="60" x2="198" y2="60" marker-end="url(#pr-after-arrow)"/>
+            <line class="d-line" x1="336" y1="60" x2="374" y2="60" marker-end="url(#pr-after-arrow)"/>
+            <line class="d-line" x1="512" y1="60" x2="550" y2="60" marker-end="url(#pr-after-arrow)"/>
+            <line class="d-line" x1="268" y1="88" x2="268" y2="158" marker-end="url(#pr-after-arrow)"/>
+            <text class="d-tm d-end" x="258" y="128">ENLAZA</text>
+            <path class="d-line" d="M444 88 V180 a8 8 0 0 1 -8 8 H338" marker-end="url(#pr-after-arrow)"/>
+            <text class="d-tm" x="454" y="140">ACTUALIZA</text>
+            <rect class="d-box" x="24" y="32" width="136" height="56"/>
+            <text class="d-t d-mid" x="92" y="56">Issue</text>
+            <text class="d-tm d-mid" x="92" y="74">la ficha</text>
+            <text class="d-tm" x="200" y="24">CAMBIA</text>
+            <rect class="d-fill" x="200" y="32" width="136" height="56"/>
+            <text class="d-t d-mid" x="268" y="56">PR · plantilla</text>
+            <text class="d-tm d-mid" x="268" y="74">figura · páginas</text>
+            <text class="d-tm" x="376" y="24">CAMBIA</text>
+            <rect class="d-fill" x="376" y="32" width="136" height="56"/>
+            <text class="d-t d-mid" x="444" y="56">Al fusionar</text>
+            <text class="d-tm d-mid" x="444" y="74">lista de cierre</text>
+            <rect class="d-box" x="552" y="32" width="144" height="56"/>
+            <text class="d-t d-mid" x="624" y="56">Rama base</text>
+            <text class="d-tm d-mid" x="624" y="74">páginas vigentes</text>
+            <rect class="d-box" x="200" y="160" width="136" height="56"/>
+            <text class="d-t d-mid" x="268" y="184">Páginas HTML</text>
+            <text class="d-tm d-mid" x="268" y="202">con su estado</text>
+          </svg>
+          <figcaption><strong>Después.</strong> Cambian la PR, que pasa de texto libre a la plantilla, y la fusión, que pasa de no tener pasos a la lista «Al fusionar». La PR enseña la figura del cambio y enlaza cada página con su estado al fusionar; la lista «Al fusionar» pasa la implementación a vigente, pone al día la técnica y marca las decisiones.</figcaption>
+        </figure>
+
+        <h2 id="como-funciona">Cómo funciona</h2>
+        <h3>La plantilla</h3>
+        <p>Antes, <code>document-types.md</code> remitía a una plantilla «de abajo» que no existía, y cada PR se escribía a su manera. Ahora la plantilla fija las secciones con el formato de nano-harness, en orden: qué cambia (la conclusión y una viñeta por commit), cómo se comprobó, cómo cambia el desarrollo (opcional, si toca páginas), avisos, cómo revisarlo y <code>Closes #N</code>. Hay dos plantillas de issue: construir y diseñar. Un proyecto la copia a <code>.github/pull_request_template.md</code>, y una sección que no aplica se quita.</p>
+
+        <h3>Cómo cambia el desarrollo</h3>
+        <p>Antes, la evidencia vivía solo en el HTML y la PR la nombraba como ruta. Ahora la sección enseña la figura como imagen PNG de <code>figuras/</code>, enlazada con <code>?raw=true</code> porque GitHub no muestra un HTML, y debajo una tabla con enlace a cada página. Un cambio grande o propuesto enseña cada figura dos veces, lado a lado: hoy a la izquierda y la propuesta a la derecha, con lo nuevo en el rojo de propuesta y borde discontinuo (el modelo es el «Flujo de la v3» de nano-harness); uno acotado, el mapa actual con lo nuevo marcado igual.</p>
+
+        <h3>El estado de cada página</h3>
+        <p>Antes, nada obligaba a cambiar el estado al fusionar. Ahora la tabla dice el estado final de cada página y la lista «Al fusionar» lo aplica en el último commit de la rama: la implementación pasa de <code>borrador: PR #N abierta</code> a <code>vigente</code> con una línea en el Historial, el diseño a <code>aplicado (PR #N)</code> y la técnica queda al día.</p>
+
+        <h2 id="donde-esta">Dónde está en el código</h2>
+        <table>
+          <thead><tr><th>Parte</th><th>Fichero</th></tr></thead>
+          <tbody>
+            <tr><td>Plantilla</td><td><code>asprog-design-system:plugins/documentation/templates/pull_request_template.md</code></td></tr>
+            <tr><td>Guía</td><td><code>asprog-design-system:plugins/documentation/skills/method/reference/pull-requests.md</code></td></tr>
+            <tr><td>Enlaces</td><td><code>document-types.md</code>, <code>method/SKILL.md</code>, <code>plugins/documentation/README.md</code></td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="como-se-comprobo">Cómo se comprobó</h2>
+        <pre><code>npm test                                              # sistema v0.9.0 correcto
+node plugins/documentation/scripts/delphos-check docs/index.html \
+  docs/registro/metodo/2026-11-09-implementacion-plantilla-pr/plantilla-pr.html</code></pre>
+        <p>Además, la PR #2 está escrita con la propia plantilla y enseña esta figura.</p>
+
+        <h2 id="pendiente">Pendiente</h2>
+        <div class="notice notice-pending">
+          <span class="notice-title">Pendiente</span>
+          <p>Publicar como 0.10.0; copiar la plantilla a nano-harness y poner al día sus páginas en borrador; decidir si entra una plantilla de issue y si un prototipo queda exento de <code>delphos-check</code> (issue #3).</p>
+        </div>
+
+        <h2 id="historial">Historial</h2>
+        <p>2026-11-09: primera versión.</p>
+      </article>
+
+      <footer class="doc-footer">
+        <span>Fuente: README.md</span>
+        <span>asprog-design-system</span>
+      </footer>
+    </div>
+
+    <script>
+      document.querySelector('.doc-theme').addEventListener('click', function () {
+        var r = document.documentElement, t = r.getAttribute('data-theme');
+        var isDark = t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        var next = isDark ? 'light' : 'dark';
+        r.setAttribute('data-theme', next);
+        try { localStorage.setItem('tema', next); } catch (e) {}
+      });
+    </script>
+  </body>
+</html>

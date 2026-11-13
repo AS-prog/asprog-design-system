@@ -1,0 +1,74 @@
+#!/usr/bin/env node
+// standalone-html: convierte una página del sitio en un solo HTML autocontenido, para
+// subirlo como artefacto de una issue de GitHub (gh issue artifact create). Sin dependencias.
+// Guía: skills/method/reference/pull-requests.md.
+//
+//   standalone-html <página.html> <salida.html>
+//
+// - Mete en la página las hojas que enlaza (<link rel="stylesheet">), con sus fuentes
+//   como data: URI, y las imágenes locales (<img src>).
+// - Quita la barra lateral (<!-- site:nav --> … <!-- /site:nav -->) y la hoja del sitio:
+//   el artefacto se lee solo, sin el resto del sitio.
+// - Quita los <script src> externos y deja los scripts en línea (el botón de tema).
+// - Los enlaces a otras páginas del repo se dejan como están: fuera del sitio no llevan a nada,
+//   así que la página debe enlazar las demás por su URL de GitHub si hacen falta.
+//
+// El nombre de la salida solo lleva letras, números, puntos, guiones y guiones bajos,
+// que es lo que admite un artefacto.
+
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { dirname, resolve, extname, basename } from 'node:path';
+
+const MIME = {
+  '.woff2': 'font/woff2', '.woff': 'font/woff', '.ttf': 'font/ttf',
+  '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.svg': 'image/svg+xml', '.webp': 'image/webp',
+};
+
+function fail(msg) {
+  console.error(`standalone-html: ${msg}`);
+  process.exit(1);
+}
+
+const [src, out] = process.argv.slice(2);
+if (!src || !out) fail('uso: standalone-html <página.html> <salida.html>');
+if (!existsSync(src)) fail(`no existe ${src}`);
+if (!/^[A-Za-z0-9._-]+$/.test(basename(out))) fail(`el nombre ${basename(out)} solo puede llevar letras, números, puntos, guiones y guiones bajos`);
+
+const here = dirname(resolve(src));
+let html = readFileSync(src, 'utf8');
+
+const dataUri = (file) => {
+  const type = MIME[extname(file).toLowerCase()];
+  if (!type) fail(`no sé meter ${file} en la página`);
+  return `data:${type};base64,${readFileSync(file).toString('base64')}`;
+};
+
+// Una hoja, con sus url(...) relativas pasadas a data: URI.
+function inlineCss(file) {
+  const base = dirname(file);
+  return readFileSync(file, 'utf8').replace(/url\((['"]?)([^'")]+)\1\)/g, (m, q, ref) => {
+    if (/^(data:|https?:|#)/.test(ref)) return m;
+    return `url("${dataUri(resolve(base, ref))}")`;
+  });
+}
+
+// 1. Fuera la barra lateral, la hoja del sitio y los scripts externos.
+html = html.replace(/<!-- site:nav -->[\s\S]*?<!-- \/site:nav -->/g, '');
+html = html.replace(/<!-- site:css -->[\s\S]*?<!-- \/site:css -->/g, '');
+html = html.replace(/<script\b[^>]*\bsrc=["'][^"']+["'][^>]*><\/script>\s*/g, '');
+
+// 2. Hojas en línea.
+html = html.replace(/<link\b[^>]*rel=["']stylesheet["'][^>]*>/g, (tag) => {
+  const href = tag.match(/href=["']([^"']+)["']/)?.[1];
+  if (!href || /^https?:/.test(href)) fail(`hoja externa ${href}: la página no debe pedir nada fuera del repo`);
+  return `<style>\n${inlineCss(resolve(here, href))}\n</style>`;
+});
+
+// 3. Imágenes locales en línea.
+html = html.replace(/(<img\b[^>]*\bsrc=)(["'])([^"']+)\2/g, (m, pre, q, ref) =>
+  /^(data:|https?:)/.test(ref) ? m : `${pre}${q}${dataUri(resolve(here, ref))}${q}`);
+
+if (/<link\b[^>]*rel=["']stylesheet["']/.test(html)) fail('quedó una hoja sin meter');
+mkdirSync(dirname(resolve(out)), { recursive: true });
+writeFileSync(out, html);
+console.log(`${out} (${Math.round(Buffer.byteLength(html) / 1024)} KB)`);

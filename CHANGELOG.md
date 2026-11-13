@@ -2,6 +2,24 @@
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y la versión, [SemVer](https://semver.org/lang/es/).
 
+## 0.13.0 · 2026-11-13
+
+### Añadido
+- Plantilla de PR (`plugins/documentation/templates/pull_request_template.md`), que un proyecto copia a `.github/pull_request_template.md`, con el formato de nano-harness: qué cambia, cómo se comprobó, avisos, cómo revisarlo y `Closes #N`. «Cómo cambia el desarrollo» (la figura y la tabla de páginas con su estado al fusionar) es opcional, para las PR que tocan páginas.
+- Plantillas de issue `templates/issues/build.md` (problema, alcance, fuera, artefactos) y `templates/issues/design.md` (temas con propuesta y preguntas abiertas, orden, referencias), que se copian a `.github/ISSUE_TEMPLATE/`.
+- Token de color `proposal` (rojo de propuesta: `#b3261e` en claro, 5,49:1; `#ff8a80` en oscuro, 8,10:1) y token `compare-width` (87.5rem).
+- Clases `d-new` (`css/base.css`) para lo nuevo en un diagrama, y `doc-new`, `doc-compare`, `doc-compare-col` y `doc-compare-label` (`css/document.css`) para comparar hoy y propuesta lado a lado y marcar lo nuevo en el texto y en las tablas. Salen del «Flujo de la v3» de nano-harness, que las tenía en un estilo propio.
+- Guía `skills/method/reference/change-figures.md`: el estándar para dibujar un cambio. Qué forma según el tamaño (hoy y propuesta lado a lado, lo nuevo marcado, tabla o architecture delta), las marcas en el rojo de propuesta con borde discontinuo o issue, cuánto texto cabe en una caja (ancho ≥ caracteres × 8 + 16) y cómo llega la figura a la PR.
+- Script `scripts/figure-png`: guarda las figuras de una página como PNG a doble resolución, todas o una con `--figure N`. Necesita Playwright.
+- Script `scripts/standalone-html`: una página del sitio en un solo HTML, con las hojas, las fuentes y las imágenes dentro y sin barra lateral, para subirla como artefacto de una issue (`gh issue artifact create`, gh 2.103.0+).
+- Ejemplo en `examples/sample-project/registro/sensores/2026-11-10-implementacion-lectura-lotes/`: una página de implementación con antes y después según `change-figures.md` (SE VA, NUEVO, CAMBIA), su PNG y la PR rellena (`pr-ejemplo.md`).
+- Skill `change`: lleva un cambio de la issue a la PR en cinco pasos (issue con su plantilla, comparación hoy | propuesta, PNG y artefacto, PR con su plantilla, estado al fusionar), con su criterio de hecho en cada uno. `method` remite a ella en lugar de repetir la guía.
+- Guía `skills/method/reference/pull-requests.md`: qué lleva la PR y la issue, cómo se enseña un cambio grande (antes y después) y uno acotado (lo nuevo marcado), y en qué estado queda cada página al fusionar.
+
+### Cambiado
+- `scripts/delphos-check` tiene permiso de ejecución.
+- `document-types.md` apunta a la plantilla de PR en lugar de a una plantilla «de abajo» que no existía. La skill `method` la enlaza en el paso 5 y en la lista final.
+
 ## 0.12.0 · 2026-11-10
 
 ### Añadido

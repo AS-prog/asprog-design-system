@@ -1,0 +1,221 @@
+<!doctype html>
+<!--
+  Página de implementación: qué hizo una ficha y cómo se comprobó. Va junto a su .md
+  en registro/<tema>/<AAAA-MM-DD>-implementacion-<objeto>/ y, una vez integrada, no se reescribe.
+  Se crea con: site.py new implementation <ruta.html> --title "…"
+  Lo que va entre {{…}} se rellena con el contenido del .md; delphos-check no
+  deja pasar la página mientras quede alguno. Guía: skill method, reference/implementation-pages.md.
+-->
+<html lang="es" data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RS 02 · Lectura por lotes</title>
+    <meta name="description" content="Ejemplo del estándar para dibujar un cambio: la lectura de sensores pasa de sensor a sensor a un lote por ciclo." />
+    <meta name="theme-color" content="#F0EBDE" />
+    <link rel="stylesheet" href="../../../docs/design-system/v0.13/tokens.css" />
+    <link rel="stylesheet" href="../../../docs/design-system/v0.13/css/base.css" />
+    <link rel="stylesheet" href="../../../docs/design-system/v0.13/css/document.css" />
+    <!-- site:css --><link rel="stylesheet" href="../../../docs/design-system/v0.13/css/library.css" /><!-- /site:css -->
+    <script>
+      // Antes de pintar, para que no haya destello: el tema guardado manda sobre «auto».
+      try {
+        var t = localStorage.getItem('tema');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
+  </head>
+  <body class="lib">
+    <!-- site:nav -->
+    <nav class="lib-nav" aria-label="Sitio">
+    <details open>
+    <summary><a class="lib-home" href="../../../index.html">Riego · ejemplo</a><span class="lib-menu">Índice</span></summary>
+    <h2>Método</h2>
+    <ul>
+    <li><a href="../../../metodo/ciclo-de-desarrollo.html">El ciclo de desarrollo</a></li>
+    </ul>
+    <h2>Lectura de sensores</h2>
+    <ul>
+    <li><a href="../../../tecnica/lector-sensores/lector-sensores.html">Cómo funciona</a></li>
+    <li><a href="../2026-11-05-implementacion-lector-sensores/lector-sensores.html">RS 01 · Lector</a></li>
+    <li><a href="lectura-lotes.html" aria-current="page">RS 02 · Lectura por lotes</a></li>
+    <li><a href="../2026-11-03-diseno-lector-sensores/lector-sensores.html">Diseño del lector</a></li>
+    </ul>
+    <h2>Programación del riego</h2>
+    <ul>
+    <li><span title="Aún sin página">Cómo funciona</span></li>
+    </ul>
+    </details>
+    </nav>
+    <script>(function () { var m = matchMedia('(max-width: 56rem)'), d = document.querySelector('.lib-nav details'); d.open = !m.matches; m.addEventListener('change', function () { d.open = !m.matches; }); })();</script>
+    <script src="../../../docs/design-system/v0.13/js/library-fold.js"></script>
+    <!-- /site:nav -->
+    <div class="doc">
+      <header class="doc-bar">
+        <span class="doc-brand">riego-management / registro</span>
+        <button class="doc-theme" type="button" aria-label="Cambiar tema">Tema</button>
+      </header>
+
+      <header class="doc-header">
+        <h1>RS 02 · Lectura por lotes</h1>
+        <p class="eyebrow">RS 02</p>
+        <p class="lede">El lector pide la humedad de todas las parcelas en una sola consulta al bus y guarda el lote en una transacción, en lugar de preguntar sensor a sensor.</p>
+        <dl class="doc-meta">
+          <div><dt>Fecha</dt><dd><time datetime="2026-11-10">2026-11-10</time></dd></div>
+          <div><dt>Estado</dt><dd>borrador: PR #14 abierta</dd></div>
+          <div><dt>Fichas</dt><dd><code>.scratch/controller/sensores/02-lotes.md</code></dd></div>
+          <div><dt>Código</dt><dd><code>riego-controller@8c41d07</code></dd></div>
+          <div><dt>Diseño</dt><dd><code>diseno/nivel-2/3-lectura.md</code>, D05</dd></div>
+        </dl>
+      </header>
+
+      <nav class="doc-toc" aria-label="Índice">
+        <h2>Índice</h2>
+        <ol>
+          <li><a href="#conclusion">Conclusión</a></li>
+          <li><a href="#que-entra">Qué entra en el cambio</a></li>
+          <li><a href="#arquitectura">Arquitectura: hoy y con RS 02</a></li>
+          <li><a href="#como-funciona">Cómo funciona</a></li>
+          <li><a href="#donde-esta">Dónde está en el código</a></li>
+          <li><a href="#como-se-comprobo">Cómo se comprobó</a></li>
+          <li><a href="#pendiente">Pendiente</a></li>
+          <li><a href="#historial">Historial</a></li>
+        </ol>
+      </nav>
+
+      <article class="doc-prose">
+        <div class="notice">
+          <span class="notice-title">Ejemplo</span>
+          <p>Página de muestra del estándar para dibujar un cambio (<code>change-figures.md</code>) y de la plantilla de PR. El proyecto y sus cifras son ficticios. La PR que la acompaña está en <code>pr-ejemplo.md</code>, en esta misma carpeta.</p>
+        </div>
+
+        <h2 id="conclusion">Conclusión</h2>
+        <p>La lectura por lotes está implementada en la rama <code>feature/lectura-lotes</code>: una consulta al bus por ciclo en lugar de doce, y un lote por transacción en lugar de una fila por sensor. El ciclo baja de ≈ 4,1 s a ≈ 0,6 s. Falta probarlo en el invernadero de pruebas.</p>
+
+        <h2 id="que-entra">Qué entra en el cambio</h2>
+        <table>
+          <thead><tr><th>Ficha</th><th>Qué aporta</th><th>Commits</th></tr></thead>
+          <tbody>
+            <tr><td>RS 02</td><td><code>read_batch()</code> pide todos los sensores en una consulta</td><td><code>8c41d07</code></td></tr>
+            <tr><td>RS 02</td><td><code>save_batch()</code> guarda el lote en una transacción</td><td><code>b2e6a90</code></td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="arquitectura">Arquitectura: hoy y con RS 02</h2>
+        <p>Es un cambio grande del ciclo de lectura, así que la figura sale dos veces con la misma disposición: el temporizador, la lectura, la validación y el guardado en una fila, y las lecturas descartadas debajo. <span class="doc-new">A la derecha, en rojo, lo que cambia RS 02.</span></p>
+
+        <figure class="figwrap">
+          <div class="doc-compare">
+            <div class="doc-compare-col"><p class="doc-compare-label">Lector hoy</p>
+          <svg viewBox="0 0 720 224" role="img" aria-labelledby="lotes-hoy-title lotes-hoy-desc">
+            <title id="lotes-hoy-title">Hoy: una consulta por sensor</title>
+            <desc id="lotes-hoy-desc">Cada 10 minutos el temporizador lanza la lectura sensor a sensor; cada valor se valida y se guarda como una fila; los valores fuera de rango van a las descartadas.</desc>
+            <defs>
+              <marker id="lotes-hoy-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="d-bar" points="0 0, 8 3, 0 6"/></marker>
+            </defs>
+            <line class="d-line" x1="168" y1="68" x2="198" y2="68" marker-end="url(#lotes-hoy-arrow)"/>
+            <line class="d-line" x1="344" y1="68" x2="374" y2="68" marker-end="url(#lotes-hoy-arrow)"/>
+            <line class="d-line" x1="520" y1="68" x2="550" y2="68" marker-end="url(#lotes-hoy-arrow)"/>
+            <line class="d-dash" x1="448" y1="96" x2="448" y2="150" marker-end="url(#lotes-hoy-arrow)"/>
+            <text class="d-tm" x="458" y="128">FUERA</text>
+            <rect class="d-box" x="24" y="40" width="144" height="56"/>
+            <text class="d-t d-mid" x="96" y="64">Temporizador</text>
+            <text class="d-tm d-mid" x="96" y="82">cada 10 min</text>
+            <rect class="d-dash" x="200" y="40" width="144" height="56"/>
+            <text class="d-t d-mid" x="272" y="64">Pedir humedad</text>
+            <text class="d-tm d-mid" x="272" y="82">sensor a sensor</text>
+            <rect class="d-box" x="376" y="40" width="144" height="56"/>
+            <text class="d-t d-mid" x="448" y="64">Validar</text>
+            <text class="d-tm d-mid" x="448" y="82">validate()</text>
+            <rect class="d-box" x="552" y="40" width="144" height="56"/>
+            <text class="d-t d-mid" x="624" y="64">Guardar</text>
+            <text class="d-tm d-mid" x="624" y="82">una fila</text>
+            <rect class="d-box" x="376" y="152" width="144" height="56"/>
+            <text class="d-t d-mid" x="448" y="176">Descartadas</text>
+            <text class="d-tm d-mid" x="448" y="194">lecturas fuera</text>
+          </svg>
+            </div>
+            <div class="doc-compare-col"><p class="doc-compare-label doc-new">Con RS 02</p>
+          <svg viewBox="0 0 720 224" role="img" aria-labelledby="lotes-rs02-title lotes-rs02-desc">
+            <title id="lotes-rs02-title">Con RS 02: una consulta por ciclo</title>
+            <desc id="lotes-rs02-desc">Cada 10 minutos el temporizador lanza la lectura del lote, pieza nueva en rojo y discontinua; el lote se valida entero y se guarda en una transacción, cambio marcado en rojo bajo Guardar; los valores fuera de rango siguen yendo a las descartadas.</desc>
+            <defs>
+              <marker id="lotes-rs02-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="d-bar" points="0 0, 8 3, 0 6"/></marker>
+              <marker id="lotes-rs02-new" class="d-new" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="d-bar" points="0 0, 8 3, 0 6"/></marker>
+            </defs>
+            <line class="d-line d-new" x1="168" y1="68" x2="198" y2="68" marker-end="url(#lotes-rs02-new)"/>
+            <line class="d-line d-new" x1="344" y1="68" x2="374" y2="68" marker-end="url(#lotes-rs02-new)"/>
+            <line class="d-line" x1="520" y1="68" x2="550" y2="68" marker-end="url(#lotes-rs02-arrow)"/>
+            <line class="d-dash" x1="448" y1="96" x2="448" y2="150" marker-end="url(#lotes-rs02-arrow)"/>
+            <text class="d-tm" x="458" y="128">FUERA</text>
+            <rect class="d-box" x="24" y="40" width="144" height="56"/>
+            <text class="d-t d-mid" x="96" y="64">Temporizador</text>
+            <text class="d-tm d-mid" x="96" y="82">cada 10 min</text>
+            <text class="d-sm d-new" x="200" y="30">RS 02 · nueva</text>
+            <g class="d-new">
+              <rect class="d-fill" x="200" y="40" width="144" height="56" stroke-dasharray="5 4"/>
+              <text class="d-t d-mid" x="272" y="64">Leer lote</text>
+              <text class="d-tm d-mid" x="272" y="82">read_batch()</text>
+            </g>
+            <rect class="d-box" x="376" y="40" width="144" height="56"/>
+            <text class="d-t d-mid" x="448" y="64">Validar</text>
+            <text class="d-tm d-mid" x="448" y="82">validate()</text>
+            <rect class="d-box" x="552" y="40" width="144" height="56"/>
+            <text class="d-t d-mid" x="624" y="64">Guardar</text>
+            <text class="d-tm d-mid" x="624" y="82">una fila</text>
+            <text class="d-sm d-mid d-new" x="624" y="114">→ un lote, una transacción</text>
+            <rect class="d-box" x="376" y="152" width="144" height="56"/>
+            <text class="d-t d-mid" x="448" y="176">Descartadas</text>
+            <text class="d-tm d-mid" x="448" y="194">lecturas fuera</text>
+          </svg>
+            </div>
+          </div>
+          <figcaption>El ciclo de lectura. Hoy el lector pregunta a los doce sensores uno por uno y guarda cada valor en su propia fila: doce consultas y doce escrituras por ciclo. <span class="doc-new">Con RS 02, en rojo y discontinuo, la lectura nueva del lote; en rojo bajo Guardar, lo que cambia: el lote entra en una transacción.</span> Validar y Descartadas siguen en su sitio.</figcaption>
+        </figure>
+
+        <h2 id="como-funciona">Cómo funciona</h2>
+        <h3>Leer lote</h3>
+        <p>Antes, <code>poll()</code> recorría los sensores y esperaba la respuesta de cada uno. Ahora <code>read_batch()</code> manda una consulta de difusión al bus y recoge las doce respuestas en ≈ 0,4 s. Un sensor que no contesta se marca como ausente en el lote, no lo detiene.</p>
+        <h3>Guardar</h3>
+        <p>Antes, cada valor era un <code>INSERT</code>. Ahora <code>save_batch()</code> escribe el lote entero en una transacción: o entran las doce lecturas del ciclo, o no entra ninguna.</p>
+
+        <h2 id="donde-esta">Dónde está en el código</h2>
+        <table>
+          <thead><tr><th>Parte</th><th>Fichero</th><th>Decisión</th></tr></thead>
+          <tbody>
+            <tr><td>Leer lote</td><td><code>riego-controller:sensors/batch.py</code></td><td>D05</td></tr>
+            <tr><td>Guardar</td><td><code>riego-controller:storage/readings.py</code></td><td>D05</td></tr>
+          </tbody>
+        </table>
+
+        <h2 id="como-se-comprobo">Cómo se comprobó</h2>
+        <pre><code>pytest tests/sensors tests/storage   # 48 pruebas en verde (9 nuevas)
+python -m sensors.bench --cycles 50  # ciclo medio: 4,1 s antes, 0,6 s después</code></pre>
+
+        <h2 id="pendiente">Pendiente</h2>
+        <div class="notice notice-pending">
+          <span class="notice-title">Pendiente</span>
+          <p>Probarlo en el invernadero de pruebas con los doce sensores reales (RS 03).</p>
+        </div>
+
+        <h2 id="historial">Historial</h2>
+        <p>2026-11-10: primera versión. Al fusionar, actualiza la página técnica <a href="../../../tecnica/lector-sensores/lector-sensores.html">Cómo funciona</a>.</p>
+      </article>
+
+      <footer class="doc-footer">
+        <span>Fuente: README.md</span>
+        <span>riego-management</span>
+      </footer>
+    </div>
+
+    <script>
+      document.querySelector('.doc-theme').addEventListener('click', function () {
+        var r = document.documentElement, t = r.getAttribute('data-theme');
+        var isDark = t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        var next = isDark ? 'light' : 'dark';
+        r.setAttribute('data-theme', next);
+        try { localStorage.setItem('tema', next); } catch (e) {}
+      });
+    </script>
+  </body>
+</html>

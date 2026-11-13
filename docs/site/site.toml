@@ -1,0 +1,17 @@
+# El sitio de la documentación de asprog-design-system: lo lee site.py del plugin documentation.
+# Rutas relativas a la raíz del repo.
+
+[project]
+name = "asprog-design-system"
+brand = "asprog-design-system"
+system = "docs/design-system"
+home = "docs/site/home.md"
+index = "docs/index.html"
+
+[[section]]
+title = "Método"
+
+[[section.page]]
+title = "Implementación: plantilla de PR"
+path = "docs/registro/metodo/2026-11-09-implementacion-plantilla-pr/plantilla-pr.html"
+type = "implementación"

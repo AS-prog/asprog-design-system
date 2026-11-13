@@ -1,4 +1,4 @@
-/* Cobalt Grid — generado desde tokens.json (v0.12.0) con scripts/build-tokens.mjs. No se edita a mano. */
+/* Cobalt Grid — generado desde tokens.json (v0.13.0) con scripts/build-tokens.mjs. No se edita a mano. */
 
 @font-face { font-family: "Newsreader"; font-style: normal; font-weight: 300 400; font-display: swap; src: url("fonts/newsreader-normal-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 
@@ -37,6 +37,7 @@
   --solution-bg: #d8e4cf;
   --pending-a: #8a4f00;
   --pending-b: #6b3fa8;
+  --proposal: #b3261e;
   --note-bg: #e3dfde;
   --note-ink: #1f2be0;
   --note-rule: rgba(31, 43, 224, .28);
@@ -63,6 +64,7 @@
   --solution-bg: #0f3a3a;
   --pending-a: #f0b85a;
   --pending-b: #c5a3f5;
+  --proposal: #ff8a80;
   --note-bg: #171949;
   --note-ink: #f0ebde;
   --note-rule: rgba(240, 235, 222, .30);
@@ -88,6 +90,7 @@
   --solution-bg: #fff;
   --pending-a: #000;
   --pending-b: #000;
+  --proposal: #000;
   --note-bg: #fff;
   --note-ink: #000;
   --note-rule: #999;
@@ -116,6 +119,7 @@
     --solution-bg: #0f3a3a;
     --pending-a: #f0b85a;
     --pending-b: #c5a3f5;
+    --proposal: #ff8a80;
     --note-bg: #171949;
     --note-ink: #f0ebde;
     --note-rule: rgba(240, 235, 222, .30);
@@ -144,6 +148,7 @@
     --solution-bg: #fff;
     --pending-a: #000;
     --pending-b: #000;
+    --proposal: #000;
     --note-bg: #fff;
     --note-ink: #000;
     --note-rule: #999;
@@ -204,6 +209,7 @@
   --measure: 36rem;
   --measure-wide: 40rem;
   --doc-width: 47rem;
+  --compare-width: 87.5rem;
   --unit: 40px;
   --grid-max: 100rem;
   --grid-margin: clamp(1.25rem, 5vw, 6rem);

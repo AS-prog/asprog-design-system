@@ -27,6 +27,11 @@ path = "registro/sensores/2026-11-05-implementacion-lector-sensores/lector-senso
 type = "implementación"
 
 [[section.page]]
+title = "RS 02 · Lectura por lotes"
+path = "registro/sensores/2026-11-10-implementacion-lectura-lotes/lectura-lotes.html"
+type = "implementación"
+
+[[section.page]]
 title = "Diseño del lector"
 path = "registro/sensores/2026-11-03-diseno-lector-sensores/lector-sensores.html"
 type = "diseño"
