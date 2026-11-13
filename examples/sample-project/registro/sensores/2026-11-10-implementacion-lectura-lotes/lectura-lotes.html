@@ -13,9 +13,9 @@
     <title>RS 02 · Lectura por lotes</title>
     <meta name="description" content="Ejemplo del estándar para dibujar un cambio: la lectura de sensores pasa de sensor a sensor a un lote por ciclo." />
     <meta name="theme-color" content="#F0EBDE" />
-    <link rel="stylesheet" href="../../../docs/design-system/v0.9/tokens.css" />
-    <link rel="stylesheet" href="../../../docs/design-system/v0.9/css/base.css" />
-    <link rel="stylesheet" href="../../../docs/design-system/v0.9/css/document.css" />
+    <link rel="stylesheet" href="../../../docs/design-system/v0.12/tokens.css" />
+    <link rel="stylesheet" href="../../../docs/design-system/v0.12/css/base.css" />
+    <link rel="stylesheet" href="../../../docs/design-system/v0.12/css/document.css" />
     <!-- site:css --><link rel="stylesheet" href="../../../docs/design-system/v0.12/css/library.css" /><!-- /site:css -->
     <script>
       // Antes de pintar, para que no haya destello: el tema guardado manda sobre «auto».
@@ -74,7 +74,7 @@
         <ol>
           <li><a href="#conclusion">Conclusión</a></li>
           <li><a href="#que-entra">Qué entra en el cambio</a></li>
-          <li><a href="#arquitectura">Arquitectura: antes y después</a></li>
+          <li><a href="#arquitectura">Arquitectura: hoy y con RS 02</a></li>
           <li><a href="#como-funciona">Cómo funciona</a></li>
           <li><a href="#donde-esta">Dónde está en el código</a></li>
           <li><a href="#como-se-comprobo">Cómo se comprobó</a></li>
@@ -101,25 +101,26 @@
           </tbody>
         </table>
 
-        <h2 id="arquitectura">Arquitectura: antes y después</h2>
-        <p>Es un cambio grande del ciclo de lectura, así que se comparan las dos versiones con la misma disposición: el temporizador, la lectura, la validación y el guardado en una fila, y las lecturas descartadas debajo. Las piezas que no cambian ocupan el mismo sitio en las dos figuras.</p>
+        <h2 id="arquitectura">Arquitectura: hoy y con RS 02</h2>
+        <p>Es un cambio grande del ciclo de lectura, así que la figura sale dos veces con la misma disposición: el temporizador, la lectura, la validación y el guardado en una fila, y las lecturas descartadas debajo. <span class="doc-new">A la derecha, en rojo, lo que cambia RS 02.</span></p>
 
         <figure class="figwrap">
-          <svg viewBox="0 0 720 224" role="img" aria-labelledby="lotes-before-title lotes-before-desc">
-            <title id="lotes-before-title">Antes: una consulta por sensor</title>
-            <desc id="lotes-before-desc">Cada 10 minutos el temporizador lanza la lectura sensor a sensor, marcada como pieza que se va; cada valor se valida y se guarda como una fila; los valores fuera de rango van a las descartadas.</desc>
+          <div class="doc-compare">
+            <div class="doc-compare-col"><p class="doc-compare-label">Lector hoy</p>
+          <svg viewBox="0 0 720 224" role="img" aria-labelledby="lotes-hoy-title lotes-hoy-desc">
+            <title id="lotes-hoy-title">Hoy: una consulta por sensor</title>
+            <desc id="lotes-hoy-desc">Cada 10 minutos el temporizador lanza la lectura sensor a sensor; cada valor se valida y se guarda como una fila; los valores fuera de rango van a las descartadas.</desc>
             <defs>
-              <marker id="lotes-before-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="d-bar" points="0 0, 8 3, 0 6"/></marker>
+              <marker id="lotes-hoy-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="d-bar" points="0 0, 8 3, 0 6"/></marker>
             </defs>
-            <line class="d-line" x1="168" y1="68" x2="198" y2="68" marker-end="url(#lotes-before-arrow)"/>
-            <line class="d-line" x1="344" y1="68" x2="374" y2="68" marker-end="url(#lotes-before-arrow)"/>
-            <line class="d-line" x1="520" y1="68" x2="550" y2="68" marker-end="url(#lotes-before-arrow)"/>
-            <line class="d-dash" x1="448" y1="96" x2="448" y2="150" marker-end="url(#lotes-before-arrow)"/>
+            <line class="d-line" x1="168" y1="68" x2="198" y2="68" marker-end="url(#lotes-hoy-arrow)"/>
+            <line class="d-line" x1="344" y1="68" x2="374" y2="68" marker-end="url(#lotes-hoy-arrow)"/>
+            <line class="d-line" x1="520" y1="68" x2="550" y2="68" marker-end="url(#lotes-hoy-arrow)"/>
+            <line class="d-dash" x1="448" y1="96" x2="448" y2="150" marker-end="url(#lotes-hoy-arrow)"/>
             <text class="d-tm" x="458" y="128">FUERA</text>
             <rect class="d-box" x="24" y="40" width="144" height="56"/>
             <text class="d-t d-mid" x="96" y="64">Temporizador</text>
             <text class="d-tm d-mid" x="96" y="82">cada 10 min</text>
-            <text class="d-tm" x="200" y="32">SE VA</text>
             <rect class="d-dash" x="200" y="40" width="144" height="56"/>
             <text class="d-t d-mid" x="272" y="64">Pedir humedad</text>
             <text class="d-tm d-mid" x="272" y="82">sensor a sensor</text>
@@ -133,40 +134,43 @@
             <text class="d-t d-mid" x="448" y="176">Descartadas</text>
             <text class="d-tm d-mid" x="448" y="194">lecturas fuera</text>
           </svg>
-          <figcaption><strong>Antes.</strong> El lector pregunta a los doce sensores uno por uno y guarda cada valor en su propia fila: doce consultas y doce escrituras por ciclo.</figcaption>
-        </figure>
-
-        <figure class="figwrap">
-          <svg viewBox="0 0 720 224" role="img" aria-labelledby="lotes-after-title lotes-after-desc">
-            <title id="lotes-after-title">Después: una consulta por ciclo</title>
-            <desc id="lotes-after-desc">Cada 10 minutos el temporizador lanza la lectura del lote, pieza nueva; el lote se valida entero y se guarda en una transacción, pieza que cambia; los valores fuera de rango siguen yendo a las descartadas.</desc>
+            </div>
+            <div class="doc-compare-col"><p class="doc-compare-label doc-new">Con RS 02</p>
+          <svg viewBox="0 0 720 224" role="img" aria-labelledby="lotes-rs02-title lotes-rs02-desc">
+            <title id="lotes-rs02-title">Con RS 02: una consulta por ciclo</title>
+            <desc id="lotes-rs02-desc">Cada 10 minutos el temporizador lanza la lectura del lote, pieza nueva en rojo y discontinua; el lote se valida entero y se guarda en una transacción, cambio marcado en rojo bajo Guardar; los valores fuera de rango siguen yendo a las descartadas.</desc>
             <defs>
-              <marker id="lotes-after-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="d-bar" points="0 0, 8 3, 0 6"/></marker>
+              <marker id="lotes-rs02-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="d-bar" points="0 0, 8 3, 0 6"/></marker>
+              <marker id="lotes-rs02-new" class="d-new" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon class="d-bar" points="0 0, 8 3, 0 6"/></marker>
             </defs>
-            <line class="d-line" x1="168" y1="68" x2="198" y2="68" marker-end="url(#lotes-after-arrow)"/>
-            <line class="d-line" x1="344" y1="68" x2="374" y2="68" marker-end="url(#lotes-after-arrow)"/>
-            <line class="d-line" x1="520" y1="68" x2="550" y2="68" marker-end="url(#lotes-after-arrow)"/>
-            <line class="d-dash" x1="448" y1="96" x2="448" y2="150" marker-end="url(#lotes-after-arrow)"/>
+            <line class="d-line d-new" x1="168" y1="68" x2="198" y2="68" marker-end="url(#lotes-rs02-new)"/>
+            <line class="d-line d-new" x1="344" y1="68" x2="374" y2="68" marker-end="url(#lotes-rs02-new)"/>
+            <line class="d-line" x1="520" y1="68" x2="550" y2="68" marker-end="url(#lotes-rs02-arrow)"/>
+            <line class="d-dash" x1="448" y1="96" x2="448" y2="150" marker-end="url(#lotes-rs02-arrow)"/>
             <text class="d-tm" x="458" y="128">FUERA</text>
             <rect class="d-box" x="24" y="40" width="144" height="56"/>
             <text class="d-t d-mid" x="96" y="64">Temporizador</text>
             <text class="d-tm d-mid" x="96" y="82">cada 10 min</text>
-            <text class="d-tm" x="200" y="32">NUEVO</text>
-            <rect class="d-fill" x="200" y="40" width="144" height="56"/>
-            <text class="d-t d-mid" x="272" y="64">Leer lote</text>
-            <text class="d-tm d-mid" x="272" y="82">read_batch()</text>
+            <text class="d-sm d-new" x="200" y="30">RS 02 · nueva</text>
+            <g class="d-new">
+              <rect class="d-fill" x="200" y="40" width="144" height="56" stroke-dasharray="5 4"/>
+              <text class="d-t d-mid" x="272" y="64">Leer lote</text>
+              <text class="d-tm d-mid" x="272" y="82">read_batch()</text>
+            </g>
             <rect class="d-box" x="376" y="40" width="144" height="56"/>
             <text class="d-t d-mid" x="448" y="64">Validar</text>
             <text class="d-tm d-mid" x="448" y="82">validate()</text>
-            <text class="d-tm" x="552" y="32">CAMBIA</text>
-            <rect class="d-fill" x="552" y="40" width="144" height="56"/>
+            <rect class="d-box" x="552" y="40" width="144" height="56"/>
             <text class="d-t d-mid" x="624" y="64">Guardar</text>
-            <text class="d-tm d-mid" x="624" y="82">un lote</text>
+            <text class="d-tm d-mid" x="624" y="82">una fila</text>
+            <text class="d-sm d-mid d-new" x="624" y="114">→ un lote, una transacción</text>
             <rect class="d-box" x="376" y="152" width="144" height="56"/>
             <text class="d-t d-mid" x="448" y="176">Descartadas</text>
             <text class="d-tm d-mid" x="448" y="194">lecturas fuera</text>
           </svg>
-          <figcaption><strong>Después.</strong> Una consulta trae los doce valores y el lote se guarda en una transacción. Validar y Descartadas no cambian y siguen en su sitio.</figcaption>
+            </div>
+          </div>
+          <figcaption>El ciclo de lectura. Hoy el lector pregunta a los doce sensores uno por uno y guarda cada valor en su propia fila: doce consultas y doce escrituras por ciclo. <span class="doc-new">Con RS 02, en rojo y discontinuo, la lectura nueva del lote; en rojo bajo Guardar, lo que cambia: el lote entra en una transacción.</span> Validar y Descartadas siguen en su sitio.</figcaption>
         </figure>
 
         <h2 id="como-funciona">Cómo funciona</h2>

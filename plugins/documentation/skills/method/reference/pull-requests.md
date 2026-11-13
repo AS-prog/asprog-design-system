@@ -39,9 +39,9 @@ GitHub las ofrece al abrir una PR o una issue. Un agente que las abre con una he
 
 El estándar completo, con las marcas, el texto que cabe en cada caja y la exportación a PNG, está en [change-figures.md](change-figures.md). En corto:
 
-- **Un cambio grande** (varias piezas, otra forma de conectarse) enseña el diagrama de antes y el de después con la misma disposición, uno encima del otro, en la página de implementación.
-- **Un cambio acotado** (una pieza nueva, sin conectar o en un solo sitio) enseña el mapa actual de la página técnica con lo nuevo marcado: relleno (`d-fill`) y la etiqueta «NUEVO» en `d-tm`. En la tinta: el verde de solución es solo para la barra lateral y las ramas.
-- **Sin diagrama** (documentación, configuración) basta la tabla de páginas.
+- **Un cambio grande o propuesto** enseña cada figura dos veces, lado a lado (`.doc-compare`): lo de hoy a la izquierda y la propuesta a la derecha, con la misma disposición.
+- **Lo nuevo va en el rojo de propuesta** (`d-new`, `doc-new`) y con borde discontinuo; lo que cambia en una pieza que ya existe, en una línea roja bajo su caja. Siempre con el número de issue al lado.
+- **Un cambio acotado** marca lo nuevo igual sobre el mapa actual; **sin diagrama** (documentación, configuración) basta la tabla con las filas nuevas en `doc-new`.
 
 Si la PR toca páginas, la figura va también en ella como imagen, para verla sin salir de GitHub: un PNG en `figuras/` de la carpeta de la página, hecho con `scripts/figure-png`, enlazado con `…/blob/<rama>/<ruta>.png?raw=true` (funciona en repos privados). Un enlace a un `.html` del repo abre su código fuente; por eso la página llega como artefacto de la issue (abajo) y la PR lo enlaza.
 

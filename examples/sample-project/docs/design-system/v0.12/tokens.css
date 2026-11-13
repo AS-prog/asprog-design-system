@@ -37,6 +37,7 @@
   --solution-bg: #d8e4cf;
   --pending-a: #8a4f00;
   --pending-b: #6b3fa8;
+  --proposal: #b3261e;
   --note-bg: #e3dfde;
   --note-ink: #1f2be0;
   --note-rule: rgba(31, 43, 224, .28);
@@ -63,6 +64,7 @@
   --solution-bg: #0f3a3a;
   --pending-a: #f0b85a;
   --pending-b: #c5a3f5;
+  --proposal: #ff8a80;
   --note-bg: #171949;
   --note-ink: #f0ebde;
   --note-rule: rgba(240, 235, 222, .30);
@@ -88,6 +90,7 @@
   --solution-bg: #fff;
   --pending-a: #000;
   --pending-b: #000;
+  --proposal: #000;
   --note-bg: #fff;
   --note-ink: #000;
   --note-rule: #999;
@@ -116,6 +119,7 @@
     --solution-bg: #0f3a3a;
     --pending-a: #f0b85a;
     --pending-b: #c5a3f5;
+    --proposal: #ff8a80;
     --note-bg: #171949;
     --note-ink: #f0ebde;
     --note-rule: rgba(240, 235, 222, .30);
@@ -144,6 +148,7 @@
     --solution-bg: #fff;
     --pending-a: #000;
     --pending-b: #000;
+    --proposal: #000;
     --note-bg: #fff;
     --note-ink: #000;
     --note-rule: #999;
@@ -204,6 +209,7 @@
   --measure: 36rem;
   --measure-wide: 40rem;
   --doc-width: 47rem;
+  --compare-width: 87.5rem;
   --unit: 40px;
   --grid-max: 100rem;
   --grid-margin: clamp(1.25rem, 5vw, 6rem);

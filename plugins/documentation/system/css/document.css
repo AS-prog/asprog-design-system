@@ -156,6 +156,19 @@ a.tag:hover { color: var(--ink); border-color: var(--ink); }
 .doc-footer { border-top: var(--line-major); margin-top: var(--s-12); padding-top: var(--s-4); display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s-2) var(--s-8); font-size: var(--t-1); color: var(--muted); }
 
 /* ---------- Móvil ---------- */
+/* Comparación lado a lado: lo que hay hoy a la izquierda y la propuesta a la derecha,
+   con la misma disposición. En estrecho se apilan; en ancho (el @media de abajo) salen del ancho del
+   documento hasta --compare-width (en la biblioteca, sin pasar bajo la barra lateral). */
+.doc-compare { display: grid; grid-template-columns: 1fr; gap: var(--s-6); }
+.doc-compare-col { min-width: 0; }
+.doc-compare-label { font-family: var(--f-mono); font-size: var(--t-2); margin: 0 0 var(--s-3); padding-bottom: var(--s-2); border-bottom: var(--line-faint); }
+/* Lo nuevo de la propuesta en el texto: una frase de la entradilla, una etiqueta o una fila de tabla. */
+.doc-new, tr.doc-new td, tr.doc-new code { color: var(--proposal); }
+@media (min-width: 62.5rem) {
+  .doc-compare { grid-template-columns: 1fr 1fr; width: min(var(--compare-width), 100vw - 2 * var(--grid-margin)); position: relative; left: 50%; transform: translateX(-50%); }
+  .lib .doc-compare { width: min(var(--compare-width), 100vw - var(--nav-width) - var(--s-9) - var(--grid-margin)); left: 0; transform: none; }
+}
+
 @media (max-width: 37.5rem) {
   .doc-meta { flex-direction: column; gap: var(--s-2); }
   .doc-prose table { font-size: var(--t-2); }

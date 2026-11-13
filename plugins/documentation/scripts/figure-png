@@ -54,14 +54,21 @@ try {
   const figures = await tab.$$('figure.figwrap');
   if (figures.length === 0) usage(`${page} no tiene ninguna figure.figwrap`);
   if (only && only > figures.length) usage(`la página tiene ${figures.length} figura(s)`);
-  const first = await (only ? figures[only - 1] : figures[0]).boundingBox();
-  const last = await (only ? figures[only - 1] : figures[figures.length - 1]).boundingBox();
+  // Una comparación (.doc-compare) sale del ancho de la figura: la caja es la unión de las dos.
+  const box = (el) => el.evaluate((e) => {
+    const rs = [e, ...e.querySelectorAll('.doc-compare')].map((x) => x.getBoundingClientRect());
+    const x = Math.min(...rs.map((r) => r.left)), right = Math.max(...rs.map((r) => r.right));
+    const y = Math.min(...rs.map((r) => r.top)), bottom = Math.max(...rs.map((r) => r.bottom));
+    return { x: x + scrollX, y: y + scrollY, width: right - x, height: bottom - y };
+  });
+  const first = await box(only ? figures[only - 1] : figures[0]);
+  const last = await box(only ? figures[only - 1] : figures[figures.length - 1]);
   mkdirSync(dirname(out), { recursive: true });
   await tab.screenshot({
     path: out,
     fullPage: true,
     clip: {
-      x: Math.max(0, first.x - MARGIN),
+      x: Math.max(0, Math.min(first.x, last.x) - MARGIN),
       y: Math.max(0, first.y - MARGIN),
       width: Math.max(first.width, last.width) + 2 * MARGIN,
       height: last.y + last.height - first.y + 2 * MARGIN,

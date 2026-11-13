@@ -29,7 +29,7 @@ Secciones, en orden: qué cambia (la conclusión y una viñeta por commit), cóm
 
 ### Cómo cambia el desarrollo
 
-Un cambio grande enseña antes y después con la misma disposición; uno acotado, el mapa actual con lo nuevo relleno y la etiqueta «NUEVO», en la tinta. La figura va como PNG en `figuras/`, enlazada con `?raw=true`, porque GitHub no muestra HTML.
+Un cambio grande o propuesto enseña cada figura dos veces, lado a lado: hoy a la izquierda y la propuesta a la derecha, con lo nuevo en el rojo de propuesta y borde discontinuo (el modelo es el «Flujo de la v3» de nano-harness); uno acotado, el mapa actual con lo nuevo marcado igual. La figura va como PNG en `figuras/`, enlazada con `?raw=true`, porque GitHub no muestra HTML.
 
 ### El estado de cada página
 

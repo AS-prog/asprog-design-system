@@ -6,34 +6,46 @@ Las figuras que enseñan cómo cambia el desarrollo se dibujan siempre igual, pa
 
 | El cambio | Forma | Dónde |
 |---|---|---|
-| Grande: varias piezas, otra forma de conectarse | **Antes y después**: dos figuras, una encima de otra, con la misma disposición | Página de implementación, sección «Arquitectura: antes y después» |
-| Acotado: una pieza nueva o una que cambia en un solo sitio | **Lo nuevo marcado** sobre el mapa actual de la página técnica | Página de implementación, sección «Arquitectura» |
-| Sin piezas que se muevan: valores, configuración, textos | **Tabla** antes → después; sin figura | Página de implementación o PR |
+| Grande o propuesto: varias piezas, otra forma de conectarse, o un diseño aún sin decidir | **Hoy y propuesta, lado a lado**: la misma figura dos veces, con la misma disposición | Página de diseño o de implementación, una comparación por figura |
+| Acotado: una pieza nueva o una que cambia en un solo sitio | **Lo nuevo marcado** sobre el mapa actual de la página técnica, con las mismas marcas | Página de implementación, sección «Arquitectura» |
+| Sin piezas que se muevan: valores, configuración, textos | **Tabla** con las filas nuevas marcadas; sin figura | Página de implementación o PR |
 | Una migración con muchas piezas que aparecen, se van y se reconectan | Tipo **architecture delta** de la skill `diagram`, con su registro de cambios | Página de diseño o de implementación |
 
-Antes y después va en vertical y no en paralelo: cada figura conserva su ancho de 560 a 760, se lee en el móvil sin desplazarse de lado y se exporta como una sola imagen.
+El modelo es el «Flujo de la v3» de nano-harness (`docs/registro/arquitectura/2026-11-13-diseno-alta-repos/flujo-v3.html`): cada diagrama sale dos veces, la v3 de hoy a la izquierda y lo que propone el issue a la derecha.
 
-## Antes y después
+## Hoy y propuesta
 
-1. **Dibuja primero el después**, y copia sus coordenadas al antes. Las piezas que sobreviven ocupan el mismo sitio en las dos figuras; una pieza que se mueve sin que eso sea el cambio confunde.
-2. **El mismo `viewBox`** en las dos. Si el antes tiene menos piezas, deja el hueco vacío: el hueco es parte de la comparación.
-3. **El antes va sin marcas**, salvo lo que desaparece. Las marcas del cambio van en el después.
-4. **Ids con prefijo propio** en cada figura (`<slug>-before-…`, `<slug>-after-…`), también en los marcadores de flecha.
-5. **El pie empieza por la palabra**: `<strong>Antes.</strong>` y `<strong>Después.</strong>`, y dice en una frase qué falla y qué lo arregla.
+```html
+<figure class="figwrap">
+  <div class="doc-compare">
+    <div class="doc-compare-col"><p class="doc-compare-label">v3 hoy</p><svg>…</svg></div>
+    <div class="doc-compare-col"><p class="doc-compare-label doc-new">Con el #60 (propuesta)</p><svg>…</svg></div>
+  </div>
+  <figcaption>… <span class="doc-new">A la derecha, en rojo y discontinuo, los pasos que añade el #60.</span></figcaption>
+</figure>
+```
+
+1. **Dibuja primero la propuesta**, y copia sus coordenadas a la de hoy. Las piezas que sobreviven ocupan el mismo sitio en las dos; si la propuesta añade pasos, la de hoy se queda con su altura y sus piezas en el mismo orden.
+2. **`.doc-compare`** pone las dos columnas lado a lado desde 62.5rem, fuera del ancho del documento (hasta `--compare-width`, 1400 px), y las apila en estrecho. Cada columna lleva su etiqueta (`.doc-compare-label`): la de hoy dice qué versión es («v3 hoy»); la de la propuesta, de qué issue sale, en `doc-new`.
+3. **La de hoy va sin marcas.** Todas las marcas van en la columna de la propuesta.
+4. **Ids con prefijo propio** en cada figura (`<slug>-hoy-…`, `<slug>-60-…`), también en los marcadores de flecha. La propuesta lleva un segundo marcador con `class="d-new"` para sus flechas rojas.
+5. **El pie dice cómo se lee**: qué es lo de la derecha y qué significa el rojo, en un `<span class="doc-new">`.
 
 ## Las marcas
 
-Una sola tinta: lo que cambia lo dice una palabra, y el relleno y el trazo la acompañan. El verde de solución y los colores de rama no se usan en estas figuras.
+Lo nuevo va en el rojo de propuesta (`--proposal`, clase `d-new` en el SVG y `doc-new` en el HTML). El rojo nunca va solo: lo acompaña el borde discontinuo o el número de issue, para que se lea también en blanco y negro.
 
-| Marca | Dónde | Cómo |
-|---|---|---|
-| **NUEVO** | Después | La caja en `d-fill` y la palabra en `d-tm` justo encima (`y` de la caja − 8), alineada a su izquierda |
-| **CAMBIA** | Después | Igual que NUEVO; el pie dice qué era antes y qué es ahora |
-| **SE VA** | Antes | La caja en `d-dash` y la palabra encima; en el después, el hueco |
-| **Conexión que cambia** | Antes y después | La de antes en `d-dash` con su etiqueta; la de después en `d-line` con la nueva |
-| **Sin conectar** | Después | `NUEVO · SIN CONECTAR` encima de la caja, sin flechas hacia ella |
+| Marca | Cómo |
+|---|---|
+| **Pieza nueva** | `<g class="d-new">` con la caja en `d-fill` y `stroke-dasharray="5 4"`, y su texto dentro |
+| **Flecha nueva** | `d-line d-new` con el marcador rojo |
+| **Cambia una pieza que ya existe** | La caja sigue en la tinta; debajo de su detalle, una línea `d-sm d-mid d-new` con lo que añade («+ setup de la ficha») |
+| **Un tramo nuevo del recorrido** | Una nota `d-sm d-new` en el margen, con el issue: «#60 · una vez por repo» |
+| **Fila nueva de una tabla** | `<tr class="doc-new">`, y la primera celda empieza por el issue: «#60 · Preparar» |
+| **Lo que propone el texto** | Una frase en `<span class="doc-new">` en la entradilla o en el pie |
+| **Se va** | En la de hoy, la caja en `d-dash`; en la propuesta, el hueco, y el pie lo dice |
 
-Como mucho **dos piezas marcadas** por figura (el presupuesto de nodos focales). Si hay más, el cambio es grande: se parte en dos figuras o se cuenta con architecture delta.
+Si las marcas pasan de la mitad de la figura, la propuesta es otra figura: se cuenta con architecture delta o se parte en dos comparaciones.
 
 ## Cuánto texto cabe
 
@@ -55,14 +67,14 @@ La página entera llega como artefacto de la issue ([pull-requests.md](pull-requ
 node <plugin>/scripts/figure-png <página.html> <carpeta>/figuras/antes-despues.png
 ```
 
-`figure-png` abre la página en modo claro, recorta desde la primera `figure.figwrap` hasta la última (o solo la que se pida con `--figure N`, contando desde 1) y guarda un PNG a doble resolución. Necesita Playwright con Chromium; si no está, lo dice y sale con 1. La imagen se regenera cada vez que cambia la figura y entra en el mismo commit.
+`figure-png` abre la página en modo claro a 1300 px de ancho (así una comparación sale lado a lado), recorta desde la primera `figure.figwrap` hasta la última (o solo la que se pida con `--figure N`, contando desde 1) y guarda un PNG a doble resolución. Necesita Playwright con Chromium; si no está, lo dice y sale con 1. La imagen se regenera cada vez que cambia la figura y entra en el mismo commit.
 
 En la PR se enlaza con `https://github.com/<owner>/<repo>/blob/<rama>/<ruta>.png?raw=true`, que funciona también en repos privados.
 
 ## Lista
 
 - [ ] La forma de la tabla de arriba, según el tamaño del cambio.
-- [ ] Antes y después con el mismo `viewBox` y las piezas que sobreviven en el mismo sitio.
-- [ ] Cada marca con su palabra; dos piezas marcadas como mucho.
+- [ ] Hoy y propuesta con la misma disposición y las piezas que sobreviven en el mismo sitio.
+- [ ] Todo el rojo en la columna de la propuesta, y cada marca con su borde discontinuo o su issue.
 - [ ] Ningún texto se sale de su caja (ancho ≥ caracteres × 8 + 16).
 - [ ] La página pasa `delphos-check` y el PNG de `figuras/` está al día.
