@@ -2,6 +2,21 @@
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y la versión, [SemVer](https://semver.org/lang/es/).
 
+## Sin publicar
+
+### Añadido
+- Plantilla de PR (`plugins/documentation/templates/pull_request_template.md`), que un proyecto copia a `.github/pull_request_template.md`, con el formato de nano-harness: qué cambia, cómo se comprobó, avisos, cómo revisarlo y `Closes #N`. «Cómo cambia el desarrollo» (la figura y la tabla de páginas con su estado al fusionar) es opcional, para las PR que tocan páginas.
+- Plantillas de issue `templates/issues/build.md` (problema, alcance, fuera, artefactos) y `templates/issues/design.md` (temas con propuesta y preguntas abiertas, orden, referencias), que se copian a `.github/ISSUE_TEMPLATE/`.
+- Guía `skills/method/reference/change-figures.md`: el estándar para dibujar un cambio. Qué forma según el tamaño (antes y después en vertical, lo nuevo marcado, tabla o architecture delta), las marcas NUEVO, CAMBIA y SE VA en la tinta, cuánto texto cabe en una caja (ancho ≥ caracteres × 8 + 16) y cómo llega la figura a la PR.
+- Script `scripts/figure-png`: guarda las figuras de una página como PNG a doble resolución, todas o una con `--figure N`. Necesita Playwright.
+- Script `scripts/standalone-html`: una página del sitio en un solo HTML, con las hojas, las fuentes y las imágenes dentro y sin barra lateral, para subirla como artefacto de una issue (`gh issue artifact create`, gh 2.103.0+).
+- Ejemplo en `examples/sample-project/registro/sensores/2026-11-10-implementacion-lectura-lotes/`: una página de implementación con antes y después según `change-figures.md` (SE VA, NUEVO, CAMBIA), su PNG y la PR rellena (`pr-ejemplo.md`).
+- Guía `skills/method/reference/pull-requests.md`: qué lleva la PR y la issue, cómo se enseña un cambio grande (antes y después) y uno acotado (lo nuevo marcado), y en qué estado queda cada página al fusionar.
+
+### Cambiado
+- `scripts/delphos-check` tiene permiso de ejecución.
+- `document-types.md` apunta a la plantilla de PR en lugar de a una plantilla «de abajo» que no existía. La skill `method` la enlaza en el paso 5 y en la lista final.
+
 ## 0.12.0 · 2026-11-10
 
 ### Añadido
@@ -31,19 +46,6 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y l
 - La capa web vuelve desde `delphos-design-system` v0.5.0 (`62af94c`), que se archiva: `system/astro/` (componentes Astro: `SiteLayout`, `HomeIntro`, `CubeFigure`, `Resume` y el resto; `grid.js` y `figure/`), `system/assets/` (la figura de los cubos y los iconos del tema) y `system/css/site.css`. Es la capa de andresrsotelo.dev; sus clases siguen sin prefijo, como en Delphos.
 - El repo es un paquete npm: `npm install github:AS-prog/asprog-design-system#vX.Y.Z` y `import { SiteLayout } from 'asprog-design-system/astro'`. `exports` publica `./astro`, `./tokens.css`, `./tokens.json`, `./css/*`, `./fonts/*`, `./assets/*` y `./js/*`; `astro` y `three` son dependencias opcionales (`three` solo para el motor de `CubeFigure`).
 - CI en GitHub Actions: `npm run build` sin cambios pendientes y `npm test` en cada PR y en `main`.
-
-### Añadido
-- Plantilla de PR (`plugins/documentation/templates/pull_request_template.md`), que un proyecto copia a `.github/pull_request_template.md`, con el formato de nano-harness: qué cambia, cómo se comprobó, avisos, cómo revisarlo y `Closes #N`. «Cómo cambia el desarrollo» (la figura y la tabla de páginas con su estado al fusionar) es opcional, para las PR que tocan páginas.
-- Plantillas de issue `templates/issues/build.md` (problema, alcance, fuera, artefactos) y `templates/issues/design.md` (temas con propuesta y preguntas abiertas, orden, referencias), que se copian a `.github/ISSUE_TEMPLATE/`.
-- Guía `skills/method/reference/change-figures.md`: el estándar para dibujar un cambio. Qué forma según el tamaño (antes y después en vertical, lo nuevo marcado, tabla o architecture delta), las marcas NUEVO, CAMBIA y SE VA en la tinta, cuánto texto cabe en una caja (ancho ≥ caracteres × 8 + 16) y cómo llega la figura a la PR.
-- Script `scripts/figure-png`: guarda las figuras de una página como PNG a doble resolución, todas o una con `--figure N`. Necesita Playwright.
-- Script `scripts/standalone-html`: una página del sitio en un solo HTML, con las hojas, las fuentes y las imágenes dentro y sin barra lateral, para subirla como artefacto de una issue (`gh issue artifact create`, gh 2.103.0+).
-- Ejemplo en `examples/sample-project/registro/sensores/2026-11-10-implementacion-lectura-lotes/`: una página de implementación con antes y después según `change-figures.md` (SE VA, NUEVO, CAMBIA), su PNG y la PR rellena (`pr-ejemplo.md`).
-- Guía `skills/method/reference/pull-requests.md`: qué lleva la PR y la issue, cómo se enseña un cambio grande (antes y después) y uno acotado (lo nuevo marcado), y en qué estado queda cada página al fusionar.
-
-### Cambiado
-- `scripts/delphos-check` tiene permiso de ejecución.
-- `document-types.md` apunta a la plantilla de PR en lugar de a una plantilla «de abajo» que no existía. La skill `method` la enlaza en el paso 5 y en la lista final.
 
 ## 0.9.0 · 2026-11-09
 
