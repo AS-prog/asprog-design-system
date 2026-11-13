@@ -12,8 +12,8 @@ Cada proyecto se documenta igual: un **repo de gestión** con el diseño, las de
 1. **Busca antes de crear.** Mira `diseno/`, `decisiones/`, `registro/`, `tecnica/` y `.scratch/`. Si un documento ya cubre el tema, amplíalo; si es fechado, añade una nota fechada al final. Hecho cuando puedes nombrar el documento que amplías o afirmar que no hay ninguno.
 2. **Elige el tipo** en [reference/document-types.md](reference/document-types.md). El tipo fija la carpeta, el nombre, si es vivo o fechado y sus secciones.
 3. **Escribe el `.md`** con las secciones del tipo, en su orden, y la voz de [reference/voice.md](reference/voice.md). El `.md` es siempre la fuente.
-4. **Si el tipo lleva página HTML**, hazla con la skill `document` y llévala al sitio con la skill `site`. Las páginas de implementación y las técnicas tienen guía propia: [reference/implementation-pages.md](reference/implementation-pages.md) y [reference/technical-pages.md](reference/technical-pages.md). Una figura que enseña un cambio se dibuja según [reference/change-figures.md](reference/change-figures.md).
-5. **Si el cambio toca código**, cumple [reference/alignment.md](reference/alignment.md): el diseño y el código van en ramas con el mismo nombre, y cada commit de código tiene su reflejo en el diseño. La PR sigue [reference/pull-requests.md](reference/pull-requests.md): enseña cómo cambia el desarrollo y enlaza sus páginas.
+4. **Si el tipo lleva página HTML**, hazla con la skill `document` y llévala al sitio con la skill `site`. Las páginas de implementación y las técnicas tienen guía propia: [reference/implementation-pages.md](reference/implementation-pages.md) y [reference/technical-pages.md](reference/technical-pages.md). Una figura que enseña un cambio es una comparación hoy | propuesta: la skill `change`.
+5. **Si el cambio toca código**, cumple [reference/alignment.md](reference/alignment.md): el diseño y el código van en ramas con el mismo nombre, y cada commit de código tiene su reflejo en el diseño. La issue y la PR siguen la skill `change`.
 6. **Revisa** con la lista final.
 
 ## Dónde va cada cosa

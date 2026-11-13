@@ -6,6 +6,7 @@ El método de documentación de los proyectos y su sistema de diseño (identidad
 |---|---|
 | `skills/method/` | Dónde va cada documento, los tipos y sus secciones, la voz, las páginas de implementación y técnicas, y el alineamiento entre diseño y código |
 | `skills/document/` | La regla visual: hojas, esqueleto, del Markdown al HTML y lo que no se hace |
+| `skills/change/` | Un cambio de la issue a la PR: las plantillas de issue y de PR y la comparación hoy \| propuesta con lo nuevo en rojo |
 | `skills/check/` | Las nueve reglas de `delphos-check`, para revisar a mano |
 | `skills/site/` | El sitio del proyecto: copia del sistema, páginas nuevas, portada y barra lateral |
 | `scripts/delphos-check` | Comprueba un HTML (Node, sin dependencias). El hook lo pasa a cada `.html` que Claude escribe |

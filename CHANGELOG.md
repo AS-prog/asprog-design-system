@@ -13,6 +13,7 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y l
 - Script `scripts/figure-png`: guarda las figuras de una página como PNG a doble resolución, todas o una con `--figure N`. Necesita Playwright.
 - Script `scripts/standalone-html`: una página del sitio en un solo HTML, con las hojas, las fuentes y las imágenes dentro y sin barra lateral, para subirla como artefacto de una issue (`gh issue artifact create`, gh 2.103.0+).
 - Ejemplo en `examples/sample-project/registro/sensores/2026-11-10-implementacion-lectura-lotes/`: una página de implementación con antes y después según `change-figures.md` (SE VA, NUEVO, CAMBIA), su PNG y la PR rellena (`pr-ejemplo.md`).
+- Skill `change`: lleva un cambio de la issue a la PR en cinco pasos (issue con su plantilla, comparación hoy | propuesta, PNG y artefacto, PR con su plantilla, estado al fusionar), con su criterio de hecho en cada uno. `method` remite a ella en lugar de repetir la guía.
 - Guía `skills/method/reference/pull-requests.md`: qué lleva la PR y la issue, cómo se enseña un cambio grande (antes y después) y uno acotado (lo nuevo marcado), y en qué estado queda cada página al fusionar.
 
 ### Cambiado
