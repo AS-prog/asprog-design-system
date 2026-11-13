@@ -49,4 +49,4 @@ La estructura entera, con el `AGENTS.md` de partida, está en [reference/folders
 - [ ] Si enseña un cambio: la figura sigue `change-figures.md` y su PNG está en `figuras/`.
 - [ ] Si lleva página: pasa `delphos-check`, está en el mapa del sitio y se ve bien en claro y en oscuro.
 - [ ] Si toca código: el diseño tiene su reflejo en la misma rama.
-- [ ] Si abre una PR: sigue la plantilla, enlaza sus páginas y dice en qué estado quedan al fusionar.
+- [ ] Si abre una PR o una issue: sigue su plantilla; si la PR toca páginas, las enlaza y dice en qué estado quedan al fusionar.

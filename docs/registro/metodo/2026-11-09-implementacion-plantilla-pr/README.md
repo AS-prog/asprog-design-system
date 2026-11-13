@@ -4,7 +4,7 @@ Issue #3, PR #2. La página es `plantilla-pr.html`, y la figura de antes y despu
 
 ## Conclusión
 
-El método `documentation` tiene una plantilla de PR (`plugins/documentation/templates/pull_request_template.md`) y una guía (`skills/method/reference/pull-requests.md`). La PR enseña cómo cambia el desarrollo con una figura y una tabla de páginas enlazadas, cada una con el estado en que queda al fusionar, y cierra con la lista «Al fusionar». Falta publicarla como 0.10.0 y copiarla a nano-harness.
+El método `documentation` tiene una plantilla de PR (`plugins/documentation/templates/pull_request_template.md`) y una guía (`skills/method/reference/pull-requests.md`). Sigue el formato de nano-harness: qué cambia, cómo se comprobó (con cifras reales), avisos, cómo revisarlo y la issue que cierra. Si la PR toca páginas, enseña además la figura del cambio y la tabla de páginas con su estado al fusionar. Hay también dos plantillas de issue, construir y diseñar. Falta publicarla como 0.10.0 y copiarla a nano-harness.
 
 ## Qué entra en el cambio
 
@@ -25,7 +25,7 @@ Es un cambio grande del recorrido de una ficha: las dos figuras tienen la misma 
 
 ### La plantilla
 
-Secciones, en orden: `Closes #N`, qué y por qué, cambios (commit → qué cambia), cómo cambia el desarrollo, validación, riesgos, pendiente, cómo revisarlo y al fusionar. Una sección que no aplica se quita.
+Secciones, en orden: qué cambia (la conclusión y una viñeta por commit), cómo se comprobó, cómo cambia el desarrollo (opcional, si toca páginas), avisos, cómo revisarlo y `Closes #N`. Una sección que no aplica se quita. Las issues: construir (problema, alcance, fuera, artefactos) y diseñar (temas con propuesta y preguntas abiertas, orden, referencias).
 
 ### Cómo cambia el desarrollo
 

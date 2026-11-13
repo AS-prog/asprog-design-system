@@ -2,29 +2,38 @@
 
 Cada PR enseña cómo cambia el desarrollo, no solo qué ficheros toca. Quien la revisa entiende el cambio desde la descripción y llega a la página que lo explica con un clic.
 
-## La plantilla
+## Las plantillas
 
-Está en [`templates/pull_request_template.md`](../../../templates/pull_request_template.md). Un proyecto la copia una vez a cada repo que tenga PR:
+Siguen el formato que se asentó en nano-harness: corto, con la conclusión primero y cifras reales. Están en `templates/`:
+
+| Fichero | Se copia a | Para |
+|---|---|---|
+| [`pull_request_template.md`](../../../templates/pull_request_template.md) | `.github/pull_request_template.md` | Cada PR |
+| [`issues/build.md`](../../../templates/issues/build.md) | `.github/ISSUE_TEMPLATE/build.md` | Una issue con alcance cerrado, lista para construir |
+| [`issues/design.md`](../../../templates/issues/design.md) | `.github/ISSUE_TEMPLATE/design.md` | Una issue para pensar antes de construir |
 
 ```
 cp <plugin>/templates/pull_request_template.md .github/pull_request_template.md
+mkdir -p .github/ISSUE_TEMPLATE && cp <plugin>/templates/issues/*.md .github/ISSUE_TEMPLATE/
 ```
 
-GitHub la pone en cada PR nueva. Un agente que abre la PR con una herramienta que no la lee (MCP, `gh pr create --body`) parte del fichero del repo y rellena sus secciones, en su orden. Si el repo ya tiene una plantilla propia, manda la del repo.
+GitHub las ofrece al abrir una PR o una issue. Un agente que las abre con una herramienta que no las lee (MCP, `gh pr create --body`) parte del fichero del repo y rellena sus secciones, en su orden. Si el repo ya tiene plantillas propias, mandan las del repo. Una sección que no aplica se quita; no se deja vacía.
 
-## Qué lleva
+## Qué lleva la PR
 
 | Sección | Contenido |
 |---|---|
-| `Closes #N` | La ficha que cierra. Si no la cierra entera, `Ficha: #N` |
-| Qué y por qué | La conclusión: qué cambia y qué lo pide |
-| Cambios | Tabla commit → qué cambia, un commit por fila |
-| Cómo cambia el desarrollo | La figura del cambio como imagen y la tabla de páginas con su estado al fusionar |
-| Validación | Comandos copiables, cifras reales |
-| Riesgos | Solo si hay alguno que pida acción |
-| Pendiente | Cada cosa con su ficha |
+| Qué cambia | Una o dos frases con la conclusión y lo que lo pide; después, una viñeta por commit o por pieza, con el nombre en negrita y el hash |
+| Cómo se comprobó | Comandos copiables y cifras reales: pruebas antes y después, aceptaciones, la ejecución con su tiempo. Si hay varias tareas, una tabla |
+| Cómo cambia el desarrollo | Opcional, solo si toca páginas del registro: la figura como imagen y la tabla de páginas con su estado al fusionar |
+| Avisos | Choques con otras PR, lo que no se toca y por qué, avisos de `delphos-check` |
 | Cómo revisarlo | Por dónde empezar |
-| Al fusionar | La lista que deja las páginas al día |
+| `Closes #N` | Al final. Si no la cierra entera, `refs #N` y lo que falta |
+
+## Qué lleva la issue
+
+- **Construir**: Problema (con la evidencia, sin la solución) · Alcance (una casilla por pieza, y una prueba que lo fija) · Fuera (con la issue que se lo lleva) · Artefactos (documentos e issues relacionadas).
+- **Diseñar**: de dónde sale · un apartado numerado por tema, con lo que pasa hoy, la propuesta a discutir y las preguntas abiertas · Orden que sugiere · Referencias.
 
 ## Cómo se enseña el cambio
 
@@ -34,7 +43,7 @@ El estándar completo, con las marcas, el texto que cabe en cada caja y la expor
 - **Un cambio acotado** (una pieza nueva, sin conectar o en un solo sitio) enseña el mapa actual de la página técnica con lo nuevo marcado: relleno (`d-fill`) y la etiqueta «NUEVO» en `d-tm`. En la tinta: el verde de solución es solo para la barra lateral y las ramas.
 - **Sin diagrama** (documentación, configuración) basta la tabla de páginas.
 
-La figura va también en la PR como imagen, para verla sin salir de GitHub: un PNG en `figuras/` de la carpeta de la página, hecho con `scripts/figure-png`, enlazado con `…/blob/<rama>/<ruta>.png?raw=true` (funciona en repos privados). Un enlace a un `.html` del repo abre su código fuente; por eso la página llega como artefacto de la issue (abajo) y la PR lo enlaza.
+Si la PR toca páginas, la figura va también en ella como imagen, para verla sin salir de GitHub: un PNG en `figuras/` de la carpeta de la página, hecho con `scripts/figure-png`, enlazado con `…/blob/<rama>/<ruta>.png?raw=true` (funciona en repos privados). Un enlace a un `.html` del repo abre su código fuente; por eso la página llega como artefacto de la issue (abajo) y la PR lo enlaza.
 
 ## La página como artefacto de la issue
 
@@ -55,7 +64,7 @@ gh issue artifact edit <N> <número> --body-file /tmp/<objeto>.html       # cada
 
 ## El estado de cada página
 
-Una página fechada es `borrador` mientras su PR está abierta. La PR dice en qué estado queda cada página al fusionar, y el último commit de la rama, una vez aprobada, la deja así, para que la rama base nunca diga «PR abierta»:
+Solo para las PR que tocan páginas del registro. Una página fechada es `borrador` mientras su PR está abierta. La PR dice en qué estado queda cada página al fusionar, y el último commit de la rama, una vez aprobada, la deja así, para que la rama base nunca diga «PR abierta»:
 
 | Tipo | Mientras la PR está abierta | Al fusionar |
 |---|---|---|

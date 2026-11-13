@@ -36,7 +36,8 @@ Todos llevan arriba la ficha técnica: fecha, estado (`borrador` mientras su cam
 | Entrada | `entradas/<AAAA-MM-DD>-<origen>/` | El material tal cual llegó y `asimilacion.md`: qué cambió en `diseno/` o `decisiones/` por él |
 | Incidencia | `.scratch/<área>/incidencias/issues/INNNN-<slug>.md` | síntoma · causa · resolución · cómo evitarla |
 | Entrega | Donde pida el destinatario, autocontenida (skill `document`, entrega suelta) | resumen para negocio · cifras · detalle · nota de método |
-| Descripción de un PR | `.github/pull_request_template.md` del repo, copiada de `templates/pull_request_template.md` ([pull-requests.md](pull-requests.md)) | qué y por qué · cambios · cómo cambia el desarrollo · validación · riesgos · pendiente · cómo revisarlo · al fusionar |
+| Descripción de un PR | `.github/pull_request_template.md` del repo, copiada de `templates/pull_request_template.md` ([pull-requests.md](pull-requests.md)) | qué cambia · cómo se comprobó · (cómo cambia el desarrollo) · avisos · cómo revisarlo · closes |
+| Issue | `.github/ISSUE_TEMPLATE/` del repo, copiadas de `templates/issues/` ([pull-requests.md](pull-requests.md)) | construir: problema · alcance · fuera · artefactos. Diseñar: temas con propuesta y preguntas · orden · referencias |
 
 ## Lo que generan otras skills
 

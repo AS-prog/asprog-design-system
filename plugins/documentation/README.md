@@ -12,7 +12,7 @@ El método de documentación de los proyectos y su sistema de diseño (identidad
 | `scripts/figure-png` | Guarda las figuras de una página como PNG, para enseñarlas en una PR (Node con Playwright) |
 | `scripts/standalone-html` | Convierte una página en un solo HTML autocontenido, sin barra lateral, para subirlo como artefacto de una issue (Node, sin dependencias) |
 | `scripts/site.py` | `vendor`, `new` y `build` del sitio (Python 3.11+ con `markdown`, o `uv`) |
-| `templates/` | Plantillas de página (implementación, técnica, diseño, documento), de `site.toml` y `home.md`, y de la descripción de una PR (`pull_request_template.md`) |
+| `templates/` | Plantillas de página (implementación, técnica, diseño, documento), de `site.toml` y `home.md`, de la descripción de una PR (`pull_request_template.md`) y de las issues (`issues/build.md`, `issues/design.md`) |
 | `system/` | Copia generada de `system/` del repo: no se edita aquí |
 
 Instalación y desarrollo: el README de la raíz del repo.
