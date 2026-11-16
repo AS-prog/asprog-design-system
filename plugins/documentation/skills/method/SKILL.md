@@ -1,6 +1,6 @@
 ---
 name: method
-description: El método de documentación de los proyectos: dónde va cada documento (diseño en dos niveles, decisiones, entradas, registro fechado, páginas técnicas vivas, fichas), qué tipo es, qué secciones lleva, con qué voz se escribe y cómo se mantiene alineado con el código. Úsala al escribir o colocar cualquier documento, al montar el repo de gestión de un proyecto nuevo o cuando pregunten «¿dónde va esto?» o «¿qué lleva esta página?».
+description: "El método de documentación de los proyectos: dónde va cada documento (diseño en dos niveles, decisiones, entradas, registro fechado, páginas técnicas vivas, fichas), qué tipo es, qué secciones lleva, con qué voz se escribe y cómo se mantiene alineado con el código. Úsala al escribir o colocar cualquier documento, al montar el repo de gestión de un proyecto nuevo o cuando pregunten «¿dónde va esto?» o «¿qué lleva esta página?»."
 ---
 
 # method

@@ -1,19 +1,19 @@
 ---
 name: site
-description: Prepara y mantiene el sitio de la documentación de un proyecto: copia el sistema de diseño al repo, crea páginas desde sus plantillas y genera la portada y la barra lateral desde docs/site/site.toml. Úsala al montar la documentación de un proyecto nuevo, al añadir una página al sitio, al subir de versión el sistema o cuando pidan «regenera el sitio» o «la barra lateral».
+description: "Prepara y mantiene el sitio de la documentación de un proyecto: copia el sistema de diseño al repo, crea páginas desde sus plantillas y genera la portada y la barra lateral desde docs/site/site.toml. Úsala al montar la documentación de un proyecto nuevo, al añadir una página al sitio, al subir de versión el sistema o cuando pidan «regenera el sitio» o «la barra lateral»."
 ---
 
 # site
 
-Todo lo hace `${CLAUDE_PLUGIN_ROOT}/scripts/site.py`, desde la raíz del repo de gestión. Necesita `uv` (o Python 3.11+ con `markdown` instalado):
+Todo lo hace `scripts/site.py` de esta skill, desde la raíz del repo de gestión. `<site>` es la carpeta de esta skill, la que tiene este `SKILL.md` (como plugin, `${CLAUDE_PLUGIN_ROOT}/skills/site`; instalada con APM, `.claude/skills/site` o `~/.claude/skills/site`). Necesita `uv` (o Python 3.11+ con `markdown` instalado):
 
 ```bash
-S="uv run --no-project --with markdown python ${CLAUDE_PLUGIN_ROOT}/scripts/site.py"
+S="uv run --no-project --with markdown python <site>/scripts/site.py"
 ```
 
 ## Un proyecto nuevo
 
-1. Copia `${CLAUDE_PLUGIN_ROOT}/templates/site/site.toml` y `home.md` a `docs/site/` y rellena lo que va entre `{{…}}`: el nombre, la marca, las secciones (una por parte del sistema, en el orden en que fluyen los datos; «Método» primero) y la portada.
+1. Copia `<site>/templates/site/site.toml` y `home.md` a `docs/site/` y rellena lo que va entre `{{…}}`: el nombre, la marca, las secciones (una por parte del sistema, en el orden en que fluyen los datos; «Método» primero) y la portada.
 2. `$S vendor`: copia el sistema a `docs/design-system/vX.Y/`. Entra en git: las páginas lo enlazan con rutas relativas.
 3. `$S build`: escribe `index.html` y pone la barra en las páginas del mapa.
 

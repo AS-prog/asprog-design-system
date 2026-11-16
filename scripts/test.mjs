@@ -36,11 +36,11 @@ for (const item of SHIPPED) {
   for (const f of statSync(src).isFile() ? [src] : files(src)) {
     const rel = relative(join(ROOT, 'system'), f);
     let copy;
-    try { copy = readFileSync(join(PLUGIN, 'system', rel)); } catch { errors.push(`falta plugins/documentation/system/${rel}: ejecuta npm run build`); continue; }
-    if (!copy.equals(readFileSync(f))) errors.push(`plugins/documentation/system/${rel} no coincide con system/${rel}: ejecuta npm run build`);
+    try { copy = readFileSync(join(PLUGIN, 'skills', 'site', 'system', rel)); } catch { errors.push(`falta plugins/documentation/skills/site/system/${rel}: ejecuta npm run build`); continue; }
+    if (!copy.equals(readFileSync(f))) errors.push(`plugins/documentation/skills/site/system/${rel} no coincide con system/${rel}: ejecuta npm run build`);
   }
 }
-const shippedVersion = readFileSync(join(PLUGIN, 'system', 'VERSION'), 'utf8').trim();
+const shippedVersion = readFileSync(join(PLUGIN, 'skills', 'site', 'system', 'VERSION'), 'utf8').trim();
 if (shippedVersion !== version()) errors.push(`el plugin lleva el sistema v${shippedVersion} y package.json dice v${version()}`);
 const listed = JSON.parse(readFileSync(join(PLUGIN, 'skills', 'check', 'classes.json'), 'utf8'));
 if (JSON.stringify(listed) !== JSON.stringify(classes())) errors.push('skills/check/classes.json no coincide con las hojas: ejecuta npm run build');
@@ -56,12 +56,12 @@ const pages = [
   ...files(join(ROOT, 'examples'), (f) => f.endsWith('.html') && !f.includes(`${join('docs', 'design-system')}`)),
   ...files(join(ROOT, 'plugins', 'diagrams', 'skills', 'diagram', 'examples'), (f) => f.endsWith('.html')),
 ];
-try { run('node', [join(PLUGIN, 'scripts', 'delphos-check'), ...pages.map((f) => relative(ROOT, f))], { stdio: ['inherit', 'ignore', 'inherit'] }); }
+try { run('node', [join(PLUGIN, 'skills', 'check', 'scripts', 'delphos-check'), ...pages.map((f) => relative(ROOT, f))], { stdio: ['inherit', 'ignore', 'inherit'] }); }
 catch { errors.push('delphos-check encuentra fallos (arriba)'); }
 
 // 5. El sitio del ejemplo, regenerado, no cambia.
 try {
-  run('uv', ['run', '--quiet', '--no-project', '--with', 'markdown', 'python', join(PLUGIN, 'scripts', 'site.py'), 'build', '--root', 'examples/sample-project', '--check'], { stdio: ['inherit', 'ignore', 'inherit'] });
+  run('uv', ['run', '--quiet', '--no-project', '--with', 'markdown', 'python', join(PLUGIN, 'skills', 'site', 'scripts', 'site.py'), 'build', '--root', 'examples/sample-project', '--check'], { stdio: ['inherit', 'ignore', 'inherit'] });
 } catch { errors.push('el sitio del ejemplo no está al día: ejecuta npm run example'); }
 
 if (errors.length) { console.error('\n' + errors.map((e) => '✗ ' + e).join('\n')); process.exit(1); }

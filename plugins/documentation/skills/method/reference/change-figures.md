@@ -64,7 +64,7 @@ Regla: **ancho de la caja ≥ caracteres × 8 + 16**. Si no cabe, se acorta el t
 La página entera llega como artefacto de la issue ([pull-requests.md](pull-requests.md)). La descripción de la PR no admite HTML, así que además enseña la figura como imagen:
 
 ```bash
-node <plugin>/scripts/figure-png <página.html> <carpeta>/figuras/antes-despues.png
+node <skills>/change/scripts/figure-png <página.html> <carpeta>/figuras/antes-despues.png
 ```
 
 `figure-png` abre la página en modo claro a 1300 px de ancho (así una comparación sale lado a lado), recorta desde la primera `figure.figwrap` hasta la última (o solo la que se pida con `--figure N`, contando desde 1) y guarda un PNG a doble resolución. Necesita Playwright con Chromium; si no está, lo dice y sale con 1. La imagen se regenera cada vez que cambia la figura y entra en el mismo commit.

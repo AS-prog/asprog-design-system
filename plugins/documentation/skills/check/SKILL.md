@@ -1,6 +1,6 @@
 ---
 name: check
-description: Revisa una página HTML del sistema de diseño (o un fragmento de diagrama) contra sus reglas antes de entregarla. Úsala cuando pidan «revisa este html», «¿cumple el sistema?» o al terminar una página hecha con la skill document.
+description: "Revisa una página HTML del sistema de diseño (o un fragmento de diagrama) contra sus reglas antes de entregarla. Úsala cuando pidan «revisa este html», «¿cumple el sistema?» o al terminar una página hecha con la skill document."
 argument-hint: ruta/al/documento.html
 ---
 
@@ -8,7 +8,7 @@ argument-hint: ruta/al/documento.html
 
 Es el mismo trabajo que hace el hook de este plugin cada vez que Claude escribe un `.html`; esta skill sirve para pedirlo a mano y como respaldo donde no hay hook (el chat de claude.ai).
 
-1. Si puedes ejecutar comandos: `node ${CLAUDE_PLUGIN_ROOT}/scripts/delphos-check <ruta> …`. Sale con 0 si cumple y con 2 si no; cada fallo lleva línea, número de regla y qué corregir. Corrige y repite hasta que salga limpio.
+1. Si puedes ejecutar comandos: `node <check>/scripts/delphos-check <ruta> …`, donde `<check>` es la carpeta de esta skill, la que tiene este `SKILL.md`. Sale con 0 si cumple y con 2 si no; cada fallo lleva línea, número de regla y qué corregir. Corrige y repite hasta que salga limpio.
 2. Si no puedes ejecutar nada, lee [rules.md](rules.md) y aplica las nueve reglas una a una, citando línea y regla.
 3. Informa en una lista corta: regla, línea y arreglo. Si todo cumple, dilo en una frase.
 

@@ -35,7 +35,7 @@ export function version() {
 
 function main() {
   writeFileSync(join(SYSTEM, 'tokens.css'), buildCss(loadTokens()));
-  const target = join(PLUGIN, 'system');
+  const target = join(PLUGIN, 'skills', 'site', 'system');
   rmSync(target, { recursive: true, force: true });
   mkdirSync(target, { recursive: true });
   for (const item of SHIPPED) cpSync(join(SYSTEM, item), join(target, item), { recursive: true });
