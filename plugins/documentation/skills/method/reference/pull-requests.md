@@ -4,17 +4,17 @@ Cada PR enseña cómo cambia el desarrollo, no solo qué ficheros toca. Quien la
 
 ## Las plantillas
 
-Siguen el formato que se asentó en nano-harness: corto, con la conclusión primero y cifras reales. Están en `templates/`:
+Siguen el formato que se asentó en nano-harness: corto, con la conclusión primero y cifras reales. Están en `templates/` de la skill `change`. Abajo, `<skills>` es la carpeta de las skills de este plugin (como plugin, `${CLAUDE_PLUGIN_ROOT}/skills`; instaladas con APM, `.claude/skills` o `~/.claude/skills`):
 
 | Fichero | Se copia a | Para |
 |---|---|---|
-| [`pull_request_template.md`](../../../templates/pull_request_template.md) | `.github/pull_request_template.md` | Cada PR |
-| [`issues/build.md`](../../../templates/issues/build.md) | `.github/ISSUE_TEMPLATE/build.md` | Una issue con alcance cerrado, lista para construir |
-| [`issues/design.md`](../../../templates/issues/design.md) | `.github/ISSUE_TEMPLATE/design.md` | Una issue para pensar antes de construir |
+| [`pull_request_template.md`](../../change/templates/pull_request_template.md) | `.github/pull_request_template.md` | Cada PR |
+| [`issues/build.md`](../../change/templates/issues/build.md) | `.github/ISSUE_TEMPLATE/build.md` | Una issue con alcance cerrado, lista para construir |
+| [`issues/design.md`](../../change/templates/issues/design.md) | `.github/ISSUE_TEMPLATE/design.md` | Una issue para pensar antes de construir |
 
 ```
-cp <plugin>/templates/pull_request_template.md .github/pull_request_template.md
-mkdir -p .github/ISSUE_TEMPLATE && cp <plugin>/templates/issues/*.md .github/ISSUE_TEMPLATE/
+cp <skills>/change/templates/pull_request_template.md .github/pull_request_template.md
+mkdir -p .github/ISSUE_TEMPLATE && cp <skills>/change/templates/issues/*.md .github/ISSUE_TEMPLATE/
 ```
 
 GitHub las ofrece al abrir una PR o una issue. Un agente que las abre con una herramienta que no las lee (MCP, `gh pr create --body`) parte del fichero del repo y rellena sus secciones, en su orden. Si el repo ya tiene plantillas propias, mandan las del repo. Una sección que no aplica se quita; no se deja vacía.
@@ -43,14 +43,14 @@ El estándar completo, con las marcas, el texto que cabe en cada caja y la expor
 - **Lo nuevo va en el rojo de propuesta** (`d-new`, `doc-new`) y con borde discontinuo; lo que cambia en una pieza que ya existe, en una línea roja bajo su caja. Siempre con el número de issue al lado.
 - **Un cambio acotado** marca lo nuevo igual sobre el mapa actual; **sin diagrama** (documentación, configuración) basta la tabla con las filas nuevas en `doc-new`.
 
-Si la PR toca páginas, la figura va también en ella como imagen, para verla sin salir de GitHub: un PNG en `figuras/` de la carpeta de la página, hecho con `scripts/figure-png`, enlazado con `…/blob/<rama>/<ruta>.png?raw=true` (funciona en repos privados). Un enlace a un `.html` del repo abre su código fuente; por eso la página llega como artefacto de la issue (abajo) y la PR lo enlaza.
+Si la PR toca páginas, la figura va también en ella como imagen, para verla sin salir de GitHub: un PNG en `figuras/` de la carpeta de la página, hecho con `scripts/figure-png` de la skill `change`, enlazado con `…/blob/<rama>/<ruta>.png?raw=true` (funciona en repos privados). Un enlace a un `.html` del repo abre su código fuente; por eso la página llega como artefacto de la issue (abajo) y la PR lo enlaza.
 
 ## La página como artefacto de la issue
 
 GitHub muestra un HTML como **artefacto de una issue** (`gh issue artifact`, gh 2.103.0 o posterior; en vista previa desde octubre de 2026): se ve renderizado, con su historial de versiones. Los artefactos cuelgan de la issue, no de la PR, así que la PR enlaza la issue que cierra y su artefacto.
 
 ```bash
-node <plugin>/scripts/standalone-html <página.html> /tmp/<objeto>.html   # un solo HTML, sin barra lateral
+node <skills>/change/scripts/standalone-html <página.html> /tmp/<objeto>.html   # un solo HTML, sin barra lateral
 gh issue artifact create <N> /tmp/<objeto>.html                          # la primera vez
 gh issue artifact list <N>                                               # su número y su URL
 gh issue artifact edit <N> <número> --body-file /tmp/<objeto>.html       # cada vez que cambia la página

@@ -1,13 +1,13 @@
 ---
 name: change
-description: Lleva un cambio de la issue a la PR enseñando cómo cambia el desarrollo: la issue con su plantilla (construir o diseñar), la comparación hoy | propuesta con lo nuevo en rojo, el PNG y el artefacto de la issue, y la PR con su plantilla. Úsala al abrir una issue o una PR, al proponer un diseño o cuando pidan «enseña el cambio», «antes y después» o «la propuesta en rojo».
+description: "Lleva un cambio de la issue a la PR enseñando cómo cambia el desarrollo: la issue con su plantilla (construir o diseñar), la comparación hoy | propuesta con lo nuevo en rojo, el PNG y el artefacto de la issue, y la PR con su plantilla. Úsala al abrir una issue o una PR, al proponer un diseño o cuando pidan «enseña el cambio», «antes y después» o «la propuesta en rojo»."
 ---
 
 # change
 
 Un cambio se cuenta igual de principio a fin: una **issue** que dice qué falta, una **comparación** que enseña hoy y la propuesta con la misma disposición, y una **PR** que dice qué entró y cómo se comprobó. Quien revisa entiende el cambio sin abrir el código.
 
-Las rutas son relativas a `${CLAUDE_PLUGIN_ROOT}`. Si el repo ya tiene plantillas en `.github/`, mandan las del repo.
+Las rutas `templates/…` y `scripts/…` son relativas a la carpeta de esta skill, la que tiene este `SKILL.md` (como plugin y con APM). Si el repo ya tiene plantillas en `.github/`, mandan las del repo.
 
 ## Pasos
 

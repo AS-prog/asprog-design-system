@@ -1,6 +1,6 @@
 # Reglas de delphos-check
 
-Las nueve reglas que aplica `scripts/delphos-check` a una página HTML. Cada una cita la sección de `skills/document/guide.md` de la que sale. Un fragmento suelto (`figure.figwrap` sin `<html>`) solo pasa por las reglas 1, 2, 3, 7 y 8.
+Las nueve reglas que aplica `scripts/delphos-check` de esta skill a una página HTML. Cada una cita la sección de `skills/document/guide.md` de la que sale. Un fragmento suelto (`figure.figwrap` sin `<html>`) solo pasa por las reglas 1, 2, 3, 7 y 8.
 
 | Regla | Qué busca | De dónde sale |
 | --- | --- | --- |
