@@ -1,8 +1,34 @@
-# AGENTS.md
+# asprog-design-system
+
+## What this is
+
+Sistema de diseño Delphos y método de documentación de los proyectos, publicado como marketplace de Claude Code.
+
+## Place in the setup
+
+- Develop on: Mac mini. El Air y el teléfono entran por Remote Control.
+- Delegates to: nadie. No delega trabajo a la Pi.
+- Role: ninguno. Sesión de trabajo normal.
+
+## Knowledge packages
+
+Ninguno. Este repo no declara paquetes en `apm.yml`.
+
+## How to verify
+
+`npm run build` y `npm test`; abrir el ejemplo en claro, en oscuro y a 400 px.
+
+## Handoff
+
+El estado se deja en una rama con su PR en borrador: qué está hecho, qué falta y cómo se comprueba. Lo que no es código va al PR o a las notas del vault. Nada queda solo en la sesión.
+
+## Repo notes
+
+### Del AGENTS.md anterior
 
 Guía para cambiar este repo. Para **usar** el sistema en un proyecto, las reglas están en el plugin: `plugins/documentation/skills/` (`method` para qué documento y dónde, `change` para la issue, la comparación y la PR de un cambio, `document` para la regla visual, `site` para el sitio, `check` para las reglas que se comprueban).
 
-## Qué se toca y dónde
+### Qué se toca y dónde
 
 | Quiero… | Toco | Y luego |
 |---|---|---|
@@ -15,7 +41,7 @@ Guía para cambiar este repo. Para **usar** el sistema en un proyecto, las regla
 
 Nunca se editan a mano: `system/tokens.css`, `plugins/documentation/skills/site/system/`, `plugins/documentation/skills/check/classes.json` ni la `version` de los manifiestos. Los genera `npm run build`.
 
-## Reglas
+### Reglas
 
 - **Nada de un cliente o un proyecto concreto.** La excepción es la capa web (`system/astro/`, `system/css/site.css`), que es la de andresrsotelo.dev y conserva sus clases sin prefijo de Delphos. Los ejemplos son ficticios (`examples/sample-project/`, el controlador de riego). Un nombre real de cliente, servidor o tabla no entra.
 - **El código va en inglés y los comentarios en español.** Carpetas, ficheros, clases, tokens, funciones y claves de configuración en inglés; README, skills, changelog, commits y todo texto visible, en español.
