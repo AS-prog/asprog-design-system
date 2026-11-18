@@ -50,7 +50,3 @@ Nunca se editan a mano: `system/tokens.css`, `plugins/documentation/skills/site/
 - **Versión** (SemVer): un cambio de valor en un token existente, o un nombre que desaparece, sube la mayor; una pieza o un token nuevo, la menor; una corrección sin cambio de valores, el parche. En 0.x, lo de la mayor sube la menor. La versión vive en `package.json` y en `system/tokens.json`, iguales (`npm test` lo comprueba); `npm run build` la lleva al plugin y a los manifiestos.
 - **Cada skill del plugin lleva dentro lo que usa** (scripts, plantillas, la copia del sistema) y las demás lo piden por la carpeta hermana. Nada en la raíz del plugin salvo el hook: APM solo copia la carpeta de cada skill. El `description` del frontmatter va entre comillas: APM lee YAML estricto.
 - **Antes de dar por bueno un cambio**: `npm run build`, `npm test`, y abrir el ejemplo en claro, en oscuro y a 400 px.
-
-### Del CLAUDE.md anterior
-
-Lee [AGENTS.md](AGENTS.md).
