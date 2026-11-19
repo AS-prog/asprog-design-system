@@ -6,6 +6,7 @@
 //   3. la copia del sistema y classes.json del plugin están al día;
 //   4. las páginas del ejemplo y los fragmentos de diagrams pasan delphos-check;
 //   5. el sitio del ejemplo está generado con la versión actual de site.py;
+//   5b. las pruebas de site-md pasan;
 //   6. site.py funciona con el sistema en jsDelivr (system como URL): ni copia ni rutas a una copia.
 import { execFileSync } from 'node:child_process';
 import { cpSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
@@ -65,6 +66,11 @@ catch { errors.push('delphos-check encuentra fallos (arriba)'); }
 try {
   run('uv', ['run', '--quiet', '--no-project', '--with', 'markdown', 'python', join(PLUGIN, 'skills', 'site', 'scripts', 'site.py'), 'build', '--root', 'examples/sample-project', '--check'], { stdio: ['inherit', 'ignore', 'inherit'] });
 } catch { errors.push('el sitio del ejemplo no está al día: ejecuta npm run example'); }
+
+// 5b. site-md: el sitio en Markdown (tests/site-md/, con pytest).
+try {
+  run('uv', ['run', '--quiet', '--no-project', '--with', 'pytest', '--with', 'markdown-it-py', '--with', 'mdit-py-plugins', '--with', 'pyyaml', 'python', '-m', 'pytest', '-q', 'tests/site-md'], { stdio: ['inherit', 'ignore', 'inherit'] });
+} catch { errors.push('las pruebas de site-md fallan: uv run … pytest tests/site-md'); }
 
 // 6. El sistema desde jsDelivr: el ejemplo, sin su copia y con system como URL.
 {

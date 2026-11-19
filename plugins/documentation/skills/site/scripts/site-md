@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+"""Sitio en Markdown: `site-md build|check|migrate` (ver ../SKILL.md, «Un sitio en Markdown»).
+
+    uv run --no-project --with markdown-it-py --with mdit-py-plugins --with pyyaml \
+        python <site>/scripts/site-md build --root docs/site
+"""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from site_md.cli import main  # noqa: E402
+
+sys.exit(main())
