@@ -2,23 +2,37 @@
 import { readFileSync } from 'node:fs';
 
 export const THEMES = ['light', 'dark', 'print'];
+// Los temas que una paleta de marca puede cambiar: la impresión es siempre la de la base.
+export const PALETTE_THEMES = ['light', 'dark'];
 export const SCALAR_FAMILIES = ['typeScale', 'lineHeight', 'letterSpacing', 'spacing', 'radius', 'layout', 'motion', 'border'];
 
 export function loadTokens(path = new URL('../system/tokens.json', import.meta.url)) {
   return JSON.parse(readFileSync(path, 'utf8'));
 }
 
-/** Valor de un token de color en un tema, con referencias {name} resueltas. */
-export function colorValue(tokens, name, theme, seen = new Set()) {
+/** Las paletas de marca de tokens.json (puede no haber ninguna). */
+export function palettes(tokens) {
+  return tokens.color.palettes ?? [];
+}
+
+/** Valor crudo de un token en un tema: el de la paleta si lo sobrescribe, si no el de la base. */
+function rawColor(tokens, name, theme, palette) {
   const t = tokens.color.tokens.find((x) => x.name === name);
   if (!t) throw new Error(`color.${name} no existe`);
-  const raw = typeof t.value === 'string' ? t.value : t.value[theme];
+  const over = palette && PALETTE_THEMES.includes(theme) ? palette.tokens[name]?.[theme] : undefined;
+  if (over != null) return over;
+  return typeof t.value === 'string' ? t.value : t.value[theme];
+}
+
+/** Valor de un token de color en un tema (y en una paleta, si se da), con referencias {name} resueltas. */
+export function colorValue(tokens, name, theme, seen = new Set(), palette = null) {
+  const raw = rawColor(tokens, name, theme, palette);
   if (raw == null) return null;
   const m = raw.match(/^\{([\w-]+)\}$/);
   if (!m) return raw;
   if (seen.has(name)) throw new Error(`referencia circular en color.${name}`);
   seen.add(name);
-  return colorValue(tokens, m[1], theme, seen);
+  return colorValue(tokens, m[1], theme, seen, palette);
 }
 
 /** Referencias de color como var(--x); {familia.x} se admite solo hacia color. */
@@ -47,8 +61,20 @@ export function buildCss(tokens) {
   for (const theme of THEMES) L.push(`${themeSel[theme]} {`, ...block(theme), '}', '');
   L.push('/* data-theme="auto": sigue a prefers-color-scheme; el conmutador lo sobrescribe escribiendo light o dark. */');
   L.push('@media (prefers-color-scheme: dark) {', '  [data-theme="auto"] {', ...block('dark', '  '), '  }', '}', '');
-  L.push('/* Al imprimir manda el tema print, se elija lo que se elija en pantalla. */');
-  L.push('@media print {', '  :root, [data-theme] {', ...block('print', '  '), '  }', '}', '');
+  // Paletas de marca: cambian solo los colores que nombran, sobre el claro o el oscuro.
+  // Van en el mismo elemento que data-theme; sin data-theme, el claro.
+  for (const p of palettes(tokens)) {
+    const sel = `[data-palette="${p.id}"]`;
+    const over = (theme, indent = '') => Object.entries(p.tokens)
+      .filter(([, v]) => v[theme] != null)
+      .map(([n, v]) => `${indent}  --${n}: ${cssRef(v[theme])};`);
+    L.push(`/* Paleta ${p.name}: ${p.source ?? 'sin fuente'} */`);
+    L.push(`${sel}, ${sel}[data-theme="light"] {`, ...over('light'), '}', '');
+    L.push(`${sel}[data-theme="dark"] {`, ...over('dark'), '}', '');
+    L.push('@media (prefers-color-scheme: dark) {', `  ${sel}[data-theme="auto"] {`, ...over('dark', '  '), '  }', '}', '');
+  }
+  L.push('/* Al imprimir manda el tema print, se elija lo que se elija en pantalla (también con una paleta). */');
+  L.push('@media print {', '  :root, [data-theme], [data-palette], [data-palette][data-theme] {', ...block('print', '  '), '  }', '}', '');
   L.push(':root {');
   for (const fam of SCALAR_FAMILIES) {
     for (const t of tokens[fam].tokens) L.push(`  --${t.name}: ${cssRef(t.value)};`);

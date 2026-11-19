@@ -2,6 +2,16 @@
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y la versión, [SemVer](https://semver.org/lang/es/).
 
+## 0.15.0 · 2026-11-19
+
+### Añadido
+- Paletas de marca (`color.palettes` en `tokens.json`): un tema de colores que se pone encima del claro y el oscuro sin sustituirlos. Cada paleta sobrescribe solo los colores que nombra, en `light` y `dark`; la impresión sigue siendo la de la base. Se activa con `data-palette="<id>"` en `<html>`, junto a `data-theme`. Sin `data-palette` manda la base y, sin `data-theme`, el claro.
+- Paleta `merkle`, con los colores de la guía de marca de Merkle (Frontify, «Colors»). Claro: fondo blanco, texto negro, acento Cobalt `#0328D1`, secundario Dark Gray `#60607D`, lo nuevo en Merkle Red `#DD3039` (4,61:1). Oscuro: fondo Merkle Blue `#040E4B`, texto blanco, secundario Mid Gray `#AEAEBC`, acento Sky Blue `#0391F2` (5,42:1), notas en Gulf Blue.
+- Par de contraste `accent / ground` (4,5:1), porque una paleta puede dar al acento un color distinto de la tinta.
+- `npm test` mide todos los pares también en cada paleta, en claro y en oscuro, y comprueba que una paleta solo nombra colores que existen.
+- `site.toml` acepta `palette` en `[project]`: `site.py build` (y `new`) lo pone como `data-palette` en `<html>` de la portada y de cada página del mapa, o lo quita si no hay.
+- `DocumentLayout` y `SiteLayout` aceptan la prop `palette`; `DocumentLayout` también la lee del frontmatter.
+
 ## 0.14.0 · 2026-11-19
 
 ### Añadido

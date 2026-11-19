@@ -22,7 +22,7 @@ import { DocumentLayout, Notice, Table } from 'asprog-design-system/astro';
 
 | Componente | Marcado | Props |
 |---|---|---|
-| `DocumentLayout` | la página entera: `<html data-theme="auto">`, `<head>` y `Document` | las de `Document` + `description`, `lang`; como `layout:` de un `.md`, `frontmatter` y `headings` llegan solos. Slots `head`, `header`, `footer` |
+| `DocumentLayout` | la página entera: `<html data-theme="auto">`, `<head>` y `Document` | las de `Document` + `description`, `lang`, `palette` (paleta de marca, p. ej. `merkle`); como `layout:` de un `.md`, `frontmatter` y `headings` llegan solos. Slots `head`, `header`, `footer` |
 | `Document` | `.doc` con barra, cabecera, índice, prosa y pie | `title`, `lede`, `meta` (`source`, `agent`, `date`, `status`, `extra`), `tags`, `toc`, `brand`, `brandHref`, `credit` |
 | `Prose` | `article.doc-prose` | slot |
 | `Toc` | `nav.doc-toc`, solo con cuatro entradas o más | `items` (`id`, `text`), `min`, `title` |
@@ -41,7 +41,7 @@ Las piezas de la web (las usa andresrsotelo.dev). Pintan el marcado que estila `
 
 | Componente | Marcado | Props |
 |---|---|---|
-| `SiteLayout` | la página entera: `<html>` sin `data-theme` (parte del claro), las hojas tokens → base → site, `a.skip-link`, `header.nav` con `ThemeToggle variant="site"`, `main#main`, `footer.site-footer`; carga `grid.js` | `title`, `description`, `links` (`href`, `label`), `nav`, `lang`, `skipLabel`. Slots `head`, `footer` |
+| `SiteLayout` | la página entera: `<html>` sin `data-theme` (parte del claro), las hojas tokens → base → site, `a.skip-link`, `header.nav` con `ThemeToggle variant="site"`, `main#main`, `footer.site-footer`; carga `grid.js` | `title`, `description`, `links` (`href`, `label`), `nav`, `lang`, `palette` (paleta de marca), `skipLabel`. Slots `head`, `footer` |
 | `PageHead` | `header.page-head` | `title`, `lede`. Slot `meta` |
 | `HomeIntro` | `section.home-intro` a dos columnas | `title`, `lede`, `align` (`start`, `center`). Slot por defecto (tras la entradilla) y slot `figure` |
 | `Eyebrow` | `p.eyebrow` | slot |

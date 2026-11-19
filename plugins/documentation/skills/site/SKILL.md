@@ -23,9 +23,13 @@ S="uv run --no-project --with markdown python <site>/scripts/site.py"
 2. Añádela a `site.toml` en su sección, con `title`, `path` y `type`. Si estaba anunciada (sin `path`), basta con ponerle la ruta.
 3. `$S build`, y commit de la página, `site.toml`, `index.html` y las páginas cuya barra cambió, en la rama de su ficha.
 
-`build` solo toca lo que hay entre `<!-- site:nav -->`/`<!-- /site:nav -->` y `<!-- site:css -->`/`<!-- /site:css -->`, así que la barra puede entrar en una página fechada sin cambiar su contenido: es navegación, no texto. Ejecutarlo dos veces deja los ficheros igual; `$S build --check` sale con 1 si algo cambiaría (para CI).
+`build` solo toca lo que hay entre `<!-- site:nav -->`/`<!-- /site:nav -->` y `<!-- site:css -->`/`<!-- /site:css -->`, y el atributo `data-palette` de `<html>`, así que la barra puede entrar en una página fechada sin cambiar su contenido: es navegación, no texto. Ejecutarlo dos veces deja los ficheros igual; `$S build --check` sale con 1 si algo cambiaría (para CI).
 
 Una página que regenera otro script entera pierde la barra: vuelve a ejecutar `build` después.
+
+## Una paleta de marca
+
+Con `palette = "<id>"` en `[project]` de `site.toml` (una de `color.palettes` de `tokens.json`, p. ej. `merkle`), `build` pone `data-palette` en `<html>` de la portada y de cada página del mapa; sin ella, la quita. El claro sigue siendo el tema de partida y el conmutador alterna claro y oscuro dentro de la paleta. Una página enlazada a una copia del sistema anterior a 0.15 no tiene paletas: se queda con la base.
 
 ## Copia o jsDelivr
 

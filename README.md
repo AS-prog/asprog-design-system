@@ -15,6 +15,16 @@ La identidad visual es **Delphos** sobre **Cobalt Grid** (papel crema, una sola 
 | `scripts/` | `build.mjs` (prepara el plugin), `test.mjs` (lo comprueba todo) y la librería de tokens |
 | `.claude-plugin/marketplace.json` | El marketplace `asprog` |
 
+## Temas y paletas de marca
+
+El color tiene dos ejes. `data-theme` elige el tema: `light` (el de partida), `dark`, `auto` (sigue al sistema) o `print`. `data-palette` elige la paleta: sin ella, la de Delphos; con `data-palette="merkle"`, los colores corporativos de Merkle, en claro y en oscuro. Los dos van en `<html>`:
+
+```html
+<html lang="es" data-theme="auto" data-palette="merkle">
+```
+
+Una paleta nueva se añade en `color.palettes` de `system/tokens.json` (solo los colores que cambian, en `light` y `dark`) y `npm run build`; `npm test` mide sus contrastes. En el sitio, `palette = "merkle"` en `site.toml`; en Astro, la prop `palette` de los layouts.
+
 ## Instalar en un proyecto
 
 Una web en Astro instala el paquete por tag:
