@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 export const THEMES = ['light', 'dark', 'print'];
 // Los temas que una paleta de marca puede cambiar: la impresión es siempre la de la base.
 export const PALETTE_THEMES = ['light', 'dark'];
-export const SCALAR_FAMILIES = ['typeScale', 'lineHeight', 'letterSpacing', 'spacing', 'radius', 'layout', 'motion', 'border'];
+export const SCALAR_FAMILIES = ['typeScale', 'lineHeight', 'letterSpacing', 'spacing', 'radius', 'layout', 'motion', 'border', 'slide'];
 
 export function loadTokens(path = new URL('../system/tokens.json', import.meta.url)) {
   return JSON.parse(readFileSync(path, 'utf8'));

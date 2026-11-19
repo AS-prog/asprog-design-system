@@ -2,6 +2,16 @@
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y la versión, [SemVer](https://semver.org/lang/es/).
 
+## 0.17.0 · 2026-11-19
+
+### Añadido
+- Familia de tokens `slide` en `tokens.json`: los parámetros de las diapositivas. Una diapositiva es un escenario fijo de 1920×1080 que se escala entero; no se recoloca en el móvil. Por eso sus medidas van en px del escenario y no dependen de `--unit` ni del ancho de la ventana.
+- Escenario: `--slide-width`, `--slide-height`, `--slide-ratio` y `--slide-unit` (40 px, un papel de puntos de 48 × 27). `--slide-dot` (1,5 px) es el radio del punto: el papel es el de puntos de `base.css`, con el punto un poco más grueso para que se siga viendo al escalar.
+- Márgenes y separaciones: `--slide-edge`, `--slide-edge-inner`, `--slide-pad-top`, `--slide-pad-bottom` y de `--slide-gap-lg` a `--slide-gap-xs`. Marco: `--slide-rule-top`, `--slide-rule-bottom` y `--slide-chrome-bottom`.
+- Escala de tipos, de `--slide-t-numeral` (232 px) a `--slide-t-chrome` (18 px). Hay dos cuerpos: `--slide-t-body` (28 px) para exponer y `--slide-t-body-dense` (24 px) para leer. Parte de Cobalt Grid evaluada a 1920×1080, con el texto subido para que se lea proyectado.
+- Decoración: `--slide-glitch-compact`, `--slide-glitch-cover` y `--slide-qr`. Fundido: `--slide-dur` (280 ms).
+- Los colores, las fuentes, las líneas y el tracking son los del sistema. Una diapositiva hereda `data-theme` y `data-palette`. Todavía no hay hoja ni clases: solo los parámetros.
+
 ## 0.16.0 · 2026-11-19
 
 ### Añadido

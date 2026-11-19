@@ -1,4 +1,4 @@
-/* Cobalt Grid — generado desde tokens.json (v0.16.0) con scripts/build-tokens.mjs. No se edita a mano. */
+/* Cobalt Grid — generado desde tokens.json (v0.17.0) con scripts/build-tokens.mjs. No se edita a mano. */
 
 @font-face { font-family: "Newsreader"; font-style: normal; font-weight: 300 400; font-display: swap; src: url("fonts/newsreader-normal-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 
@@ -302,6 +302,40 @@
   --focus: 2px solid var(--accent);
   --focus-offset: 3px;
   --diagram-stroke: 1.4;
+  --slide-width: 1920px;
+  --slide-height: 1080px;
+  --slide-ratio: 16 / 9;
+  --slide-unit: 40px;
+  --slide-dot: 1.5px;
+  --slide-edge: 80px;
+  --slide-edge-inner: 160px;
+  --slide-pad-top: 120px;
+  --slide-pad-bottom: 120px;
+  --slide-gap-lg: 56px;
+  --slide-gap-md: 40px;
+  --slide-gap-sm: 24px;
+  --slide-gap-xs: 16px;
+  --slide-rule-top: 28px;
+  --slide-rule-bottom: 24px;
+  --slide-chrome-bottom: 52px;
+  --slide-t-numeral: 232px;
+  --slide-t-hero: 192px;
+  --slide-t-closing: 152px;
+  --slide-t-chapter: 120px;
+  --slide-t-quote: 96px;
+  --slide-t-headline: 88px;
+  --slide-t-callout: 48px;
+  --slide-t-row: 40px;
+  --slide-t-lede: 32px;
+  --slide-t-body: 28px;
+  --slide-t-body-dense: 24px;
+  --slide-t-label: 20px;
+  --slide-t-mono: 20px;
+  --slide-t-chrome: 18px;
+  --slide-glitch-compact: 320px;
+  --slide-glitch-cover: 640px;
+  --slide-qr: 80px;
+  --slide-dur: 280ms;
   --font-display: "Newsreader", Georgia, "Times New Roman", serif;
   --font-body: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
   --font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
