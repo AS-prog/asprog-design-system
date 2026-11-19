@@ -306,6 +306,7 @@
   --slide-height: 1080px;
   --slide-ratio: 16 / 9;
   --slide-unit: 40px;
+  --slide-dot: 1.5px;
   --slide-edge: 80px;
   --slide-edge-inner: 160px;
   --slide-pad-top: 120px;
