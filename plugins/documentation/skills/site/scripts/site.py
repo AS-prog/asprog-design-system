@@ -38,7 +38,8 @@ import tomllib
 import unicodedata
 from pathlib import Path
 
-PLUGIN = Path(__file__).resolve().parents[1]
+# Carpeta de la skill site: lleva system/ y templates/ (sirve igual como plugin y con APM).
+SKILL = Path(__file__).resolve().parents[1]
 CONFIG = "docs/site/site.toml"
 KINDS = ("implementation", "technical", "design", "document")
 
@@ -113,13 +114,13 @@ HOME = """<!doctype html>
 
 
 def system_version() -> str:
-    return (PLUGIN / "system" / "VERSION").read_text(encoding="utf-8").strip()
+    return (SKILL / "system" / "VERSION").read_text(encoding="utf-8").strip()
 
 
 def load(root: Path) -> dict:
     path = root / CONFIG
     if not path.exists():
-        raise SystemExit(f"No encuentro {CONFIG} en {root}. Copia {PLUGIN / 'templates' / 'site' / 'site.toml'}.")
+        raise SystemExit(f"No encuentro {CONFIG} en {root}. Copia {SKILL / 'templates' / 'site' / 'site.toml'}.")
     config = tomllib.loads(path.read_text(encoding="utf-8"))
     project = config.setdefault("project", {})
     project.setdefault("index", "index.html")
@@ -172,7 +173,7 @@ def vendor(root: Path, config: dict) -> list[Path]:
     target = root / system_dir(config)
     if target.exists():
         shutil.rmtree(target)
-    shutil.copytree(PLUGIN / "system", target)
+    shutil.copytree(SKILL / "system", target)
     return [target]
 
 
@@ -183,7 +184,7 @@ def new(root: Path, config: dict, kind: str, page: str, title: str | None) -> li
     target = root / page
     if target.exists():
         raise SystemExit(f"{page} ya existe: una página no se pisa con la plantilla")
-    text = (PLUGIN / "templates" / f"{kind}.html").read_text(encoding="utf-8")
+    text = (SKILL / "templates" / f"{kind}.html").read_text(encoding="utf-8")
     text = text.replace("{{system}}", rel(system_dir(config), page))
     text = text.replace("{{brand}}", html.escape(config["project"]["brand"]))
     text = text.replace("{{date}}", dt.date.today().isoformat())

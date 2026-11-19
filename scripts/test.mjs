@@ -38,11 +38,11 @@ for (const item of SHIPPED) {
   for (const f of statSync(src).isFile() ? [src] : files(src)) {
     const rel = relative(join(ROOT, 'system'), f);
     let copy;
-    try { copy = readFileSync(join(PLUGIN, 'system', rel)); } catch { errors.push(`falta plugins/documentation/system/${rel}: ejecuta npm run build`); continue; }
-    if (!copy.equals(readFileSync(f))) errors.push(`plugins/documentation/system/${rel} no coincide con system/${rel}: ejecuta npm run build`);
+    try { copy = readFileSync(join(PLUGIN, 'skills', 'site', 'system', rel)); } catch { errors.push(`falta plugins/documentation/skills/site/system/${rel}: ejecuta npm run build`); continue; }
+    if (!copy.equals(readFileSync(f))) errors.push(`plugins/documentation/skills/site/system/${rel} no coincide con system/${rel}: ejecuta npm run build`);
   }
 }
-const shippedVersion = readFileSync(join(PLUGIN, 'system', 'VERSION'), 'utf8').trim();
+const shippedVersion = readFileSync(join(PLUGIN, 'skills', 'site', 'system', 'VERSION'), 'utf8').trim();
 if (shippedVersion !== version()) errors.push(`el plugin lleva el sistema v${shippedVersion} y package.json dice v${version()}`);
 const listed = JSON.parse(readFileSync(join(PLUGIN, 'skills', 'check', 'classes.json'), 'utf8'));
 if (JSON.stringify(listed) !== JSON.stringify(classes())) errors.push('skills/check/classes.json no coincide con las hojas: ejecuta npm run build');
@@ -58,12 +58,12 @@ const pages = [
   ...files(join(ROOT, 'examples'), (f) => f.endsWith('.html') && !f.includes(`${join('docs', 'design-system')}`)),
   ...files(join(ROOT, 'plugins', 'diagrams', 'skills', 'diagram', 'examples'), (f) => f.endsWith('.html')),
 ];
-try { run('node', [join(PLUGIN, 'scripts', 'delphos-check'), ...pages.map((f) => relative(ROOT, f))], { stdio: ['inherit', 'ignore', 'inherit'] }); }
+try { run('node', [join(PLUGIN, 'skills', 'check', 'scripts', 'delphos-check'), ...pages.map((f) => relative(ROOT, f))], { stdio: ['inherit', 'ignore', 'inherit'] }); }
 catch { errors.push('delphos-check encuentra fallos (arriba)'); }
 
 // 5. El sitio del ejemplo, regenerado, no cambia.
 try {
-  run('uv', ['run', '--quiet', '--no-project', '--with', 'markdown', 'python', join(PLUGIN, 'scripts', 'site.py'), 'build', '--root', 'examples/sample-project', '--check'], { stdio: ['inherit', 'ignore', 'inherit'] });
+  run('uv', ['run', '--quiet', '--no-project', '--with', 'markdown', 'python', join(PLUGIN, 'skills', 'site', 'scripts', 'site.py'), 'build', '--root', 'examples/sample-project', '--check'], { stdio: ['inherit', 'ignore', 'inherit'] });
 } catch { errors.push('el sitio del ejemplo no está al día: ejecuta npm run example'); }
 
 // 6. El sistema desde jsDelivr: el ejemplo, sin su copia y con system como URL.
@@ -75,7 +75,7 @@ try {
     const toml = join(tmp, 'docs', 'site', 'site.toml');
     const text = readFileSync(toml, 'utf8');
     writeFileSync(toml, /^system\s*=/m.test(text) ? text.replace(/^system\s*=.*$/m, `system = "${CDN}"`) : text.replace(/^\[project\]$/m, `[project]\nsystem = "${CDN}"`));
-    const site = (...a) => execFileSync('uv', ['run', '--quiet', '--no-project', '--with', 'markdown', 'python', join(PLUGIN, 'scripts', 'site.py'), ...a, '--root', tmp], { cwd: ROOT, stdio: ['ignore', 'pipe', 'pipe'] });
+    const site = (...a) => execFileSync('uv', ['run', '--quiet', '--no-project', '--with', 'markdown', 'python', join(PLUGIN, 'skills', 'site', 'scripts', 'site.py'), ...a, '--root', tmp], { cwd: ROOT, stdio: ['ignore', 'pipe', 'pipe'] });
     site('vendor');
     if (files(tmp).some((f) => f.includes('design-system'))) errors.push('site.py vendor con system como URL ha copiado el sistema');
     site('build');
@@ -90,7 +90,7 @@ try {
       if (!index.includes(CDN + want)) errors.push(`con system como URL, index.html no enlaza ${CDN + want}`);
     }
     if (!readFileSync(join(tmp, 'registro', 'prueba', 'nueva.html'), 'utf8').includes(`${CDN}/tokens.css`)) errors.push('site.py new no pone la URL del sistema en la plantilla');
-    try { run('node', [join(PLUGIN, 'scripts', 'delphos-check'), join(tmp, 'index.html')], { stdio: ['inherit', 'ignore', 'inherit'] }); }
+    try { run('node', [join(PLUGIN, 'skills', 'check', 'scripts', 'delphos-check'), join(tmp, 'index.html')], { stdio: ['inherit', 'ignore', 'inherit'] }); }
     catch { errors.push('delphos-check no acepta la portada con el sistema en jsDelivr'); }
   } catch (e) { errors.push(`site.py con system como URL falla: ${e.stderr?.toString().trim() || e.message}`); }
   finally { rmSync(tmp, { recursive: true, force: true }); }

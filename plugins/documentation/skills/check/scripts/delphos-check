@@ -20,6 +20,7 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve, sep, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { homedir } from 'node:os';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ALLOWED_HOSTS = new Set();
@@ -33,13 +34,24 @@ const CDN = 'https://cdn.jsdelivr.net/gh/AS-prog/asprog-design-system@';
 const CDN_TAG = /https:\/\/cdn\.jsdelivr\.net\/gh\/AS-prog\/asprog-design-system@(v?\d+\.\d+\.\d+)\//;
 
 // Clases que existen en las hojas: las genera `npm run build` desde system/css/.
+// Junto al script en la skill; APM copia el script solo para el hook, así que
+// también se busca en las skills instaladas del proyecto y del usuario.
 function knownClasses() {
-  const f = join(HERE, '..', 'skills', 'check', 'classes.json');
+  const project = process.env.CLAUDE_PROJECT_DIR || process.cwd();
+  const candidates = [
+    join(HERE, '..', 'classes.json'),
+    join(project, '.claude', 'skills', 'check', 'classes.json'),
+    join(project, '.agents', 'skills', 'check', 'classes.json'),
+    join(homedir(), '.claude', 'skills', 'check', 'classes.json'),
+    join(homedir(), '.agents', 'skills', 'check', 'classes.json'),
+  ];
+  const f = candidates.find((c) => existsSync(c));
+  if (!f) return null;
   try { return new Set(JSON.parse(readFileSync(f, 'utf8'))); } catch { return null; }
 }
 
 function pluginVersion() {
-  try { return readFileSync(join(HERE, '..', 'system', 'VERSION'), 'utf8').trim(); } catch { return ''; }
+  try { return readFileSync(join(HERE, '..', '..', 'site', 'system', 'VERSION'), 'utf8').trim(); } catch { return ''; }
 }
 
 // Las clases de las hojas de un tag, del classes.json de ese tag. Una vez por tag y ejecución.

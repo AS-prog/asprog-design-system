@@ -9,7 +9,7 @@ La identidad visual es **Delphos** sobre **Cobalt Grid** (papel crema, una sola 
 | Ruta | Qué es |
 |---|---|
 | `system/` | La fuente del sistema: `tokens.json` (y `tokens.css`, generado), `fonts/` y las hojas `css/base.css`, `css/document.css`, `css/view.css` (vistas generadas) y `css/library.css` (sitio: barra lateral y portada); la capa web: `css/site.css`, `astro/` (componentes Astro) y `assets/` (figura e iconos) |
-| `plugins/documentation/` | El plugin: skills `method`, `document`, `check` y `site`; `scripts/delphos-check` y su hook; `scripts/site.py`; las plantillas de página; y una copia generada de `system/` |
+| `plugins/documentation/` | El plugin: skills `method`, `document`, `change`, `check` y `site`, cada una con sus scripts y plantillas (`check/scripts/delphos-check` y su hook; `site/scripts/site.py`, las plantillas de página y una copia generada de `system/`) |
 | `plugins/diagrams/` | Los 45 tipos de diagrama de diagram-design como SVG en línea con las clases `.d-*` |
 | `examples/sample-project/` | Un proyecto ficticio (un controlador de riego) con su sitio, para probar y como modelo |
 | `scripts/` | `build.mjs` (prepara el plugin), `test.mjs` (lo comprueba todo) y la librería de tokens |

@@ -2,7 +2,7 @@
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y la versión, [SemVer](https://semver.org/lang/es/).
 
-## 0.14.0 · 2026-11-13
+## 0.14.0 · 2026-11-19
 
 ### Añadido
 - El sistema se puede importar desde jsDelivr fijado a un tag, en lugar de copiarlo en el repo (#13). En `site.toml`, `system = "https://cdn.jsdelivr.net/gh/AS-prog/asprog-design-system@v0.14.0/system"`: `vendor` no copia nada, la barra lateral y `library.css` salen de esa URL, `new` escribe las plantillas con ella y `build` lleva a ese tag las hojas del sistema de cada página del mapa. Sin red no hay estilos; la copia sigue siendo el modo por defecto. El README del plugin y la skill `site` explican cuándo usar cada uno.
@@ -11,6 +11,12 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y l
 
 ### Cambiado
 - `scripts/test.mjs` construye el ejemplo con el sistema como URL y comprueba que no queda copia ni ruta local.
+
+## 0.13.1 · 2026-11-16
+
+### Corregido
+- El plugin `documentation` se instala también con APM (0.35). El `description` del frontmatter de `change`, `document`, `method`, `site` y `check` va entre comillas: con dos puntos sin comillas APM no lo lee («mapping values are not allowed here»).
+- Las skills ya no dependen de `${CLAUDE_PLUGIN_ROOT}`, que solo existe en Claude Code. Cada una lleva lo que usa: `check/scripts/delphos-check`; `site/scripts/site.py`, `site/templates/` y `site/system/`; `change/scripts/` (`figure-png`, `standalone-html`) y `change/templates/` (PR e issues). Las demás lo piden por la carpeta hermana. El hook pasa a `${CLAUDE_PLUGIN_ROOT}/skills/check/scripts/delphos-check`. Con APM, que copia el script del hook a `.claude/hooks/` sin `classes.json`, `delphos-check` busca la lista de clases también en las skills instaladas (`.claude/skills/check/`, `.agents/skills/check/`, en el proyecto o en `~`), para que la regla 8 no se quede muda.
 
 ## 0.13.0 · 2026-11-13
 

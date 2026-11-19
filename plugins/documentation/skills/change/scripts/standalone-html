@@ -22,7 +22,8 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, resolve, extname, basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const PLUGIN_SYSTEM = join(dirname(fileURLToPath(import.meta.url)), '..', 'system');
+// El sistema está en la skill hermana site (skills/site/system).
+const PLUGIN_SYSTEM = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'site', 'system');
 const CDN_SYSTEM = /^https:\/\/cdn\.jsdelivr\.net\/gh\/AS-prog\/asprog-design-system@v?(\d+\.\d+\.\d+)\/system\/(.+)$/;
 const pluginVersion = existsSync(join(PLUGIN_SYSTEM, 'VERSION')) ? readFileSync(join(PLUGIN_SYSTEM, 'VERSION'), 'utf8').trim() : '';
 
