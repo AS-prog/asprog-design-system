@@ -2,6 +2,16 @@
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y la versión, [SemVer](https://semver.org/lang/es/).
 
+## 0.16.0 · 2026-11-19
+
+### Añadido
+- `skills/site/scripts/site-md`: el sitio de un proyecto escrito en Markdown y SVG. `check` valida el mapa, el frontmatter, las figuras y los avisos. `build` genera todo el HTML (portada, barra lateral, ficha, índice) con las hojas del sistema y le pasa `delphos-check`. `migrate` pasa un artefacto HTML a `.md` y SVG y comprueba que el texto queda idéntico. Viene del sitio de `AS-prog/platform` (`site/src/site_build`), que lo usa con 33 páginas. Es el modo por defecto para la documentación de un repo (ADR 0011 de platform).
+- Extensiones de Markdown de `site-md`: `## Título {#ancla}`, bloque `figure` (SVG en línea con su pie), avisos `> [!NOTE|IMPORTANT|WARNING|pending]`, estado en la primera celda (`✓ ` `✗ ` `~ `), columnas numéricas, bloques con `title="…"`, `::::: compare` y clases del sistema con `[texto]{.clase}`.
+- `site-md` usa la copia del sistema de la skill y `delphos-check` de la skill hermana `check`. Un sitio puede fijar otra en `vendor/`. Si `system` de `site.toml` no coincide con la versión de la copia, avisa.
+- Plantilla `skills/site/templates/site-md/`: `site.toml`, `home.md` y una primera página.
+- Los tipos de página de `site.toml` de `site-md` son los de `site.py`: cómo funciona, implementación, diseño, historia, método, guía, generada.
+- `npm test` pasa las pruebas de `site-md` (`tests/site-md/`, con `uv`).
+
 ## 0.15.0 · 2026-11-19
 
 ### Añadido

@@ -1,0 +1,40 @@
+# El sitio de la documentación en Markdown: lo lee scripts/site-md de la skill `site`.
+# Va en docs/site/site.toml del proyecto. Rutas relativas a docs/site/.
+#
+# [project]
+#   name     el nombre del proyecto: enlace de la barra lateral a la portada
+#   brand    el texto de la barra de marca (por defecto, name)
+#   system   dónde queda el sistema en la salida, con su versión: design-system/vX.Y.
+#            Sale de la copia de la skill, o de vendor/design-system/vX.Y/ si el sitio
+#            fija la suya. Tiene que coincidir con la versión de la copia que se usa.
+#   home     el texto de la portada en Markdown (por defecto, home.md)
+#
+# [[section]]           una sección de la barra, en orden
+#   title
+#   fold     true para que salga plegada (p. ej. Historia)
+#   [[section.page]]    una página de la sección, en orden
+#     title
+#     path   el .md fuente: content/<carpeta>/<nombre>.md. Sin path, anunciada
+#     type   cómo funciona | implementación | diseño | historia | método | guía | generada
+#     was    el artefacto de claude.ai del que viene: sus enlaces pasan a la página
+
+[project]
+name = "{{Nombre del proyecto}}"
+brand = "{{repo}} / docs"
+system = "design-system/v{{X.Y}}"
+home = "home.md"
+
+[[section]]
+title = "Método"
+
+[[section.page]]
+title = "Cómo se documenta"
+path = "content/metodo/como-se-documenta.md"
+type = "método"
+
+[[section]]
+title = "{{Componente}}"
+
+[[section.page]]
+title = "Cómo funciona"
+type = "cómo funciona"

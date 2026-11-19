@@ -1,9 +1,59 @@
 ---
 name: site
-description: "Prepara y mantiene el sitio de la documentación de un proyecto: enlaza el sistema de diseño (copia en el repo o jsDelivr), crea páginas desde sus plantillas y genera la portada y la barra lateral desde docs/site/site.toml. Úsala al montar la documentación de un proyecto nuevo, al añadir una página al sitio, al subir de versión el sistema o cuando pidan «regenera el sitio» o «la barra lateral»."
+description: "Prepara y mantiene el sitio de la documentación de un proyecto: escrito en Markdown y SVG (site-md, el modo por defecto) o en páginas HTML desde plantillas (site.py); enlaza el sistema de diseño, genera la portada y la barra lateral desde docs/site/site.toml y pasa delphos-check. Úsala al montar la documentación de un proyecto nuevo, al añadir una página al sitio, al subir de versión el sistema o cuando pidan «regenera el sitio» o «la barra lateral»."
 ---
 
 # site
+
+Dos herramientas, el mismo `site.toml` y el mismo aspecto:
+
+- **`scripts/site-md`**: el sitio se escribe en Markdown y SVG, y `build` genera todo el HTML. Es el modo por defecto para la documentación de un repo (ADR 0011 de `AS-prog/platform`). Va en «Un sitio en Markdown».
+- **`scripts/site.py`**: páginas HTML escritas desde las plantillas, a las que `build` solo les pone la barra. Para lo que ya está en HTML o se genera fuera.
+
+## Un sitio en Markdown
+
+Necesita `uv` y, para `delphos-check`, `node`. `migrate` necesita además `pandoc`:
+
+```bash
+M="uv run --no-project --with markdown-it-py --with mdit-py-plugins --with pyyaml python <site>/scripts/site-md"
+$M check --root docs/site     # valida mapa, frontmatter, figuras y avisos, sin escribir
+$M build --root docs/site     # genera docs/site/dist/ y le pasa delphos-check
+```
+
+Un proyecto nuevo:
+
+1. Copia `<site>/templates/site-md/` a `docs/site/`. Rellena lo que va entre `{{…}}` y pon en `system` la versión de esta skill: `design-system/vX.Y`, la de `<site>/system/VERSION`.
+2. `$M build`. `dist/` no entra en git. Se abre con doble clic, o se publica como artefacto o en el tailnet.
+
+Una página: `content/<sección>/<nombre>.md` sale en `dist/<sección>/<nombre>.html`. Lleva frontmatter con `title`, `lede` (admite `código` y enlaces), `date` y, si hace falta, `description`, `meta` (más filas de la ficha) y `source` (el pie). El cuerpo empieza en `##`; con cuatro secciones o más sale el índice. Después se añade al mapa con `path` y `type`.
+
+Lo que Markdown no tiene:
+
+| Quieres | Escribes |
+|---|---|
+| Ancla fija | `## Título {#ancla}` |
+| Diagrama | Bloque ```` ```figure ```` con `src: nombre.svg` y `caption:`. El SVG va en `figs/`, con `role="img"`, `<title>`, `<desc>` y clases `d-*` |
+| Aviso | `> [!NOTE]`, `> [!IMPORTANT]`, `> [!WARNING]`, `> [!pending]`; el texto tras el marcador es su título |
+| Estado en una tabla | La primera celda empieza por `✓ ` (`.g-ok`), `✗ ` (`.g-stop`) o `~ ` (`.g-warn`) |
+| Columna numérica | Alineada a la derecha (`---:`): sale `td.num` |
+| Bloque con nombre de fichero | ```` ```yaml title="ruta/fichero" ```` |
+| Hoy frente a propuesta | `::::: compare`, dentro `:::: col Etiqueta` … `::::`, y cierre `:::::` |
+| Clase del sistema en un trozo | `[texto]{.doc-new}`, `[hecho]{.g-ok}` |
+| Salto dentro de una celda | `<br>`, el único HTML que se admite |
+
+Nada de `<style>`, hojas propias ni HTML en bruto: el build y `delphos-check` lo rechazan. Un enlace a otro `.md` del sitio pasa a su `.html`, y falla si la página no existe. Un enlace al artefacto de una página migrada (`was` en el mapa) pasa a la página.
+
+El sistema sale de la copia de esta skill. Si el sitio necesita quedarse en una versión, se fija en `docs/site/vendor/design-system/vX.Y/` y `vendor/check/`, y entonces mandan esas. Para subir de versión: actualizar el paquete (o la copia de `vendor/`), cambiar `system` y reconstruir.
+
+Migrar un artefacto HTML:
+
+```bash
+$M migrate <artefacto.html> content/<sección>/<nombre>.md --figs <prefijo> --root docs/site
+```
+
+Saca los diagramas a `figs/<prefijo>-NN-<título>.svg`, pasa la ficha al frontmatter y vuelve a renderizar el `.md` para comparar el texto con el original. Sale con 0 solo si es idéntico, y lista las diferencias y lo que no ha podido traducir: clases inventadas, anclas de avisos o SVG sin `<desc>`. La fuente es la versión publicada del artefacto. Después, el artefacto se marca como movido al sitio, sin borrarlo.
+
+## Páginas HTML (site.py)
 
 Todo lo hace `scripts/site.py` de esta skill, desde la raíz del repo de gestión. `<site>` es la carpeta de esta skill, la que tiene este `SKILL.md` (como plugin, `${CLAUDE_PLUGIN_ROOT}/skills/site`; instalada con APM, `.claude/skills/site` o `~/.claude/skills/site`). Necesita `uv` (o Python 3.11+ con `markdown` instalado):
 
@@ -11,13 +61,13 @@ Todo lo hace `scripts/site.py` de esta skill, desde la raíz del repo de gestió
 S="uv run --no-project --with markdown python <site>/scripts/site.py"
 ```
 
-## Un proyecto nuevo
+### Un proyecto nuevo
 
 1. Copia `<site>/templates/site/site.toml` y `home.md` a `docs/site/` y rellena lo que va entre `{{…}}`: el nombre, la marca, las secciones (una por parte del sistema, en el orden en que fluyen los datos; «Método» primero) y la portada.
 2. Elige cómo llega el sistema (abajo, «Copia o jsDelivr»). Con copia, `$S vendor` lo deja en `docs/design-system/vX.Y/`, que entra en git. Con jsDelivr, `system` en `site.toml` es la URL fijada a un tag y no hay nada que copiar.
 3. `$S build`: escribe `index.html` y pone la barra en las páginas del mapa.
 
-## Una página nueva
+### Una página nueva
 
 1. `$S new <implementation|technical|design|document> <ruta.html> --title "…"`. Rellénala con la skill `document`.
 2. Añádela a `site.toml` en su sección, con `title`, `path` y `type`. Si estaba anunciada (sin `path`), basta con ponerle la ruta.
@@ -27,11 +77,11 @@ S="uv run --no-project --with markdown python <site>/scripts/site.py"
 
 Una página que regenera otro script entera pierde la barra: vuelve a ejecutar `build` después.
 
-## Una paleta de marca
+### Una paleta de marca
 
 Con `palette = "<id>"` en `[project]` de `site.toml` (una de `color.palettes` de `tokens.json`, p. ej. `merkle`), `build` pone `data-palette` en `<html>` de la portada y de cada página del mapa; sin ella, la quita. El claro sigue siendo el tema de partida y el conmutador alterna claro y oscuro dentro de la paleta. Una página enlazada a una copia del sistema anterior a 0.15 no tiene paletas: se queda con la base.
 
-## Copia o jsDelivr
+### Copia o jsDelivr
 
 `[project] system` en `site.toml` decide de dónde salen las hojas, los tokens, las fuentes y `library-fold.js`:
 
