@@ -5,7 +5,10 @@
 #   name     el nombre del proyecto: enlace de la barra lateral a la portada
 #   brand    el texto de la barra de marca de la portada (por defecto, name)
 #   system   carpeta de la copia del sistema; site.py vendor la llena en
-#            <system>/vX.Y/ (por defecto, docs/design-system)
+#            <system>/vX.Y/ (por defecto, docs/design-system). O la URL del
+#            sistema en jsDelivr, fijada a un tag, y entonces no hay copia:
+#            https://cdn.jsdelivr.net/gh/AS-prog/asprog-design-system@v0.14.0/system
+#            Para subir de versión se cambia el tag y se ejecuta site.py build.
 #   home     el texto de la portada en Markdown (por defecto, docs/site/home.md)
 #   index    la portada que se genera (por defecto, index.html)
 #
