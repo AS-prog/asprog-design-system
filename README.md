@@ -2,7 +2,7 @@
 
 El sistema de diseño y el método de documentación de mis proyectos, en un solo sitio y como marketplace de Claude Code. Un proyecto instala el plugin `documentation` y tiene todo lo que necesita para documentarse igual que los demás: dónde va cada documento y qué lleva, las plantillas de página, las hojas de estilo, el sitio con barra lateral y la comprobación automática de cada HTML.
 
-La identidad visual es **Delphos** sobre **Cobalt Grid** (papel crema, una sola tinta, retícula, radio 0). Este repo sustituye a `delphos-design-system` (la parte de documentos), `delphos-inc` (el marketplace) y el plugin local `documentacion`. Nada de un cliente concreto vive aquí: lo de cada proyecto va en su propio repo.
+La identidad visual es **Delphos** sobre **Cobalt Grid** (papel crema, una sola tinta, retícula, radio 0). Este repo sustituye a `delphos-design-system` (la parte de documentos), `delphos-inc` (el marketplace) y el plugin local `documentacion`. Nada de un cliente concreto vive aquí, salvo sus colores como paleta de marca: lo de cada proyecto va en su propio repo.
 
 ## Qué hay
 
