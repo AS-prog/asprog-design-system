@@ -9,6 +9,7 @@ import { cpSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } f
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadTokens, buildCss } from './tokens-lib.mjs';
+import { buildDesignMd, designTargets } from './design-md.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const SYSTEM = join(ROOT, 'system');
@@ -34,7 +35,12 @@ export function version() {
 }
 
 function main() {
-  writeFileSync(join(SYSTEM, 'tokens.css'), buildCss(loadTokens()));
+  const tokens = loadTokens();
+  writeFileSync(join(SYSTEM, 'tokens.css'), buildCss(tokens));
+  // DESIGN.md por paleta y tema, para HyperFrames y otras herramientas que leen design.md.
+  rmSync(join(SYSTEM, 'design'), { recursive: true, force: true });
+  mkdirSync(join(SYSTEM, 'design'), { recursive: true });
+  for (const d of designTargets(tokens)) writeFileSync(join(SYSTEM, 'design', d.file), buildDesignMd(tokens, d.theme, d.palette));
   const target = join(PLUGIN, 'skills', 'site', 'system');
   rmSync(target, { recursive: true, force: true });
   mkdirSync(target, { recursive: true });
