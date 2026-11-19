@@ -11,6 +11,8 @@
 #            Para subir de versión se cambia el tag y se ejecuta site.py build.
 #   home     el texto de la portada en Markdown (por defecto, docs/site/home.md)
 #   index    la portada que se genera (por defecto, index.html)
+#   palette  paleta de marca del sistema (color.palettes de tokens.json), p. ej.
+#            "merkle"; build la pone en <html> de cada página. Sin ella, la base
 #
 # [[section]]           una sección de la barra, en orden
 #   title

@@ -24,10 +24,12 @@ interface Props {
   /** false en una página que lleva su propia cabecera (la portada). Por defecto: true. */
   nav?: boolean;
   lang?: string;
+  /** Paleta de marca de tokens.json (`color.palettes`), p. ej. `merkle`. Sin ella, la base. */
+  palette?: string;
   /** Texto del enlace de salto. Por defecto: «Saltar al contenido». */
   skipLabel?: string;
 }
-const { title, description, links = [], nav = true, lang = 'es', skipLabel = 'Saltar al contenido' } = Astro.props;
+const { title, description, links = [], nav = true, lang = 'es', palette, skipLabel = 'Saltar al contenido' } = Astro.props;
 
 // Un destino está activo en su propia ruta y en todo lo que cuelga de ella; la raíz, solo en sí.
 const path = Astro.url.pathname;
@@ -38,7 +40,7 @@ const current = (href: string) => {
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang={lang} data-palette={palette}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

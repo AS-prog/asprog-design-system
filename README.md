@@ -2,7 +2,7 @@
 
 El sistema de diseño y el método de documentación de mis proyectos, en un solo sitio y como marketplace de Claude Code. Un proyecto instala el plugin `documentation` y tiene todo lo que necesita para documentarse igual que los demás: dónde va cada documento y qué lleva, las plantillas de página, las hojas de estilo, el sitio con barra lateral y la comprobación automática de cada HTML.
 
-La identidad visual es **Delphos** sobre **Cobalt Grid** (papel crema, una sola tinta, retícula, radio 0). Este repo sustituye a `delphos-design-system` (la parte de documentos), `delphos-inc` (el marketplace) y el plugin local `documentacion`. Nada de un cliente concreto vive aquí: lo de cada proyecto va en su propio repo.
+La identidad visual es **Delphos** sobre **Cobalt Grid** (papel crema, una sola tinta, retícula, radio 0). Este repo sustituye a `delphos-design-system` (la parte de documentos), `delphos-inc` (el marketplace) y el plugin local `documentacion`. Nada de un cliente concreto vive aquí, salvo sus colores como paleta de marca: lo de cada proyecto va en su propio repo.
 
 ## Qué hay
 
@@ -14,6 +14,16 @@ La identidad visual es **Delphos** sobre **Cobalt Grid** (papel crema, una sola 
 | `examples/sample-project/` | Un proyecto ficticio (un controlador de riego) con su sitio, para probar y como modelo |
 | `scripts/` | `build.mjs` (prepara el plugin), `test.mjs` (lo comprueba todo) y la librería de tokens |
 | `.claude-plugin/marketplace.json` | El marketplace `asprog` |
+
+## Temas y paletas de marca
+
+El color tiene dos ejes. `data-theme` elige el tema: `light` (el de partida), `dark`, `auto` (sigue al sistema) o `print`. `data-palette` elige la paleta: sin ella, la de Delphos; con `data-palette="merkle"`, los colores corporativos de Merkle, en claro y en oscuro. Los dos van en `<html>`:
+
+```html
+<html lang="es" data-theme="auto" data-palette="merkle">
+```
+
+Una paleta nueva se añade en `color.palettes` de `system/tokens.json` (solo los colores que cambian, en `light` y `dark`) y `npm run build`; `npm test` mide sus contrastes. En el sitio, `palette = "merkle"` en `site.toml`; en Astro, la prop `palette` de los layouts.
 
 ## Instalar en un proyecto
 

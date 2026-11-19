@@ -1,5 +1,5 @@
 ---
-// La página completa de un documento: <html data-theme="auto">, <head> con el tema
+// La página completa de un documento: <html data-theme="auto"> (y `data-palette` si se pide una paleta), <head> con el tema
 // guardado antes de pintar y las tres hojas en su orden (tokens → base → document), y el
 // esqueleto de Document dentro.
 //
@@ -23,12 +23,14 @@ interface Props extends Partial<DocumentProps> {
   /** meta[name=description]; por defecto, la entradilla. */
   description?: string;
   lang?: string;
+  /** Paleta de marca de tokens.json (`color.palettes`), p. ej. `merkle`. Sin ella, la base. */
+  palette?: string;
   /** Lo que llega cuando el layout lo pone un .md. */
   frontmatter?: Record<string, any>;
   headings?: MarkdownHeading[];
 }
 
-const { frontmatter: fm, headings, lang = 'es', ...props } = Astro.props;
+const { frontmatter: fm, headings, lang = 'es', palette, ...props } = Astro.props;
 
 // Del frontmatter a las props, sin pisar lo que se pase a mano.
 const fromMarkdown: Partial<DocumentProps> & { description?: string } = fm
@@ -52,7 +54,7 @@ const description = doc.description ?? doc.lede;
 ---
 
 <!doctype html>
-<html lang={lang} data-theme="auto">
+<html lang={lang} data-theme="auto" data-palette={palette ?? fm?.palette}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

@@ -20,7 +20,8 @@ Todo sale de docs/site/site.toml (plantilla en templates/site/site.toml):
   delphos-check no deja pasar una página con marcadores.
 - build escribe la portada (index.html) desde home.md y el mapa, y pone la
   barra lateral en cada página del mapa, entre <!-- site:nav --> y
-  <!-- /site:nav -->. Fuera de esas marcas no toca nada, así que una página
+  <!-- /site:nav -->. Fuera de esas marcas solo toca el atributo
+  data-palette de <html> (la paleta de marca de site.toml), así que una página
   fechada no cambia de contenido. Con --check no escribe: sale con 1 si algo
   cambiaría.
 """
@@ -188,6 +189,7 @@ def new(root: Path, config: dict, kind: str, page: str, title: str | None) -> li
     text = text.replace("{{system}}", rel(system_dir(config), page))
     text = text.replace("{{brand}}", html.escape(config["project"]["brand"]))
     text = text.replace("{{date}}", dt.date.today().isoformat())
+    text = with_palette(text, config)
     if title:
         text = text.replace("{{title}}", html.escape(title))
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -264,7 +266,7 @@ def home(root: Path, config: dict) -> tuple[str, str]:
     title, rest = re.match(r"# (.+?)\n+(.*)", text, re.S).groups()
     lede, rest = (re.match(r"(.+?)\n\n(.*)", rest, re.S) or re.match(r"(.+)()", rest, re.S)).groups()
     index = project["index"]
-    out = HOME.format(
+    out = with_palette(HOME.format(
         title=html.escape(title),
         description=html.escape(re.sub(r"[`*_]", "", lede).strip(), quote=True),
         lede=markdown.markdown(lede.strip())[3:-4],
@@ -277,8 +279,19 @@ def home(root: Path, config: dict) -> tuple[str, str]:
         home=project["home"],
         config=CONFIG,
         version=page_version(config),
-    )
+    ), config)
     return index, out
+
+
+def with_palette(text: str, config: dict) -> str:
+    """Pone en <html> la paleta de marca de site.toml (data-palette), o la quita si no hay."""
+    palette = config["project"].get("palette")
+
+    def fix(m: re.Match) -> str:
+        tag = re.sub(r'\s+data-palette="[^"]*"', "", m.group(0))
+        return tag[:-1] + f' data-palette="{html.escape(palette, quote=True)}">' if palette else tag
+
+    return re.sub(r"<html\b[^>]*>", fix, text, count=1)
 
 
 def replace_block(text: str, start: str, end: str, block: str, anchor: str, before: bool) -> str:
@@ -313,7 +326,7 @@ def page(root: Path, config: dict, path: str) -> tuple[str, str]:
                          r'<link rel="stylesheet" href="[^"]*css/(?:document|view)\.css" />', before=False)
     text = replace_block(text, NAV_OPEN, NAV_CLOSE, nav(config, path), r'<div class="(?:doc|view)">', before=True)
     text = re.sub(r"<body(?: class=\"lib\")?>", '<body class="lib">', text, count=1)
-    return path, text
+    return path, with_palette(text, config)
 
 
 def build(root: Path, config: dict, check: bool) -> list[Path]:

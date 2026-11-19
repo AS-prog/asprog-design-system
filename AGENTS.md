@@ -43,7 +43,7 @@ Nunca se editan a mano: `system/tokens.css`, `plugins/documentation/skills/site/
 
 ### Reglas
 
-- **Nada de un cliente o un proyecto concreto.** La excepción es la capa web (`system/astro/`, `system/css/site.css`), que es la de andresrsotelo.dev y conserva sus clases sin prefijo de Delphos. Los ejemplos son ficticios (`examples/sample-project/`, el controlador de riego). Un nombre real de cliente, servidor o tabla no entra.
+- **Nada de un cliente o un proyecto concreto.** Hay dos excepciones: la capa web (`system/astro/`, `system/css/site.css`), que es la de andresrsotelo.dev y conserva sus clases sin prefijo de Delphos, y las paletas de marca de `color.palettes` en `tokens.json` (p. ej. `merkle`), que solo traen colores de una guía de marca, con su `source`. Los ejemplos son ficticios (`examples/sample-project/`, el controlador de riego). Un nombre real de cliente, servidor o tabla no entra.
 - **El código va en inglés y los comentarios en español.** Carpetas, ficheros, clases, tokens, funciones y claves de configuración en inglés; README, skills, changelog, commits y todo texto visible, en español.
 - **Ningún valor a mano en las hojas.** `scripts/check-css.mjs` lo comprueba. Si falta un paso, se añade a `tokens.json`.
 - **Una clase nueva** lleva el prefijo de su capa: `doc-` documento, `lib-` sitio, `d-` diagrama, `hl-` resaltado, `g-` estado.
