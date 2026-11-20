@@ -39,7 +39,7 @@ Guía para cambiar este repo. Para **usar** el sistema en un proyecto, las regla
 | Cambiar la web (Astro) | `system/astro/` y `system/css/site.css`, solo con tokens | `npm test`; en la web, subir al tag nuevo |
 | Cambiar el sitio | `plugins/documentation/skills/site/scripts/site.py`, `system/css/library.css` y `skills/site/SKILL.md` | `npm run example` |
 
-Nunca se editan a mano: `system/tokens.css`, `plugins/documentation/skills/site/system/`, `plugins/documentation/skills/check/classes.json` ni la `version` de los manifiestos. Los genera `npm run build`.
+Nunca se editan a mano: `system/tokens.css`, `system/design/`, `plugins/documentation/skills/site/system/`, `plugins/documentation/skills/check/classes.json` ni la `version` de los manifiestos. Los genera `npm run build`.
 
 ### Reglas
 

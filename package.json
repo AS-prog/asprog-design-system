@@ -1,6 +1,6 @@
 {
   "name": "asprog-design-system",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "private": true,
   "description": "El sistema de diseño y el método de documentación de los proyectos de Andrés R. Sotelo, con sus plugins de Claude Code.",
   "license": "MIT",
@@ -11,6 +11,7 @@
   "files": [
     "system/astro/",
     "system/assets/",
+    "system/design/",
     "system/css/",
     "system/fonts/",
     "system/js/",
@@ -24,6 +25,7 @@
     "./tokens.css": "./system/tokens.css",
     "./tokens.json": "./system/tokens.json",
     "./css/*": "./system/css/*",
+    "./design/*": "./system/design/*",
     "./fonts/*": "./system/fonts/*",
     "./assets/*": "./system/assets/*",
     "./js/*": "./system/js/*"

@@ -4,6 +4,7 @@
 //   1. tokens.json y tokens.css coinciden y los contrastes llegan al mínimo;
 //   2. las hojas no llevan valores a mano;
 //   3. la copia del sistema y classes.json del plugin están al día;
+//   3b. los DESIGN.md de system/design/ coinciden con tokens.json;
 //   4. las páginas del ejemplo y los fragmentos de diagrams pasan delphos-check;
 //   5. el sitio del ejemplo está generado con la versión actual de site.py;
 //   5b. las pruebas de site-md pasan;
@@ -14,6 +15,8 @@ import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { classes, SHIPPED, version } from './build.mjs';
+import { loadTokens } from './tokens-lib.mjs';
+import { buildDesignMd, designTargets } from './design-md.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const PLUGIN = join(ROOT, 'plugins', 'documentation');
@@ -52,6 +55,19 @@ if (tokensVersion !== version()) errors.push(`system/tokens.json dice v${tokensV
 for (const name of ['documentation', 'diagrams']) {
   const m = JSON.parse(readFileSync(join(ROOT, 'plugins', name, '.claude-plugin', 'plugin.json'), 'utf8'));
   if (m.version !== version()) errors.push(`plugins/${name} declara v${m.version}; package.json, v${version()}`);
+}
+
+// 3b. Los DESIGN.md de system/design/ están al día con tokens.json y no sobra ninguno.
+{
+  const tokens = loadTokens();
+  const targets = designTargets(tokens);
+  for (const d of targets) {
+    let got;
+    try { got = readFileSync(join(ROOT, 'system', 'design', d.file), 'utf8'); } catch { errors.push(`falta system/design/${d.file}: ejecuta npm run build`); continue; }
+    if (got !== buildDesignMd(tokens, d.theme, d.palette)) errors.push(`system/design/${d.file} no coincide con tokens.json: ejecuta npm run build`);
+  }
+  const want = new Set(targets.map((d) => d.file));
+  for (const f of readdirSync(join(ROOT, 'system', 'design'))) if (!want.has(f)) errors.push(`system/design/${f} sobra: ejecuta npm run build`);
 }
 
 // 4. delphos-check sobre el ejemplo y los fragmentos de diagrams.

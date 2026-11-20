@@ -2,6 +2,14 @@
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y la versión, [SemVer](https://semver.org/lang/es/).
 
+## 0.18.0 · 2026-11-19
+
+### Añadido
+- `system/design/`: el sistema en formato design.md, un fichero por paleta y tema (`delphos-light.md`, `delphos-dark.md`, `merkle-light.md`, `merkle-dark.md`). Lo genera `npm run build` desde `tokens.json` con `scripts/design-md.mjs`. Es el formato que leen HyperFrames (heygen-com/hyperframes) y otras herramientas que hacen vídeo o imagen a partir de HTML.
+- El frontmatter lleva todos los colores resueltos para ese tema y esa paleta; la tipografía con los tamaños de la familia `slide` (px de 1920×1080) y el peso, el interlineado y el tracking de su estilo en `type.groups`; los espaciados de la diapositiva, el radio y el movimiento. En `components`: el papel de puntos (nunca la cuadrícula de líneas), las dos líneas del marco, el número de página y lo pendiente a trazos.
+- El paquete exporta `./design/*`.
+- `npm test` comprueba que los DESIGN.md coinciden con `tokens.json` y que no sobra ninguno.
+
 ## 0.17.0 · 2026-11-19
 
 ### Añadido
