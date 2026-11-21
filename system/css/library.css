@@ -72,8 +72,8 @@
 .lib-nav li.lib-solution li a[aria-current="page"] { border-left-color: var(--solution); background: transparent; color: var(--solution); }
 .lib-nav li.lib-solution > a[aria-current="page"] { border-left-color: transparent; background: transparent; }
 
-/* Las secciones de la página abierta cuelgan un nivel por debajo de su enlace. */
-.lib-nav li > ul[aria-label="Secciones de esta página"] { padding-left: var(--s-3); }
+/* Las listas anidadas en la barra (TOC de página o subniveles) cuelgan un nivel por debajo. */
+.lib-nav li > ul { padding-left: var(--s-3); }
 
 /* ---------- Niveles plegables (los activa js/library-fold.js) ----------
    Sin JavaScript todo queda desplegado. El script pone un button.lib-fold en
@@ -97,7 +97,9 @@
 .lib-sections > li { border-top: var(--line-minor); padding-top: var(--s-3); }
 .lib-sections h3 { font-size: var(--t-5); margin-bottom: var(--s-2); }
 .lib-sections ul { list-style: none; margin: 0; padding: 0; font-size: var(--t-3); }
-.lib-sections ul li { margin: 0; padding: var(--s-1) 0; border-bottom: var(--line-faint); display: flex; justify-content: space-between; gap: var(--s-3); }
+.lib-sections ul li { margin: 0; padding: var(--s-1) 0; border-bottom: var(--line-faint); display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s-3); }
+.lib-sections ul li > ul { flex: 1 0 100%; padding-left: var(--s-3); }
+.lib-sections ul ul li:last-child { border-bottom: 0; }
 .lib-type { font-family: var(--f-mono); font-size: var(--t-1); color: var(--muted); white-space: nowrap; }
 .lib-pending { color: var(--muted); }
 

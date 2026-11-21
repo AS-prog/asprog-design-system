@@ -261,3 +261,29 @@ def test_template_braces_in_code_are_entities():
 def test_task_list_disabled_checkboxes():
     html, _ = renderer().render("- [x] hecho\n- [ ] falta\n")
     assert html.count('type="checkbox"') == 2 and 'checked="checked"' in html and "disabled" in html
+
+
+def test_nested_pages_and_groups_in_sitemap_and_nav():
+    site = SiteMap.from_config({
+        "project": {"name": "demo"},
+        "section": [{
+            "title": "Paquetes",
+            "page": [{
+                "title": "Catálogo",
+                "type": "guía",
+                "path": "content/paquetes/catalogo.md",
+                "page": [{
+                    "title": "Roles",
+                    "page": [
+                        {"title": "role-director", "type": "guía", "path": "content/paquetes/role-director.md"},
+                    ],
+                }],
+            }],
+        }],
+    })
+    assert [e.title for e in site.entries()] == ["Catálogo", "Roles", "role-director"]
+    assert site.section_for("content/paquetes/role-director.md").title == "Paquetes"
+    sidebar = nav(site, "paquetes/role-director.html")
+    assert '<li><a href="catalogo.html">Catálogo</a><ul>' in sidebar
+    assert '<li><span>Roles</span><ul>' in sidebar
+    assert 'aria-current="page">role-director</a>' in sidebar
