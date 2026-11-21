@@ -10,7 +10,7 @@ import re
 from html import escape
 from typing import Callable, Dict, List, Optional
 
-from .domain import ContentError, RenderedPage, SiteMap, needs_toc, rel
+from .domain import ContentError, Entry, RenderedPage, SiteMap, needs_toc, rel
 
 INDEX = "index.html"
 
@@ -35,6 +35,24 @@ THEME_TOGGLE = """<script>
 Inline = Callable[[str], str]
 
 
+def _nav_items(entries: List[Entry], page: str, cur) -> List[str]:
+    items = []
+    for e in entries:
+        title = escape(e.title)
+        if e.href:
+            head = f'<a href="{rel(e.href, page)}"{cur(e.href)}>{title}</a>'
+        elif e.children:
+            head = f"<span>{title}</span>"
+        else:
+            head = f'<span title="Aún sin migrar">{title}</span>'
+        if e.children:
+            sub = "\n".join(_nav_items(e.children, page, cur))
+            items.append(f"<li>{head}<ul>\n{sub}\n</ul></li>")
+        else:
+            items.append(f"<li>{head}</li>")
+    return items
+
+
 def nav(site: SiteMap, page: str) -> str:
     """Side bar for page (a path relative to the site root), current page marked."""
     cur = lambda href: ' aria-current="page"' if href == page else ""  # noqa: E731
@@ -43,15 +61,9 @@ def nav(site: SiteMap, page: str) -> str:
            '<span class="lib-menu">Índice</span></summary>']
     for section in site.sections:
         out.append(f"<h2>{escape(section.title)}</h2>")
-        items = []
-        for e in section.entries:
-            title = escape(e.title)
-            if e.href:
-                items.append(f'<li><a href="{rel(e.href, page)}"{cur(e.href)}>{title}</a></li>')
-            else:
-                items.append(f'<li><span title="Aún sin migrar">{title}</span></li>')
+        items = _nav_items(section.entries, page, cur)
         if section.fold:
-            n = len(section.entries)
+            n = sum(1 for e in section.entries for _ in e.walk() if _.href or not _.children)
             out.append(f'<ul><li><span>{n} {"página" if n == 1 else "páginas"}</span><ul>')
             out += items
             out.append("</ul></li></ul>")
@@ -168,16 +180,29 @@ def render_page(site: SiteMap, rp: RenderedPage, inline: Inline, version: str) -
     return relink(out, site.link_map(), p.href, {e.href for e in site.entries() if e.href})
 
 
+def _section_items(entries: List[Entry]) -> List[str]:
+    out = []
+    for e in entries:
+        title = escape(e.title)
+        if e.href:
+            label = f'<a href="{e.href}">{title}</a><span class="lib-type">{escape(e.type or "")}</span>'
+        elif e.children:
+            label = f'<span>{title}</span><span class="lib-type">{len(e.children)}</span>'
+        else:
+            label = f'<span class="lib-pending">{title}</span><span class="lib-type">pendiente</span>'
+        if e.children:
+            sub = "\n".join(_section_items(e.children))
+            out.append(f"<li>{label}<ul>\n{sub}\n</ul></li>")
+        else:
+            out.append(f"<li>{label}</li>")
+    return out
+
+
 def _sections(site: SiteMap) -> str:
     out = ['<ul class="lib-sections">']
     for s in site.sections:
         out.append(f"<li><h3>{escape(s.title)}</h3><ul>")
-        for e in s.entries:
-            title = escape(e.title)
-            if e.href:
-                out.append(f'<li><a href="{e.href}">{title}</a><span class="lib-type">{escape(e.type)}</span></li>')
-            else:
-                out.append(f'<li><span class="lib-pending">{title}</span><span class="lib-type">pendiente</span></li>')
+        out.extend(_section_items(s.entries))
         out.append("</ul></li>")
     out.append("</ul>")
     return "\n".join(out)

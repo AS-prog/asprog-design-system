@@ -36,13 +36,20 @@ def rel(target: str, page: str) -> str:
 @dataclass(frozen=True)
 class Entry:
     title: str
-    type: str
-    path: Optional[str] = None  # .md source; None = announced
+    type: Optional[str] = None
+    path: Optional[str] = None  # .md source; None = announced or group
     was: Optional[str] = None   # artifact it comes from
+    children: List["Entry"] = field(default_factory=list)
 
     @property
     def href(self) -> Optional[str]:
         return html_path(self.path) if self.path else None
+
+    def walk(self) -> List["Entry"]:
+        out = [self]
+        for child in self.children:
+            out.extend(child.walk())
+        return out
 
 
 @dataclass(frozen=True)
@@ -50,6 +57,24 @@ class Section:
     title: str
     entries: List[Entry]
     fold: bool = False
+
+
+def _parse_entry(p: dict, seen: set) -> Entry:
+    raw_children = p.get("page") or p.get("children") or []
+    children = [_parse_entry(c, seen) for c in raw_children]
+    ptype = p.get("type")
+    path = p.get("path")
+    if path or not children:
+        if ptype not in TYPES:
+            raise ContentError(f"{p.get('title')}: tipo {ptype!r}; vale {', '.join(TYPES)}")
+    elif ptype is not None and ptype not in TYPES:
+        raise ContentError(f"{p.get('title')}: tipo {ptype!r}; vale {', '.join(TYPES)}")
+    if path:
+        html_path(path)
+        if path in seen:
+            raise ContentError(f"{path} sale dos veces en el mapa")
+        seen.add(path)
+    return Entry(p["title"], ptype, path, p.get("was"), children)
 
 
 @dataclass
@@ -66,24 +91,14 @@ class SiteMap:
         sections = []
         seen = set()
         for s in config.get("section", []):
-            entries = []
-            for p in s.get("page", []):
-                if p.get("type") not in TYPES:
-                    raise ContentError(f"{p.get('title')}: tipo {p.get('type')!r}; vale {', '.join(TYPES)}")
-                path = p.get("path")
-                if path:
-                    html_path(path)
-                    if path in seen:
-                        raise ContentError(f"{path} sale dos veces en el mapa")
-                    seen.add(path)
-                entries.append(Entry(p["title"], p["type"], path, p.get("was")))
+            entries = [_parse_entry(p, seen) for p in s.get("page", [])]
             sections.append(Section(s["title"], entries, bool(s.get("fold"))))
         name = project.get("name", "Site")
         return cls(name, project.get("brand", name), project.get("system", "design-system"),
                    project.get("home", "home.md"), sections)
 
     def entries(self) -> List[Entry]:
-        return [e for s in self.sections for e in s.entries]
+        return [item for s in self.sections for e in s.entries for item in e.walk()]
 
     def entry_for(self, source: str) -> Entry:
         for e in self.entries():
@@ -92,7 +107,7 @@ class SiteMap:
         raise ContentError(f"{source} no está en site.toml")
 
     def section_for(self, source: str) -> Section:
-        return next(s for s in self.sections for e in s.entries if e.path == source)
+        return next(s for s in self.sections for e in s.entries for item in e.walk() if item.path == source)
 
     def link_map(self) -> Dict[str, str]:
         """Artifact URL -> page href, for migrated pages only."""
