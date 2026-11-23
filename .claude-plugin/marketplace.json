@@ -20,7 +20,7 @@
     },
     {
       "name": "grill",
-      "description": "Entrevista implacable de diseño en rondas (grill-me) con interfaz web autocontenida en Delphos.",
+      "description": "Prototipo: entrevista implacable de diseño en rondas (grill-me) con interfaz web autocontenida en Delphos.",
       "source": "./plugins/grill"
     }
   ]

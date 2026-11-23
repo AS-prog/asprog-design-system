@@ -6,6 +6,8 @@ argument-hint: plan, idea o cambio que quieres someter a entrevista
 
 # grill-me
 
+> **Estado: prototipo.** Interfaz y contrato en validación con sesiones reales.
+
 Adaptación del método `grilling` de [mattpocock/skills](https://github.com/mattpocock/skills) (MIT) con interfaz web autocontenida en el sistema de diseño Delphos.
 
 Entrevista a la persona sin descanso hasta llegar a un **entendimiento compartido** del diseño o plan. Modela el problema como un **árbol de decisiones**: cada decisión se ramifica en las decisiones que cuelgan de ella. No ejecutes ni cambies código del plan hasta que la persona confirme explícitamente el entendimiento compartido.

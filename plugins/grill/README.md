@@ -1,5 +1,7 @@
 # grill
 
+> **Estado: prototipo.** Primera versión funcional para probar la interfaz web autocontenida de `grill-me` en Delphos; el contrato del CLI y el diseño pueden cambiar tras probarla en sesiones reales.
+
 Plugin del marketplace `asprog` que adapta el método **`grill-me`** / **`grilling`** de [mattpocock/skills](https://github.com/mattpocock/skills) (licencia MIT) y le añade una **interfaz web autocontenida** construida con el sistema de diseño **Delphos**.
 
 ## Qué trae

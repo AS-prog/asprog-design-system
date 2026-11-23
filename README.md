@@ -11,7 +11,7 @@ La identidad visual es **Delphos** sobre **Cobalt Grid** (papel crema, una sola 
 | `system/` | La fuente del sistema: `tokens.json` (y `tokens.css`, generado), `fonts/` y las hojas `css/base.css`, `css/document.css`, `css/view.css` (vistas generadas), `css/library.css` (sitio: barra lateral y portada) y `css/grill.css` (interfaz de entrevista); la capa web: `css/site.css`, `astro/` (componentes Astro) y `assets/` (figura e iconos); `design/`, el sistema en formato `DESIGN.md` por paleta y tema (generado) |
 | `plugins/documentation/` | El plugin: skills `method`, `document`, `change`, `check` y `site`, cada una con sus scripts y plantillas (`check/scripts/delphos-check` y su hook; `site/scripts/site.py`, las plantillas de página y una copia generada de `system/`) |
 | `plugins/diagrams/` | Los 45 tipos de diagrama de diagram-design como SVG en línea con las clases `.d-*` |
-| `plugins/grill/` | La skill `grill-me` (adaptada de mattpocock/skills) con interfaz web autocontenida en Delphos y servidor local por rondas |
+| `plugins/grill/` | Prototipo de la skill `grill-me` (adaptada de mattpocock/skills) con interfaz web autocontenida en Delphos y servidor local por rondas |
 | `examples/sample-project/` | Un proyecto ficticio (un controlador de riego) con su sitio, para probar y como modelo |
 | `scripts/` | `build.mjs` (prepara el plugin), `test.mjs` (lo comprueba todo) y la librería de tokens |
 | `.claude-plugin/marketplace.json` | El marketplace `asprog` |

@@ -5,7 +5,7 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y l
 ## 0.19.0 · 2026-11-23
 
 ### Añadido
-- Nuevo plugin `grill` (`plugins/grill/`) registrado en `.claude-plugin/marketplace.json`, con atribución MIT de [mattpocock/skills](https://github.com/mattpocock/skills) (`LICENSE-mattpocock-skills`) y la skill autocontenida `grill-me`.
+- Nuevo plugin `grill` (`plugins/grill/`, **prototipo**) registrado en `.claude-plugin/marketplace.json`, con atribución MIT de [mattpocock/skills](https://github.com/mattpocock/skills) (`LICENSE-mattpocock-skills`) y la skill autocontenida `grill-me`.
 - Hoja `system/css/grill.css` (prefijo `.grill-*`, solo tokens de `tokens.json`) y cliente `system/js/grill-app.js` sin dependencias externas: ronda activa con renderizador seguro de Markdown, aceptación rápida de recomendaciones, opciones estructuradas, respuesta o matiz libre, «investigar / posponer», nota general, cancelación, árbol de decisiones jerárquico plegable a 400 px con reapertura de decisiones pasadas (`revisions`), pantalla de confirmación final y exportación en Markdown.
 - `scripts/build-grill.mjs` y `npm run build` ensamblan `plugins/grill/skills/grill-me/assets/ui.html` (único HTML autocontenido con `tokens.css`, hojas del sistema, JS y las 5 tipografías `latin` en base64, sin red) y la demo precargada `plugins/grill/docs/demo.html`.
 - CLI y servidor local en Node.js puro (`plugins/grill/skills/grill-me/scripts/grill.mjs`) con subcomandos `start`, `round`, `wait`, `status`, `summary`, `close` y `demo`: sesión viva por SSE, autenticación por token, tolerancia a timeout (`pending`, código 2), estado persistido en `os.tmpdir()` y borrador autoguardado en `localStorage`.
