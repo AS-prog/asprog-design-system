@@ -64,9 +64,10 @@ Después, en el repo de gestión del proyecto, la skill `site` lo prepara: `site
 ## Desarrollar
 
 ```
-npm run build      # tokens.css desde tokens.json; copia del sistema y classes.json en el plugin; versión en los manifiestos
-npm test           # tokens y contrastes, hojas sin valores a mano, copias al día, delphos-check sobre el ejemplo y los diagramas, sitio del ejemplo al día
+npm run build      # tokens.css desde tokens.json; copia del sistema, classes.json y UI de grill en los plugins; versión en los manifiestos
+npm test           # tokens y contrastes, hojas sin valores a mano, copias al día, delphos-check sobre el ejemplo y los diagramas, sitio del ejemplo y pruebas de grill
 npm run example    # regenera la copia del sistema y el sitio del ejemplo
+npm run grill:demo # abre la demo interactiva local de la interfaz grill-me
 ```
 
 Hace falta Node 18+ y `uv` (o Python 3.11+ con `markdown`). La guía para agentes que cambian este repo está en [`AGENTS.md`](AGENTS.md); los cambios, en [`CHANGELOG.md`](CHANGELOG.md).
