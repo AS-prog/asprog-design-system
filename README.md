@@ -8,9 +8,10 @@ La identidad visual es **Delphos** sobre **Cobalt Grid** (papel crema, una sola 
 
 | Ruta | Qué es |
 |---|---|
-| `system/` | La fuente del sistema: `tokens.json` (y `tokens.css`, generado), `fonts/` y las hojas `css/base.css`, `css/document.css`, `css/view.css` (vistas generadas) y `css/library.css` (sitio: barra lateral y portada); la capa web: `css/site.css`, `astro/` (componentes Astro) y `assets/` (figura e iconos); `design/`, el sistema en formato `DESIGN.md` por paleta y tema (generado) |
+| `system/` | La fuente del sistema: `tokens.json` (y `tokens.css`, generado), `fonts/` y las hojas `css/base.css`, `css/document.css`, `css/view.css` (vistas generadas), `css/library.css` (sitio: barra lateral y portada) y `css/grill.css` (interfaz de entrevista); la capa web: `css/site.css`, `astro/` (componentes Astro) y `assets/` (figura e iconos); `design/`, el sistema en formato `DESIGN.md` por paleta y tema (generado) |
 | `plugins/documentation/` | El plugin: skills `method`, `document`, `change`, `check` y `site`, cada una con sus scripts y plantillas (`check/scripts/delphos-check` y su hook; `site/scripts/site.py`, las plantillas de página y una copia generada de `system/`) |
 | `plugins/diagrams/` | Los 45 tipos de diagrama de diagram-design como SVG en línea con las clases `.d-*` |
+| `plugins/grill/` | Prototipo de la skill `grill-me` (adaptada de mattpocock/skills) con interfaz web autocontenida en Delphos y servidor local por rondas |
 | `examples/sample-project/` | Un proyecto ficticio (un controlador de riego) con su sitio, para probar y como modelo |
 | `scripts/` | `build.mjs` (prepara el plugin), `test.mjs` (lo comprueba todo) y la librería de tokens |
 | `.claude-plugin/marketplace.json` | El marketplace `asprog` |
@@ -47,6 +48,7 @@ Para documentar un proyecto con Claude Code:
 /plugin marketplace add AS-prog/asprog-design-system
 /plugin install documentation@asprog
 /plugin install diagrams@asprog
+/plugin install grill@asprog
 ```
 
 En claude.ai: Customize > Plugins > Add marketplace con `AS-prog/asprog-design-system`. Para fijarlo en un proyecto, copia `plugins/documentation/examples/project-settings.json` a su `.claude/settings.json`.
@@ -62,9 +64,10 @@ Después, en el repo de gestión del proyecto, la skill `site` lo prepara: `site
 ## Desarrollar
 
 ```
-npm run build      # tokens.css desde tokens.json; copia del sistema y classes.json en el plugin; versión en los manifiestos
-npm test           # tokens y contrastes, hojas sin valores a mano, copias al día, delphos-check sobre el ejemplo y los diagramas, sitio del ejemplo al día
+npm run build      # tokens.css desde tokens.json; copia del sistema, classes.json y UI de grill en los plugins; versión en los manifiestos
+npm test           # tokens y contrastes, hojas sin valores a mano, copias al día, delphos-check sobre el ejemplo y los diagramas, sitio del ejemplo y pruebas de grill
 npm run example    # regenera la copia del sistema y el sitio del ejemplo
+npm run grill:demo # abre la demo interactiva local de la interfaz grill-me
 ```
 
 Hace falta Node 18+ y `uv` (o Python 3.11+ con `markdown`). La guía para agentes que cambian este repo está en [`AGENTS.md`](AGENTS.md); los cambios, en [`CHANGELOG.md`](CHANGELOG.md).

@@ -39,14 +39,14 @@ Guía para cambiar este repo. Para **usar** el sistema en un proyecto, las regla
 | Cambiar la web (Astro) | `system/astro/` y `system/css/site.css`, solo con tokens | `npm test`; en la web, subir al tag nuevo |
 | Cambiar el sitio | `plugins/documentation/skills/site/scripts/site.py`, `system/css/library.css` y `skills/site/SKILL.md` | `npm run example` |
 
-Nunca se editan a mano: `system/tokens.css`, `system/design/`, `plugins/documentation/skills/site/system/`, `plugins/documentation/skills/check/classes.json` ni la `version` de los manifiestos. Los genera `npm run build`.
+Nunca se editan a mano: `system/tokens.css`, `system/design/`, `plugins/documentation/skills/site/system/`, `plugins/documentation/skills/check/classes.json`, `plugins/grill/skills/grill-me/assets/ui.html`, `plugins/grill/docs/demo.html` ni la `version` de los manifiestos. Los genera `npm run build`.
 
 ### Reglas
 
 - **Nada de un cliente o un proyecto concreto.** Hay dos excepciones: la capa web (`system/astro/`, `system/css/site.css`), que es la de andresrsotelo.dev y conserva sus clases sin prefijo de Delphos, y las paletas de marca de `color.palettes` en `tokens.json` (p. ej. `merkle`), que solo traen colores de una guía de marca, con su `source`. Los ejemplos son ficticios (`examples/sample-project/`, el controlador de riego). Un nombre real de cliente, servidor o tabla no entra.
 - **El código va en inglés y no lleva comentarios.** Carpetas, ficheros, clases, tokens, funciones y claves de configuración en inglés; README, skills, changelog, commits y todo texto visible, en español. Lo que explicaría un comentario lo dicen los nombres y la forma del código; el porqué va en el commit, la PR o el changelog. Un docstring corto, en inglés, solo en lo público. Se admiten las directivas de herramienta y los avisos de licencia. Los comentarios que ya hay se retiran cuando se toca el archivo o con una tarea expresa.
 - **Ningún valor a mano en las hojas.** `scripts/check-css.mjs` lo comprueba. Si falta un paso, se añade a `tokens.json`.
-- **Una clase nueva** lleva el prefijo de su capa: `doc-` documento, `lib-` sitio, `d-` diagrama, `hl-` resaltado, `g-` estado.
+- **Una clase nueva** lleva el prefijo de su capa: `doc-` documento, `lib-` sitio, `d-` diagrama, `hl-` resaltado, `g-` estado, `grill-` entrevista.
 - **Versión** (SemVer): un cambio de valor en un token existente, o un nombre que desaparece, sube la mayor; una pieza o un token nuevo, la menor; una corrección sin cambio de valores, el parche. En 0.x, lo de la mayor sube la menor. La versión vive en `package.json` y en `system/tokens.json`, iguales (`npm test` lo comprueba); `npm run build` la lleva al plugin y a los manifiestos.
 - **Cada skill del plugin lleva dentro lo que usa** (scripts, plantillas, la copia del sistema) y las demás lo piden por la carpeta hermana. Nada en la raíz del plugin salvo el hook: APM solo copia la carpeta de cada skill. El `description` del frontmatter va entre comillas: APM lee YAML estricto.
 - **Antes de dar por bueno un cambio**: `npm run build`, `npm test`, y abrir el ejemplo en claro, en oscuro y a 400 px.

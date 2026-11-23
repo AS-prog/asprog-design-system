@@ -17,6 +17,11 @@
       "name": "diagrams",
       "description": "Los 45 tipos de diagrama de diagram-design con la identidad Delphos, como SVG en línea.",
       "source": "./plugins/diagrams"
+    },
+    {
+      "name": "grill",
+      "description": "Prototipo: entrevista implacable de diseño en rondas (grill-me) con interfaz web autocontenida en Delphos.",
+      "source": "./plugins/grill"
     }
   ]
 }
