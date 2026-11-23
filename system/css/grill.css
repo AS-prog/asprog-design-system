@@ -1,0 +1,971 @@
+.grill {
+  width: min(100% - 2 * var(--grid-margin), var(--grid-max));
+  margin: 0 auto;
+  padding-bottom: var(--s-12);
+  font-size: var(--t-3);
+  line-height: var(--lh-11);
+}
+
+.grill [hidden] {
+  display: none;
+}
+
+.grill .doc-bar {
+  padding-bottom: var(--s-5);
+}
+
+.grill-bar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+}
+
+.grill-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+}
+
+.grill-conn {
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  line-height: var(--lh-9);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  padding: 0 var(--s-2);
+  border: var(--line-faint);
+  color: var(--muted);
+}
+
+.grill-conn.is-live {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.grill-conn.is-demo {
+  border-style: dashed;
+}
+
+.grill-header {
+  display: grid;
+  gap: var(--s-4);
+  padding-bottom: var(--s-7);
+  border-bottom: var(--line-minor);
+}
+
+.grill-header h1 {
+  font-size: var(--t-h2);
+  line-height: var(--lh-5);
+  max-width: var(--measure-wide);
+}
+
+.grill-header .lede {
+  font-size: var(--t-4);
+  max-width: var(--measure-wide);
+}
+
+.grill-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-6);
+  margin: 0;
+}
+
+.grill-stats > div {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+
+.grill-stats dt {
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.grill-stats dd {
+  margin: 0;
+  font-family: var(--f-mono);
+  font-size: var(--t-3);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.grill-workspace {
+  display: grid;
+  grid-template-columns: var(--nav-width) minmax(0, var(--doc-width));
+  gap: var(--s-8);
+  align-items: start;
+  padding-top: var(--s-7);
+}
+
+.grill-rail {
+  position: sticky;
+  top: var(--s-4);
+  padding-right: var(--s-4);
+  border-right: var(--line-faint);
+}
+
+.grill-rail-fold > summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  cursor: pointer;
+  padding-bottom: var(--s-3);
+  border-bottom: var(--line-minor);
+}
+
+.grill-rail-fold > summary::-webkit-details-marker {
+  display: none;
+}
+
+.grill-rail-title {
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.grill-rail-toggle {
+  display: none;
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--muted);
+  border: var(--line-faint);
+  padding: 0 var(--s-2);
+}
+
+.grill-rail-tabs {
+  display: flex;
+  margin-top: var(--s-3);
+  border: var(--line-faint);
+}
+
+.grill-rail-tabs button {
+  flex: 1 1 0;
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  background: transparent;
+  color: var(--muted);
+  border: 0;
+  padding: var(--s-1) var(--s-2);
+  min-height: var(--control);
+  cursor: pointer;
+}
+
+.grill-rail-tabs button[aria-selected="true"] {
+  background: var(--ink);
+  color: var(--ground);
+}
+
+.grill-tree {
+  list-style: none;
+  margin: var(--s-4) 0 0;
+  padding: 0;
+}
+
+.grill-tree ul {
+  list-style: none;
+  margin: var(--s-1) 0 0 var(--s-2);
+  padding: 0 0 0 var(--s-3);
+  border-left: var(--line-faint);
+}
+
+.grill-tree li {
+  margin-top: var(--s-2);
+}
+
+.grill-node {
+  display: grid;
+  gap: var(--s-1);
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  color: var(--ink);
+  border: 0;
+  border-left: 2px solid transparent;
+  padding: var(--s-1) var(--s-2);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--t-2);
+  line-height: var(--lh-9);
+}
+
+.grill-node:hover {
+  border-left-color: var(--rule);
+  background: var(--note-bg);
+}
+
+.grill-node.is-selected {
+  border-left-color: var(--accent);
+  background: var(--note-bg);
+}
+
+.grill-node.is-frontier {
+  border-left-color: var(--ink);
+}
+
+.grill-node.is-settled {
+  border-left-color: var(--solution);
+}
+
+.grill-node.is-pending {
+  border-left-style: dashed;
+  border-left-color: var(--rule);
+  color: var(--muted);
+}
+
+.grill-node-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-2);
+}
+
+.grill-node-label {
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.grill-state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+.grill-state-mark {
+  display: inline-block;
+  width: var(--s-2);
+  height: var(--s-2);
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.grill-state.is-settled {
+  color: var(--solution);
+}
+
+.grill-state.is-frontier {
+  color: var(--ink);
+}
+
+.grill-state.is-pending .grill-state-mark {
+  background: transparent;
+  border: var(--line-faint);
+}
+
+.grill-history-list {
+  list-style: none;
+  margin: var(--s-4) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s-3);
+}
+
+.grill-history-round {
+  border-top: var(--line-faint);
+  padding-top: var(--s-2);
+}
+
+.grill-history-round > h3 {
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: var(--s-2);
+}
+
+.grill-history-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s-1);
+}
+
+.grill-inspector {
+  margin-top: var(--s-4);
+  padding: var(--s-3);
+  border-top: var(--line-major);
+  background: var(--note-bg);
+  color: var(--note-ink);
+  display: grid;
+  gap: var(--s-2);
+  font-size: var(--t-2);
+}
+
+.grill-inspector-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-2);
+}
+
+.grill-inspector-close {
+  background: transparent;
+  border: var(--line-faint);
+  color: var(--ink);
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  padding: 0 var(--s-2);
+  min-height: var(--s-6);
+  cursor: pointer;
+}
+
+.grill-inspector dt {
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: var(--s-2);
+}
+
+.grill-inspector dd {
+  margin: var(--s-1) 0 0;
+  overflow-wrap: anywhere;
+}
+
+.grill-main {
+  min-width: 0;
+  display: grid;
+  gap: var(--s-6);
+}
+
+.grill-banner {
+  background: var(--note-bg);
+  color: var(--note-ink);
+  border-top: var(--line-accent);
+  padding: var(--s-4);
+  display: grid;
+  gap: var(--s-2);
+}
+
+.grill-banner.is-done {
+  background: var(--solution-bg);
+  border-top-color: var(--solution);
+}
+
+.grill-banner.is-warn {
+  border-top-style: dashed;
+}
+
+.grill-banner-title {
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.grill-round-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+  padding-bottom: var(--s-4);
+  border-bottom: var(--line-minor);
+}
+
+.grill-round-meta {
+  display: grid;
+  gap: var(--s-1);
+}
+
+.grill-round-meta h2 {
+  font-size: var(--t-7);
+  line-height: var(--lh-6);
+}
+
+.grill-round-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+}
+
+.grill-progress {
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.grill-revisions {
+  border-top: var(--line-minor);
+  border-bottom: var(--line-faint);
+  padding: var(--s-3) 0;
+  display: grid;
+  gap: var(--s-2);
+}
+
+.grill-revisions h3 {
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--proposal);
+}
+
+.grill-revision-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s-2);
+}
+
+.grill-revision-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: var(--s-2) var(--s-3);
+  background: var(--note-bg);
+  border-left: 2px solid var(--proposal);
+  font-size: var(--t-2);
+}
+
+.grill-questions {
+  display: grid;
+  gap: var(--s-7);
+}
+
+.grill-question {
+  border-top: var(--line-minor);
+  padding-top: var(--s-5);
+  display: grid;
+  gap: var(--s-4);
+}
+
+.grill-question.is-missing {
+  border-top-color: var(--proposal);
+  padding-left: var(--s-3);
+  border-left: 2px solid var(--proposal);
+}
+
+.grill-question.is-readonly {
+  opacity: .82;
+}
+
+.grill-q-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+}
+
+.grill-q-id-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+}
+
+.grill-q-id {
+  font-family: var(--f-mono);
+  font-size: var(--t-2);
+  font-weight: 500;
+  letter-spacing: var(--ls-mono);
+  color: var(--ink);
+}
+
+.grill-q-branch {
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.grill-q-status {
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  padding: 0 var(--s-2);
+  border: var(--line-faint);
+  color: var(--muted);
+}
+
+.grill-q-status.is-answered {
+  background: var(--ink);
+  color: var(--ground);
+  border-color: var(--ink);
+}
+
+.grill-q-status.is-deferred {
+  border-style: dashed;
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.grill-q-status.is-missing {
+  border-color: var(--proposal);
+  color: var(--proposal);
+}
+
+.grill-q-title {
+  font-family: var(--f-display);
+  font-size: var(--t-6);
+  line-height: var(--lh-7);
+  letter-spacing: var(--ls-headline);
+  margin: 0;
+}
+
+.grill-md {
+  display: grid;
+  gap: var(--s-3);
+  font-size: var(--t-4);
+  line-height: var(--lh-11);
+  max-width: var(--doc-width);
+}
+
+.grill-md p {
+  max-width: var(--measure-wide);
+}
+
+.grill-md ul,
+.grill-md ol {
+  margin: 0;
+  padding-left: var(--s-5);
+  display: grid;
+  gap: var(--s-1);
+  max-width: var(--measure-wide);
+}
+
+.grill-md pre {
+  margin: 0;
+  background: var(--note-bg);
+  color: var(--note-ink);
+  border-top: var(--line-faint);
+  padding: var(--s-3) var(--s-4);
+  overflow-x: auto;
+}
+
+.grill-md :not(pre) > code {
+  background: var(--note-bg);
+  padding: 0 var(--s-1);
+}
+
+.grill-md blockquote {
+  font-family: var(--f-body);
+  font-size: var(--t-3);
+  line-height: var(--lh-10);
+  border-left: var(--line-minor);
+  padding-left: var(--s-4);
+  color: var(--muted);
+  max-width: var(--measure-wide);
+}
+
+.grill-md table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: var(--t-2);
+}
+
+.grill-md th,
+.grill-md td {
+  text-align: left;
+  vertical-align: top;
+  padding: var(--s-1) var(--s-3) var(--s-1) 0;
+  border-bottom: var(--line-faint);
+}
+
+.grill-md th {
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: var(--line-minor);
+}
+
+.grill-rec {
+  background: var(--note-bg);
+  color: var(--note-ink);
+  border-left: var(--line-accent);
+  padding: var(--s-3) var(--s-4);
+  display: grid;
+  gap: var(--s-2);
+}
+
+.grill-rec-label {
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.grill-rec .grill-md {
+  font-size: var(--t-3);
+}
+
+.grill-options {
+  display: grid;
+  gap: var(--s-2);
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.grill-options legend {
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: var(--s-2);
+  padding: 0;
+}
+
+.grill-option {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--s-3);
+  align-items: start;
+  padding: var(--s-3);
+  border: var(--line-faint);
+  cursor: pointer;
+  transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+}
+
+.grill-option:hover {
+  border-color: var(--ink);
+}
+
+.grill-option.is-picked {
+  border-color: var(--ink);
+  border-left-width: 2px;
+  background: var(--note-bg);
+}
+
+.grill-option input {
+  margin-top: var(--s-1);
+  accent-color: var(--accent);
+}
+
+.grill-option-body {
+  display: grid;
+  gap: var(--s-1);
+  min-width: 0;
+}
+
+.grill-option-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+}
+
+.grill-option-id {
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  font-weight: 500;
+}
+
+.grill-option-label {
+  font-weight: 500;
+  font-size: var(--t-3);
+}
+
+.grill-option-rec {
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.grill-option-desc {
+  font-size: var(--t-2);
+  color: var(--muted);
+}
+
+.grill-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.grill-choice-btn {
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  background: transparent;
+  color: var(--ink);
+  border: var(--line-faint);
+  padding: var(--s-2) var(--s-3);
+  min-height: var(--control);
+  cursor: pointer;
+  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+
+.grill-choice-btn:hover {
+  border-color: var(--ink);
+}
+
+.grill-choice-btn[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--ground);
+  border-color: var(--ink);
+}
+
+.grill-choice-btn.is-defer[aria-pressed="true"] {
+  background: var(--note-bg);
+  color: var(--ink);
+  border: 2px dashed var(--ink);
+}
+
+.grill-field {
+  display: grid;
+  gap: var(--s-1);
+}
+
+.grill-field label {
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  letter-spacing: var(--ls-mono);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.grill-textarea {
+  width: 100%;
+  min-height: var(--s-11);
+  padding: var(--s-2) var(--s-3);
+  font-family: var(--f-body);
+  font-size: var(--t-3);
+  line-height: var(--lh-10);
+  color: var(--ink);
+  background: var(--ground);
+  border: var(--line-faint);
+  border-radius: var(--r-1);
+  resize: vertical;
+}
+
+.grill-textarea:focus {
+  border-color: var(--ink);
+  outline: var(--focus);
+  outline-offset: var(--focus-offset);
+}
+
+.grill-submit-bar {
+  border-top: var(--line-major);
+  padding-top: var(--s-5);
+  display: grid;
+  gap: var(--s-4);
+}
+
+.grill-submit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.grill-submit-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.grill .btn {
+  cursor: pointer;
+  min-height: var(--control);
+  font-size: var(--t-3);
+}
+
+.grill .btn:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.grill-btn-danger {
+  border-color: var(--proposal);
+  color: var(--proposal);
+}
+
+.grill-btn-danger:hover {
+  border-color: var(--proposal);
+  background: var(--proposal);
+  color: var(--ground);
+}
+
+.grill-summary {
+  display: grid;
+  gap: var(--s-5);
+}
+
+.grill-summary-box {
+  border-top: var(--line-major);
+  padding-top: var(--s-5);
+  display: grid;
+  gap: var(--s-4);
+}
+
+.grill-decisions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: var(--line-minor);
+}
+
+.grill-decisions li {
+  padding: var(--s-3) 0;
+  border-bottom: var(--line-faint);
+  display: grid;
+  gap: var(--s-1);
+}
+
+.grill-toast {
+  position: fixed;
+  right: var(--s-4);
+  bottom: var(--s-4);
+  z-index: 10;
+  background: var(--ink);
+  color: var(--ground);
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+  letter-spacing: var(--ls-mono);
+  padding: var(--s-2) var(--s-4);
+  max-width: var(--measure);
+}
+
+.grill-dialog {
+  width: min(var(--doc-width), 100% - 2 * var(--s-4));
+  max-height: calc(100% - 2 * var(--s-6));
+  background: var(--ground);
+  color: var(--ink);
+  border: var(--line-major);
+  padding: var(--s-5);
+}
+
+.grill-dialog::backdrop {
+  background: var(--ground);
+  opacity: .75;
+}
+
+.grill-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding-bottom: var(--s-3);
+  border-bottom: var(--line-minor);
+}
+
+.grill-dialog-pre {
+  margin-top: var(--s-4);
+  max-height: var(--measure);
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: var(--note-bg);
+  color: var(--note-ink);
+  padding: var(--s-4);
+  font-family: var(--f-mono);
+  font-size: var(--t-1);
+}
+
+.grill-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-top: var(--s-4);
+}
+
+@media (max-width: 56rem) {
+  .grill-workspace {
+    grid-template-columns: 1fr;
+    gap: var(--s-5);
+    padding-top: var(--s-5);
+  }
+
+  .grill-rail {
+    position: static;
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
+    border-right: 0;
+    border-bottom: var(--line-minor);
+    padding-bottom: var(--s-4);
+  }
+
+  .grill-rail-toggle {
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .grill-rail-fold:not([open]) > summary {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+}
+
+@media (max-width: 37.5rem) {
+  .grill-bar-actions,
+  .grill-round-controls,
+  .grill-submit-actions,
+  .grill-submit-group {
+    width: 100%;
+  }
+
+  .grill-submit-group .btn,
+  .grill-actions .grill-choice-btn {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+
+  .grill-toast {
+    left: var(--s-3);
+    right: var(--s-3);
+    bottom: var(--s-3);
+  }
+}
+
+@media print {
+  .grill-workspace {
+    display: block;
+  }
+
+  .grill-rail {
+    position: static;
+    max-height: none;
+    border-right: 0;
+    margin-bottom: var(--s-6);
+  }
+
+  .grill-bar-actions,
+  .grill-actions,
+  .grill-submit-bar,
+  .grill-toast {
+    display: none;
+  }
+}

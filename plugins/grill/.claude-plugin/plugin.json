@@ -1,0 +1,21 @@
+{
+  "name": "grill",
+  "displayName": "Grill Me",
+  "version": "0.19.0",
+  "description": "Entrevista implacable de diseño en rondas (grill-me) con una interfaz web autocontenida en el sistema de diseño Delphos.",
+  "author": {
+    "name": "Andrés R. Sotelo",
+    "url": "https://github.com/AS-prog"
+  },
+  "homepage": "https://github.com/AS-prog/asprog-design-system",
+  "repository": "https://github.com/AS-prog/asprog-design-system",
+  "license": "MIT",
+  "keywords": [
+    "delphos",
+    "grill-me",
+    "grilling",
+    "interview",
+    "design-tree",
+    "planning"
+  ]
+}

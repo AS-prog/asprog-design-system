@@ -1,25 +1,20 @@
 #!/usr/bin/env node
-// Prepara el plugin documentation a partir de system/. Uso: npm run build
-//
-// El plugin no puede mirar fuera de su carpeta (Claude Code lo copia a su
-// caché), así que lleva una copia de las hojas, los tokens, los scripts y las fuentes, y la
-// lista de clases que delphos-check admite. Las dos cosas se generan aquí;
-// npm test falla si se quedan atrás.
 import { cpSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadTokens, buildCss } from './tokens-lib.mjs';
 import { buildDesignMd, designTargets } from './design-md.mjs';
+import { buildGrillUi, demoBootstrap } from './build-grill.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const SYSTEM = join(ROOT, 'system');
 const PLUGIN = join(ROOT, 'plugins', 'documentation');
+const GRILL_PLUGIN = join(ROOT, 'plugins', 'grill');
 
-// Lo que viaja con el plugin y luego se copia a cada proyecto.
 export const SHIPPED = ['tokens.css', 'css', 'js', 'fonts'];
+export const PLUGINS = ['documentation', 'diagrams', 'grill'];
 
-// Prefijos de las clases que delphos-check vigila (regla 8).
-const WATCHED = /^(doc-|d-|hl-|g-|lib-|notice)/;
+const WATCHED = /^(doc-|d-|hl-|g-|lib-|grill-|notice)/;
 
 export function classes() {
   const found = new Set();
@@ -37,23 +32,35 @@ export function version() {
 function main() {
   const tokens = loadTokens();
   writeFileSync(join(SYSTEM, 'tokens.css'), buildCss(tokens));
-  // DESIGN.md por paleta y tema, para HyperFrames y otras herramientas que leen design.md.
+
   rmSync(join(SYSTEM, 'design'), { recursive: true, force: true });
   mkdirSync(join(SYSTEM, 'design'), { recursive: true });
-  for (const d of designTargets(tokens)) writeFileSync(join(SYSTEM, 'design', d.file), buildDesignMd(tokens, d.theme, d.palette));
+  for (const d of designTargets(tokens)) {
+    writeFileSync(join(SYSTEM, 'design', d.file), buildDesignMd(tokens, d.theme, d.palette));
+  }
+
   const target = join(PLUGIN, 'skills', 'site', 'system');
   rmSync(target, { recursive: true, force: true });
   mkdirSync(target, { recursive: true });
   for (const item of SHIPPED) cpSync(join(SYSTEM, item), join(target, item), { recursive: true });
   writeFileSync(join(target, 'VERSION'), version() + '\n');
   writeFileSync(join(PLUGIN, 'skills', 'check', 'classes.json'), JSON.stringify(classes(), null, 2) + '\n');
-  for (const name of ['documentation', 'diagrams']) {
+
+  const grillAssets = join(GRILL_PLUGIN, 'skills', 'grill-me', 'assets');
+  mkdirSync(grillAssets, { recursive: true });
+  writeFileSync(join(grillAssets, 'ui.html'), buildGrillUi(tokens));
+
+  const grillDocs = join(GRILL_PLUGIN, 'docs');
+  mkdirSync(grillDocs, { recursive: true });
+  writeFileSync(join(grillDocs, 'demo.html'), buildGrillUi(tokens, { bootstrap: demoBootstrap() }));
+
+  for (const name of PLUGINS) {
     const p = join(ROOT, 'plugins', name, '.claude-plugin', 'plugin.json');
     const manifest = JSON.parse(readFileSync(p, 'utf8'));
     manifest.version = version();
     writeFileSync(p, JSON.stringify(manifest, null, 2) + '\n');
   }
-  console.log(`plugin documentation preparado con el sistema v${version()}`);
+  console.log(`plugins preparados con el sistema v${version()}`);
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) main();
