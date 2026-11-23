@@ -23,8 +23,8 @@ Un plan, una petición o un bug cuya fuente final es un issue nace como borrador
 
 1. **Borrador.** Copia la plantilla de su tipo a `.scratch/<tema>/borrador.md` del repo destino. `.scratch/` va en su `.gitignore`. Rellena el frontmatter (`type`, `title`, `repo`, `labels`, `parent`, `status: borrador`, `date`) y el cuerpo con las secciones del issue. Hecho cuando no queda ningún `<…>` de la plantilla.
 2. **Vista.** Regenera el HTML desde el `.md` cada vez que cambie, con la skill `document`, para verlo como página. El borrador se reescribe cuanto haga falta.
-3. **Publicar**, solo cuando la persona lo ordena («publícalo»). El modelo puede proponerlo, pero no hacerlo por su cuenta. El cuerpo, sin el frontmatter, va al texto del issue (`gh issue create --repo <repo> --title <title> --body-file`). `labels` da las etiquetas, y `parent`, el issue padre (como sub-issue). `scripts/standalone-html` deja la vista en un solo archivo, y `gh issue artifact create <N>` la sube como artefacto. Hecho cuando el issue tiene su texto, sus etiquetas, su padre y el artefacto.
-4. **Borrar el borrador.** Se borran el `.md` y el HTML de `.scratch/<tema>/`: en el repo no queda nada. Desde aquí la fuente es el issue. Un cambio se hace en el issue y se vuelve a subir el artefacto.
+3. **Publicar**, solo cuando la persona lo ordena («publícalo»). El modelo puede proponerlo, pero no hacerlo por su cuenta. Se hace con `scripts/publish-draft .scratch/<tema>/borrador.md`: sin `--apply` enseña el plan (repo, título, etiquetas, padre, artefacto y los archivos que borraría) y no escribe nada en GitHub; con `--apply` crea el issue con el cuerpo sin frontmatter y sus etiquetas, lo enlaza como sub-issue de `parent` (un número, o `dueño/nombre#N` si el padre está en otro repo), sube la vista como artefacto y borra el borrador. La vista es `borrador.html`, al lado del `.md`, u otra con `--html`; antes de publicar pasa `delphos-check`. No publica si falta `title` o `repo`, si queda un `<…>` de la plantilla o si la página no pasa. Si un paso falla, se para, dice qué quedó hecho y no borra nada. Necesita `gh` con sesión (2.103.0 o posterior para el artefacto). Hecho cuando el issue tiene su texto, sus etiquetas, su padre y el artefacto.
+4. **Borrar el borrador.** Lo hace `publish-draft` al terminar: se borran el `.md` y el HTML de `.scratch/<tema>/`, y en el repo no queda nada. Desde aquí la fuente es el issue. Un cambio se hace en el issue y se vuelve a subir el artefacto.
 
 Los tickets no pasan por borrador: `to-tickets` los publica como sub-issues del plan cuando la persona aprueba el troceo.
 
@@ -34,4 +34,4 @@ Los tickets no pasan por borrador: `to-tickets` los publica como sub-issues del 
 - [ ] Cada figura de un cambio que mueve piezas es una comparación hoy | propuesta, con el rojo solo a la derecha.
 - [ ] La página pasa `delphos-check` y su PNG de `figuras/` está al día.
 - [ ] La PR sigue su plantilla, con cifras reales y `Closes #N` al final.
-- [ ] Un borrador publicado tiene su issue con texto, etiquetas, padre y artefacto, y ya no está en `.scratch/`.
+- [ ] Un borrador se publica con `scripts/publish-draft`, solo por orden de la persona: tiene su issue con texto, etiquetas, padre y artefacto, y ya no está en `.scratch/`.

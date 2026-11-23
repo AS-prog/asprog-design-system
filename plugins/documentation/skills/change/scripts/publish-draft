@@ -1,0 +1,158 @@
+#!/usr/bin/env node
+import { spawnSync } from 'node:child_process';
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { basename, dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const TEMPLATES = join(HERE, '..', 'templates', 'drafts');
+const CHECK = join(HERE, '..', '..', 'check', 'scripts', 'delphos-check');
+const STANDALONE = join(HERE, 'standalone-html');
+const USAGE = 'uso: publish-draft <borrador.md> [--html <página.html>] [--apply]';
+
+class Stop extends Error {}
+
+function parseArgs(argv) {
+  const args = { draft: '', html: '', apply: false };
+  for (let i = 0; i < argv.length; i++) {
+    if (argv[i] === '--apply') args.apply = true;
+    else if (argv[i] === '--html') args.html = argv[++i] ?? '';
+    else if (argv[i].startsWith('--')) throw new Stop(`opción desconocida ${argv[i]}\n${USAGE}`);
+    else if (!args.draft) args.draft = argv[i];
+    else throw new Stop(USAGE);
+  }
+  if (!args.draft) throw new Stop(USAGE);
+  return args;
+}
+
+function scalar(raw) {
+  const value = raw.trim().replace(/^(["'])(.*)\1$/, '$2');
+  return value === 'null' || value === '~' ? '' : value;
+}
+
+function parseDraft(text) {
+  const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/.exec(text);
+  if (!match) throw new Stop('el borrador no empieza con un frontmatter entre líneas ---');
+  const meta = {};
+  for (const line of match[1].split(/\r?\n/)) {
+    const pair = /^([A-Za-z_]+):\s*(.*)$/.exec(line);
+    if (pair) meta[pair[1]] = pair[2].trim();
+  }
+  const list = /^\[(.*)\]$/.exec(meta.labels ?? '');
+  return {
+    type: scalar(meta.type ?? ''),
+    title: scalar(meta.title ?? ''),
+    repo: scalar(meta.repo ?? ''),
+    labels: (list ? list[1].split(',') : [meta.labels ?? '']).map(scalar).filter(Boolean),
+    parent: scalar(meta.parent ?? ''),
+    body: text.slice(match[0].length).replace(/^\s+/, ''),
+  };
+}
+
+function templatePlaceholders(type) {
+  const file = join(TEMPLATES, `${type}.md`);
+  if (!existsSync(file)) return [];
+  return [...new Set(readFileSync(file, 'utf8').match(/<[^<>\n]+>/g) ?? [])];
+}
+
+function parentOf(draft) {
+  if (!draft.parent) return null;
+  const match = /^(?:([\w.-]+\/[\w.-]+))?#?(\d+)$/.exec(draft.parent);
+  if (!match) throw new Stop(`parent: ${draft.parent} no es un número de issue ni dueño/nombre#N`);
+  return { repo: match[1] || draft.repo, number: match[2] };
+}
+
+function validate(draft, text) {
+  const missing = ['title', 'repo'].filter((key) => !draft[key]);
+  if (missing.length) throw new Stop(`al frontmatter le falta ${missing.join(' y ')}`);
+  const left = templatePlaceholders(draft.type).filter((mark) => text.includes(mark));
+  if (left.length) throw new Stop(`quedan sin rellenar de la plantilla: ${left.join(' ')}`);
+  if (!/^[\w.-]+\/[\w.-]+$/.test(draft.repo)) throw new Stop(`repo: ${draft.repo} no es dueño/nombre`);
+}
+
+function gh(args) {
+  const result = spawnSync('gh', args, { encoding: 'utf8' });
+  if (result.error) throw new Stop(`no pude ejecutar gh: ${result.error.message}`);
+  if (result.status !== 0) throw new Stop(`gh ${args.slice(0, 3).join(' ')} falló: ${(result.stderr || result.stdout).trim()}`);
+  return result.stdout.trim();
+}
+
+function artifactName(draft, html) {
+  const folder = basename(dirname(resolve(html))).replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^[-.]+|-+$/g, '');
+  return `${folder || draft.type || 'borrador'}.html`;
+}
+
+function showPlan(draft, parent, files, html) {
+  console.log(`publicaría en ${draft.repo}`);
+  console.log(`  título:    ${draft.title}`);
+  console.log(`  etiquetas: ${draft.labels.join(', ') || 'ninguna'}`);
+  console.log(`  padre:     ${parent ? `${parent.repo}#${parent.number}` : 'ninguno'}`);
+  console.log(`  artefacto: ${html ? `${artifactName(draft, html)}, desde ${html}` : 'ninguno'}`);
+  console.log('  borraría:');
+  for (const file of files) console.log(`    ${file}`);
+  console.log('nada publicado: repite con --apply');
+}
+
+function main() {
+  const args = parseArgs(process.argv.slice(2));
+  if (!existsSync(args.draft)) throw new Stop(`no existe ${args.draft}`);
+  const text = readFileSync(args.draft, 'utf8');
+  const draft = parseDraft(text);
+  validate(draft, text);
+  const parent = parentOf(draft);
+
+  const beside = join(dirname(args.draft), 'borrador.html');
+  const html = args.html || (existsSync(beside) ? beside : '');
+  if (args.html && !existsSync(args.html)) throw new Stop(`no existe ${args.html}`);
+  if (html) {
+    const check = spawnSync('node', [CHECK, html], { stdio: ['ignore', 'ignore', 'inherit'] });
+    if (check.status !== 0) throw new Stop(`${html} no pasa delphos-check: no se publica`);
+  }
+  const files = [args.draft, html].filter(Boolean);
+  if (!args.apply) return showPlan(draft, parent, files, html);
+
+  const work = mkdtempSync(join(tmpdir(), 'publish-draft-'));
+  let issue = '';
+  try {
+    const bodyFile = join(work, 'body.md');
+    writeFileSync(bodyFile, draft.body);
+    const url = gh(['issue', 'create', '--repo', draft.repo, '--title', draft.title, '--body-file', bodyFile,
+      ...draft.labels.flatMap((label) => ['--label', label])]);
+    issue = /\/issues\/(\d+)\s*$/.exec(url)?.[1] ?? '';
+    if (!issue) throw new Stop(`gh creó el issue pero no entiendo su respuesta: ${url}`);
+    console.log(`creado ${draft.repo}#${issue}: ${url}`);
+
+    if (parent) {
+      const id = gh(['api', `repos/${draft.repo}/issues/${issue}`, '--jq', '.id']);
+      gh(['api', '-X', 'POST', `repos/${parent.repo}/issues/${parent.number}/sub_issues`, '-F', `sub_issue_id=${id}`]);
+      console.log(`enlazado como sub-issue de ${parent.repo}#${parent.number}`);
+    }
+
+    if (html) {
+      const single = join(work, artifactName(draft, html));
+      const built = spawnSync('node', [STANDALONE, html, single], { stdio: ['ignore', 'ignore', 'inherit'] });
+      if (built.status !== 0) throw new Stop(`standalone-html falló con ${html}`);
+      gh(['issue', 'artifact', 'create', issue, single, '--repo', draft.repo]);
+      console.log(`artefacto ${basename(single)} subido a ${draft.repo}#${issue}`);
+    }
+  } catch (error) {
+    if (!(error instanceof Stop)) throw error;
+    const done = issue ? `quedó creado ${draft.repo}#${issue}; lo demás, sin hacer` : 'no se creó ningún issue';
+    throw new Stop(`${error.message}\n${done}. El borrador sigue en su sitio.`);
+  } finally {
+    rmSync(work, { recursive: true, force: true });
+  }
+
+  for (const file of files) rmSync(file);
+  console.log(`borrado ${files.join(' y ')}`);
+  console.log(`publicado: ${draft.repo}#${issue}`);
+}
+
+try {
+  main();
+} catch (error) {
+  if (!(error instanceof Stop)) throw error;
+  console.error(`publish-draft: ${error.message}`);
+  process.exit(1);
+}

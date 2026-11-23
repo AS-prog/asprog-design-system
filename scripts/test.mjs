@@ -8,6 +8,7 @@
 //   4. las páginas del ejemplo y los fragmentos de diagrams pasan delphos-check;
 //   5. el sitio del ejemplo está generado con la versión actual de site.py;
 //   5b. las pruebas de site-md pasan;
+//   5c. las pruebas de publish-draft pasan;
 //   6. site.py funciona con el sistema en jsDelivr (system como URL): ni copia ni rutas a una copia.
 import { execFileSync } from 'node:child_process';
 import { cpSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
@@ -87,6 +88,10 @@ try {
 try {
   run('uv', ['run', '--quiet', '--no-project', '--with', 'pytest', '--with', 'markdown-it-py', '--with', 'mdit-py-plugins', '--with', 'pyyaml', 'python', '-m', 'pytest', '-q', 'tests/site-md'], { stdio: ['inherit', 'ignore', 'inherit'] });
 } catch { errors.push('las pruebas de site-md fallan: uv run … pytest tests/site-md'); }
+
+// 5c. publish-draft: publicar un borrador como issue, con un gh doble.
+try { run('node', ['scripts/test-publish-draft.mjs'], { stdio: ['inherit', 'ignore', 'inherit'] }); }
+catch { errors.push('las pruebas de publish-draft fallan: node scripts/test-publish-draft.mjs'); }
 
 // 6. El sistema desde jsDelivr: el ejemplo, sin su copia y con system como URL.
 {
