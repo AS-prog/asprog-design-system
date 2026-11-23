@@ -11,7 +11,7 @@ Cada proyecto se documenta igual: un **repo de gestión** con el diseño, las de
 
 1. **Busca antes de crear.** Mira `diseno/`, `decisiones/`, `registro/`, `tecnica/` y `.scratch/`. Si un documento ya cubre el tema, amplíalo; si es fechado, añade una nota fechada al final. Hecho cuando puedes nombrar el documento que amplías o afirmar que no hay ninguno.
 2. **Elige el tipo** en [reference/document-types.md](reference/document-types.md). El tipo fija la carpeta, el nombre, si es vivo o fechado y sus secciones.
-3. **Escribe el `.md`** con las secciones del tipo, en su orden, y la voz de [reference/voice.md](reference/voice.md). El `.md` es siempre la fuente.
+3. **Escribe el `.md`** con las secciones del tipo, en su orden, y la voz de [reference/voice.md](reference/voice.md). El `.md` es la fuente, salvo en un borrador que se publica como issue (skill `change`).
 4. **Si el tipo lleva página HTML**, hazla con la skill `document` y llévala al sitio con la skill `site`. Las páginas de implementación y las técnicas tienen guía propia: [reference/implementation-pages.md](reference/implementation-pages.md) y [reference/technical-pages.md](reference/technical-pages.md). Una figura que enseña un cambio es una comparación hoy | propuesta: la skill `change`.
 5. **Si el cambio toca código**, cumple [reference/alignment.md](reference/alignment.md): el diseño y el código van en ramas con el mismo nombre, y cada commit de código tiene su reflejo en el diseño. La issue y la PR siguen la skill `change`.
 6. **Revisa** con la lista final.
@@ -31,10 +31,11 @@ La estructura entera, con el `AGENTS.md` de partida, está en [reference/folders
 | El método del proyecto | `metodo/` | Vivo |
 | Fichas, specs, mapas e incidencias | `.scratch/<área>/<tema>/` | Estado en la ficha |
 | Glosario | `GLOSSARY.md` en la raíz del repo de código | Vivo |
+| Borrador de un plan, una petición o un bug | `.scratch/<tema>/borrador.md`, ignorado por git, hasta publicarlo como issue | La fuente pasa al issue |
 
 ## Reglas que no cambian de un proyecto a otro
 
-- **El `.md` es la fuente.** Una página HTML, un Claude Doc o una vista generada son vistas que se regeneran desde él.
+- **El `.md` es la fuente.** Una página HTML, un Claude Doc o una vista generada son vistas que se regeneran desde él. La excepción es un borrador que acaba en issue: vive en `.scratch/<tema>/`, ignorado por git, y una vez publicado la fuente es el issue y el borrador se borra.
 - **Lo fechado no se reescribe.** Un documento de `registro/` o `entradas/` se corrige con una nota fechada al final. Mientras su cambio no está integrado es un borrador y sí se reescribe.
 - **Lo vivo se mantiene al día.** Una página técnica desfasada se corrige con un cambio propio, no con una nota.
 - **El diseño manda.** Si el código contradice `diseno/` o `decisiones/`, se dice: o se corrige el código, o se abre una ficha para cambiar el diseño.
