@@ -1,6 +1,6 @@
 ---
 name: change
-description: "Lleva un cambio de la issue a la PR enseñando cómo cambia el desarrollo: la issue con su plantilla (construir o diseñar), la comparación hoy | propuesta con lo nuevo en rojo, el PNG y el artefacto de la issue, y la PR con su plantilla. Úsala al abrir una issue o una PR, al proponer un diseño o cuando pidan «enseña el cambio», «antes y después» o «la propuesta en rojo»."
+description: "Lleva un cambio de la issue a la PR enseñando cómo cambia el desarrollo: la issue con su plantilla (construir o diseñar), la comparación hoy | propuesta con lo nuevo en rojo, el PNG y el artefacto de la issue, y la PR con su plantilla, y los borradores que se publican como issue. Úsala al abrir una issue o una PR, al proponer un diseño o cuando pidan «enseña el cambio», «antes y después» «la propuesta en rojo» o «publícalo»."
 ---
 
 # change
@@ -17,9 +17,21 @@ Las rutas `templates/…` y `scripts/…` son relativas a la carpeta de esta ski
 4. **La PR.** Plantilla `templates/pull_request_template.md`: qué cambia (la conclusión y una viñeta por commit con su hash), cómo se comprobó (comandos y cifras reales, antes y después), avisos, cómo revisarlo y `Closes #N`. La sección de la comparación va solo si la PR toca páginas, con el PNG enlazado con `?raw=true`. La guía completa está en [../method/reference/pull-requests.md](../method/reference/pull-requests.md). Hecho cuando cada cifra salió de una ejecución de esta rama y cada sección que no aplica está quitada.
 5. **Al fusionar**, las páginas que la PR toca pasan a su estado final (implementación `vigente`, diseño `aplicado`) y la propuesta de la comparación deja de serlo: la columna de la derecha pasa a ser la de hoy en la siguiente.
 
+## Un borrador que acaba en issue
+
+Un plan, una petición o un bug cuya fuente final es un issue nace como borrador y no queda en el repo. Las plantillas están en `templates/drafts/` (`plan.md`, `enhancement.md`, `bug.md`).
+
+1. **Borrador.** Copia la plantilla de su tipo a `.scratch/<tema>/borrador.md` del repo destino. `.scratch/` va en su `.gitignore`. Rellena el frontmatter (`type`, `title`, `repo`, `labels`, `parent`, `status: borrador`, `date`) y el cuerpo con las secciones del issue. Hecho cuando no queda ningún `<…>` de la plantilla.
+2. **Vista.** Regenera el HTML desde el `.md` cada vez que cambie, con la skill `document`, para verlo como página. El borrador se reescribe cuanto haga falta.
+3. **Publicar**, solo cuando la persona lo ordena («publícalo»). El modelo puede proponerlo, pero no hacerlo por su cuenta. El cuerpo, sin el frontmatter, va al texto del issue (`gh issue create --repo <repo> --title <title> --body-file`). `labels` da las etiquetas, y `parent`, el issue padre (como sub-issue). `scripts/standalone-html` deja la vista en un solo archivo, y `gh issue artifact create <N>` la sube como artefacto. Hecho cuando el issue tiene su texto, sus etiquetas, su padre y el artefacto.
+4. **Borrar el borrador.** Se borran el `.md` y el HTML de `.scratch/<tema>/`: en el repo no queda nada. Desde aquí la fuente es el issue. Un cambio se hace en el issue y se vuelve a subir el artefacto.
+
+Los tickets no pasan por borrador: `to-tickets` los publica como sub-issues del plan cuando la persona aprueba el troceo.
+
 ## Lista
 
 - [ ] La issue sigue su plantilla y su alcance se comprueba en casillas.
 - [ ] Cada figura de un cambio que mueve piezas es una comparación hoy | propuesta, con el rojo solo a la derecha.
 - [ ] La página pasa `delphos-check` y su PNG de `figuras/` está al día.
 - [ ] La PR sigue su plantilla, con cifras reales y `Closes #N` al final.
+- [ ] Un borrador publicado tiene su issue con texto, etiquetas, padre y artefacto, y ya no está en `.scratch/`.
