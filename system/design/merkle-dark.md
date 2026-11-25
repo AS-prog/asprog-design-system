@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: "Delphos · Merkle · oscuro"
-description: "Generado desde tokens.json (v0.18.0) de asprog-design-system con npm run build. No se edita a mano. Papel, una sola tinta, papel de puntos, Newsreader, Hanken Grotesk y DM Mono, radio 0."
+description: "Generado desde tokens.json (v0.19.0) de asprog-design-system con npm run build. No se edita a mano. Papel, una sola tinta, papel de puntos, Newsreader, Hanken Grotesk y DM Mono, radio 0."
 unit: "la diapositiva o el fotograma de 1920×1080; las medidas son px de ese escenario"
 theme: dark
 palette: merkle
@@ -31,6 +31,12 @@ colors:
   cube-right: "#041677"
   cube-left: "#031fa4"
   cube-apex: "#dd3039"
+  series-1: "#e5544a"
+  series-2: "#7591eb"
+  series-3: "#27b964"
+  series-4: "#bfa2e0"
+  series-5: "#fba75d"
+  series-6: "#19d8e3"
 
 typography:
   numeral: { fontFamily: "Newsreader", px: 232, weight: 300, lineHeight: 1.02, tracking: "-0.018em" }
