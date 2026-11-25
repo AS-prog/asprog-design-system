@@ -1,0 +1,8 @@
+name: asprog-design-system
+version: 0.1.0
+dependencies:
+  apm:
+    - AS-prog/nano-harness/packages/director-rules#e637b047d9017f9018bbf9a4fb49bcad2e25648e
+compilation:
+  agents_md:
+    mode: managed_section
