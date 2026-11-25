@@ -1,4 +1,4 @@
-/* Cobalt Grid — generado desde tokens.json (v0.19.0) con scripts/build-tokens.mjs. No se edita a mano. */
+/* Cobalt Grid — generado desde tokens.json (v0.20.0) con scripts/build-tokens.mjs. No se edita a mano. */
 
 @font-face { font-family: "Newsreader"; font-style: normal; font-weight: 300 400; font-display: swap; src: url("fonts/newsreader-normal-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 
@@ -45,6 +45,12 @@
   --cube-right: #cfcce0;
   --cube-left: #e0dce0;
   --cube-apex: var(--ink);
+  --series-1: #002e1e;
+  --series-2: #183082;
+  --series-3: #872015;
+  --series-4: #7d3682;
+  --series-5: #7e5700;
+  --series-6: #007096;
 }
 
 [data-theme="dark"] {
@@ -72,6 +78,12 @@
   --cube-right: #151a5a;
   --cube-left: #1d2270;
   --cube-apex: #1f2be0;
+  --series-1: #00976b;
+  --series-2: #6e93ed;
+  --series-3: #f48573;
+  --series-4: #e598ea;
+  --series-5: #f7b94e;
+  --series-6: #9cdeff;
 }
 
 [data-theme="print"] {
@@ -98,6 +110,12 @@
   --cube-right: #cfcce0;
   --cube-left: #e0dce0;
   --cube-apex: var(--ink);
+  --series-1: #0a0a0a;
+  --series-2: #242424;
+  --series-3: #3a3a3a;
+  --series-4: #4e4e4e;
+  --series-5: #626262;
+  --series-6: #767676;
 }
 
 /* data-theme="auto": sigue a prefers-color-scheme; el conmutador lo sobrescribe escribiendo light o dark. */
@@ -127,6 +145,12 @@
     --cube-right: #151a5a;
     --cube-left: #1d2270;
     --cube-apex: #1f2be0;
+    --series-1: #00976b;
+    --series-2: #6e93ed;
+    --series-3: #f48573;
+    --series-4: #e598ea;
+    --series-5: #f7b94e;
+    --series-6: #9cdeff;
   }
 }
 
@@ -225,6 +249,12 @@
     --cube-right: #cfcce0;
     --cube-left: #e0dce0;
     --cube-apex: var(--ink);
+    --series-1: #0a0a0a;
+    --series-2: #242424;
+    --series-3: #3a3a3a;
+    --series-4: #4e4e4e;
+    --series-5: #626262;
+    --series-6: #767676;
   }
 }
 

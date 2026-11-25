@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: "Delphos · claro"
-description: "Generado desde tokens.json (v0.19.0) de asprog-design-system con npm run build. No se edita a mano. Papel, una sola tinta, papel de puntos, Newsreader, Hanken Grotesk y DM Mono, radio 0."
+description: "Generado desde tokens.json (v0.20.0) de asprog-design-system con npm run build. No se edita a mano. Papel, una sola tinta, papel de puntos, Newsreader, Hanken Grotesk y DM Mono, radio 0."
 unit: "la diapositiva o el fotograma de 1920×1080; las medidas son px de ese escenario"
 theme: light
 
@@ -29,6 +29,12 @@ colors:
   cube-right: "#cfcce0"
   cube-left: "#e0dce0"
   cube-apex: "#1f2be0"
+  series-1: "#002e1e"
+  series-2: "#183082"
+  series-3: "#872015"
+  series-4: "#7d3682"
+  series-5: "#7e5700"
+  series-6: "#007096"
 
 typography:
   numeral: { fontFamily: "Newsreader", px: 232, weight: 300, lineHeight: 1.02, tracking: "-0.018em" }

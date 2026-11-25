@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: "Delphos · oscuro"
-description: "Generado desde tokens.json (v0.19.0) de asprog-design-system con npm run build. No se edita a mano. Papel, una sola tinta, papel de puntos, Newsreader, Hanken Grotesk y DM Mono, radio 0."
+description: "Generado desde tokens.json (v0.20.0) de asprog-design-system con npm run build. No se edita a mano. Papel, una sola tinta, papel de puntos, Newsreader, Hanken Grotesk y DM Mono, radio 0."
 unit: "la diapositiva o el fotograma de 1920×1080; las medidas son px de ese escenario"
 theme: dark
 
@@ -29,6 +29,12 @@ colors:
   cube-right: "#151a5a"
   cube-left: "#1d2270"
   cube-apex: "#1f2be0"
+  series-1: "#00976b"
+  series-2: "#6e93ed"
+  series-3: "#f48573"
+  series-4: "#e598ea"
+  series-5: "#f7b94e"
+  series-6: "#9cdeff"
 
 typography:
   numeral: { fontFamily: "Newsreader", px: 232, weight: 300, lineHeight: 1.02, tracking: "-0.018em" }

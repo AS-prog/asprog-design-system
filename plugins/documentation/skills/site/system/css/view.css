@@ -130,6 +130,12 @@
 .view-chart .chart-band { fill: currentColor; fill-opacity: .08; }
 .view-chart .chart-point { fill: currentColor; stroke: var(--ground); stroke-width: 2; }
 .view-chart .chart-peak { fill: var(--ground); stroke: currentColor; stroke-width: 2; }
+.chart-series-1 { color: var(--series-1); }
+.chart-series-2 { color: var(--series-2); }
+.chart-series-3 { color: var(--series-3); }
+.chart-series-4 { color: var(--series-4); }
+.chart-series-5 { color: var(--series-5); }
+.chart-series-6 { color: var(--series-6); }
 .view-tooltip { position: absolute; pointer-events: none; background: var(--ground); border: var(--line-minor); padding: var(--s-1) var(--s-2); font-size: var(--t-1); max-width: var(--measure-title); z-index: 1; }
 .view-tooltip ul { margin: var(--s-1) 0 0; padding-left: var(--s-4); }
 
