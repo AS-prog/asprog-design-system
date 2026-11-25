@@ -68,16 +68,16 @@ class Renderer:
         md.core.ruler.push("cell_marks", self._cell_marks)
         md.core.ruler.push("align_to_num", self._align_to_num)
         md.core.ruler.push("alerts", self._alerts)
-        md.add_render_rule("fence", lambda _r, t, i, o, e: self._fence(t, i, o, e))
+        md.add_render_rule("fence", self._fence)
         md.add_render_rule("code_inline", lambda _r, t, i, o, e: f"<code>{_braces(escapeHtml(t[i].content))}</code>")
         md.add_render_rule("table_open", lambda *a: '<div class="table-wrap"><table>\n')
         md.add_render_rule("table_close", lambda *a: "</table></div>\n")
-        md.add_render_rule("blockquote_open", lambda _r, t, i, o, e: self._quote_open(t, i, o, e))
-        md.add_render_rule("blockquote_close", lambda _r, t, i, o, e: self._quote_close(t, i, o, e))
+        md.add_render_rule("blockquote_open", self._quote_open)
+        md.add_render_rule("blockquote_close", self._quote_close)
         md.use(attrs_plugin, spans=True)
         md.use(tasklists_plugin)  # - [ ] / - [x] -> li > input[type=checkbox][disabled] (guide §3)
-        md.use(container_plugin, "compare", render=lambda _r, t, i, o, e: self._compare(t, i, o, e))
-        md.use(container_plugin, "col", render=lambda _r, t, i, o, e: self._col(t, i, o, e))
+        md.use(container_plugin, "compare", render=self._compare)
+        md.use(container_plugin, "col", render=self._col)
         self.md = md
 
     # ---- public ----
