@@ -2,6 +2,16 @@
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y la versión, [SemVer](https://semver.org/lang/es/).
 
+## 0.20.0 · 2026-11-25
+
+### Añadido
+- Los seis colores de serie (`color.tokens`: `series-1` … `series-6`), la rampa para gráficos con varias series (#29). Se leen como seis tonos distintos, no como seis claridades de la tinta: verde, índigo, ladrillo, violeta, ámbar y celeste. Van ordenados por luminancia y las series vecinas se distinguen en deuteranopía y protanopía. En claro cada tono alcanza al menos 4,69:1 sobre `ground`; en oscuro, 4,96:1. En `merkle`, al menos 5,59:1 sobre el blanco en claro y 4,82:1 sobre su azul en oscuro. En impresión son seis grises de valor creciente, de 19,80:1 a 4,54:1 sobre el blanco.
+- Un par de contraste por serie (`series-N` / `ground`, mínimo 3:1), medido también en cada paleta de marca.
+- `.chart-series-1` … `.chart-series-6` en `css/view.css`: fijan `color` con el token de su serie para que lo hereden las marcas de `.view-chart` (línea, área, banda, punto, pico y barra) y la muestra de `.view-legend`, sin añadir coberturas ni reglas en la página.
+
+### Corregido
+- `site-md`: las reglas de dibujo de `figure`, avisos y columnas se atan al `Renderer` propio y no al `RendererHTML` de markdown-it-py, que las reenlaza al registrarlas. Sin esto, `npm test` fallaba en las pruebas de `site-md`.
+
 ## 0.19.0 · 2026-11-23
 
 ### Añadido
