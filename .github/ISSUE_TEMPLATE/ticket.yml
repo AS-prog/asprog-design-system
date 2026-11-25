@@ -1,0 +1,59 @@
+name: Ticket para el taller
+description: Una tarea que el taller puede construir sin interpretar prosa. Es el formato que escribe `to-tickets` y lee `issue_intake`.
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Un ticket es una tarea del lote. Triage le pone `ready-for-agent` cuando pasa la comprobación de la frontera (`nano-harness tickets --repo R --issue N`); este formulario no la pone.
+        Los bloqueos se ponen como bloqueos nativos de GitHub («Blocked by»), no en el texto.
+  - type: textarea
+    id: what
+    attributes:
+      label: Qué construir
+      description: Lo que tiene que hacer la tarea, con el contexto que necesita quien no ha estado en la conversación. Va a `instructions`.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Criterios de aceptación
+      description: Una lista de lo que tiene que ser cierto al terminar. Se añade al final de `instructions`.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Tipo de tarea
+      description: Elige la skill con la que se construye. En un bug, `fix`.
+      options:
+        - feature
+        - module
+        - fix
+        - refactor
+        - prototype
+        - docs
+        - analysis
+        - investigate
+        - audit
+        - research
+      default: 0
+    validations:
+      required: true
+  - type: textarea
+    id: only_touch
+    attributes:
+      label: Archivos que puede tocar
+      description: Una ruta o un patrón por línea. Va a `verification.only_touch`; en una tarea de informe no se usa, porque solo puede tocar la carpeta del informe.
+    validations:
+      required: true
+  - type: textarea
+    id: tests
+    attributes:
+      label: Pruebas
+      description: |
+        Una por línea, con la forma `orden => salida esperada`. Con el prefijo `rojo:` la prueba debe fallar antes del cambio («debe fallar primero»).
+        En nano-harness, una prueba suelta se lanza con `uv run python -m unittest discover -s tests -p test_x.py`.
+      placeholder: |
+        rojo: uv run python -m unittest discover -s tests -p test_x.py 2>&1 | tail -1 => OK
+        uv run python -m unittest discover -s tests 2>&1 | tail -1 => OK
+    validations:
+      required: true

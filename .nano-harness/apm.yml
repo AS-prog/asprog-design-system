@@ -1,0 +1,6 @@
+name: asprog-design-system
+version: 0.1.0
+dependencies:
+  apm:
+    - AS-prog/nano-harness/packages/role-pi-builder#e637b047d9017f9018bbf9a4fb49bcad2e25648e
+    - AS-prog/nano-harness/packages/role-pi-diagnostician#e637b047d9017f9018bbf9a4fb49bcad2e25648e

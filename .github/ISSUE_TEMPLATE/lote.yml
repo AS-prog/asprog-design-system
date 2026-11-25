@@ -1,0 +1,44 @@
+name: Lote para el taller
+description: La aprobación de un lote, sobre una lista cerrada de tickets o un lote ya preparado en una rama. Lo lanza `nano-harness issue <número>`.
+title: "Lote: "
+labels: ["ready-for-agent"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Con «Tickets», el lote se arma con esos tickets sobre el lote base de la rama (`.nano-harness/base-batch.json`). Todos tienen que pasar la frontera (`nano-harness tickets --repo R`); si uno no pasa, no se lanza nada.
+        Sin «Tickets», el lote (su `tasks.json`, sus encargos y su `apm.yml`) tiene que estar ya subido en la carpeta que diga «Carpeta del lote».
+        Este issue solo dice qué se lanza. Quien lo lance no decide nada más.
+  - type: input
+    id: repo
+    attributes:
+      label: Repositorio
+      description: dueño/nombre. Tiene que ser este mismo repositorio.
+      placeholder: AS-prog/whiteboard
+    validations:
+      required: true
+  - type: input
+    id: ref
+    attributes:
+      label: Rama
+      description: La rama que contiene el lote o el lote base. La `base` del lote debe ser `origin/<esta rama>` u otra referencia que exista en el taller.
+      placeholder: claude/lote-control
+    validations:
+      required: true
+  - type: textarea
+    id: tickets
+    attributes:
+      label: Tickets
+      description: Los tickets que se aprueban, de este repositorio, como `#a #b`. Cada uno se vuelve una tarea.
+      placeholder: "#150 #152"
+  - type: input
+    id: path
+    attributes:
+      label: Carpeta del lote
+      description: Solo sin «Tickets». Ruta de la carpeta del lote dentro del repositorio.
+      placeholder: lotes/control
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notas
+      description: Qué se espera del lote y qué hay que mirar al volver. La orden no lo lee.

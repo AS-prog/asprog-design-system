@@ -1,0 +1,42 @@
+{
+  "version": 2,
+  "project": {
+    "name": "delphos",
+    "repo": "~/Workspaces/projects/asprog-design-system",
+    "base": "origin/lote/rampa-series",
+    "worktrees_dir": "~/wt-orq/asprog-design-system",
+    "branch_prefix": "lote-",
+    "session_prefix": "delphos-",
+    "bridge": {},
+    "integration": {
+      "tests": [
+        {
+          "command": "npm test > /dev/null 2>&1 && echo OK",
+          "expected_output": "OK",
+          "max_seconds": 900
+        }
+      ]
+    }
+  },
+  "agent": {
+    "launcher": "pi",
+    "mode": "headless",
+    "model": "nan/deepseek-v4-flash",
+    "thinking": "high",
+    "tools": [
+      "read",
+      "write",
+      "edit",
+      "bash"
+    ],
+    "context": [
+      "contexto/taller.md"
+    ]
+  },
+  "limits": {
+    "max_seconds": 3600,
+    "retries": 2,
+    "escalate_on_retry": true,
+    "parallel": 1
+  }
+}
