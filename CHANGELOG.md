@@ -2,6 +2,13 @@
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y la versión, [SemVer](https://semver.org/lang/es/).
 
+## 0.19.0 · 2026-11-25
+
+### Añadido
+- Seis tokens de color `series-1` … `series-6` en `color.tokens`, para gráficos con varias series: rojo, azul, verde, violeta, ámbar y turquesa. Cada uno trae valor para claro, oscuro e impresión. La rampa se ordena por luminancia de `series-1` a `series-6`, cada vecina se distingue en deuteranopía y protanopía, y en impresión son seis grises de valor distinto.
+- Los seis tonos llegan a 4,5:1 sobre `ground` en claro y en oscuro, también en la paleta `merkle`, y mantienen al menos 3:1 como objeto gráfico. Un par de `color.pairs` por serie con `min: 3`, para que `npm test` lo compruebe en la base y en cada paleta.
+- En `system/css/view.css`, las clases `.chart-series-1` … `.chart-series-6` fijan el color de la serie y lo heredan las marcas de `.view-chart` (`.chart-line`, `.chart-area`, `.chart-band`, `.chart-point`, `.chart-peak` y las barras) y la muestra de `.view-legend`, sin reglas nuevas en la página ni coberturas sobre la tinta.
+
 ## 0.18.0 · 2026-11-19
 
 ### Añadido
