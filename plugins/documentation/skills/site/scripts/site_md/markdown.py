@@ -58,6 +58,11 @@ def slugify(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-") or "seccion"
 
 
+def _with_renderer_ignored(rule: Callable[..., str]) -> Callable[..., str]:
+    """markdown-it rebinds every render rule to its renderer; the rule keeps its own receiver."""
+    return lambda _renderer, tokens, idx, options, env: rule(tokens, idx, options, env)
+
+
 class Renderer:
     def __init__(self, load_figure: FigureLoader):
         self._load_figure = load_figure
@@ -68,16 +73,16 @@ class Renderer:
         md.core.ruler.push("cell_marks", self._cell_marks)
         md.core.ruler.push("align_to_num", self._align_to_num)
         md.core.ruler.push("alerts", self._alerts)
-        md.add_render_rule("fence", self._fence)
+        md.add_render_rule("fence", _with_renderer_ignored(self._fence))
         md.add_render_rule("code_inline", lambda _r, t, i, o, e: f"<code>{_braces(escapeHtml(t[i].content))}</code>")
         md.add_render_rule("table_open", lambda *a: '<div class="table-wrap"><table>\n')
         md.add_render_rule("table_close", lambda *a: "</table></div>\n")
-        md.add_render_rule("blockquote_open", self._quote_open)
-        md.add_render_rule("blockquote_close", self._quote_close)
+        md.add_render_rule("blockquote_open", _with_renderer_ignored(self._quote_open))
+        md.add_render_rule("blockquote_close", _with_renderer_ignored(self._quote_close))
         md.use(attrs_plugin, spans=True)
         md.use(tasklists_plugin)  # - [ ] / - [x] -> li > input[type=checkbox][disabled] (guide §3)
-        md.use(container_plugin, "compare", render=self._compare)
-        md.use(container_plugin, "col", render=self._col)
+        md.use(container_plugin, "compare", render=_with_renderer_ignored(self._compare))
+        md.use(container_plugin, "col", render=_with_renderer_ignored(self._col))
         self.md = md
 
     # ---- public ----
