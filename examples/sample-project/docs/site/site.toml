@@ -13,6 +13,11 @@ title = "El ciclo de desarrollo"
 path = "metodo/ciclo-de-desarrollo.html"
 type = "método"
 
+[[section.page]]
+title = "Las series en un gráfico"
+path = "metodo/series-en-un-grafico.html"
+type = "guía"
+
 [[section]]
 title = "Lectura de sensores"
 
