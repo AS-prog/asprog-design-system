@@ -1,0 +1,211 @@
+<!doctype html>
+<!--
+  Documento de la biblioteca: la versión HTML de cualquier .md (análisis, guía, entrega…).
+  Va junto a su .md.
+  Se crea con: site.py new document <ruta.html> --title "…"
+  Lo que va entre {{…}} se rellena con el contenido del .md; delphos-check no
+  deja pasar la página mientras quede alguno. Guía: skill method, reference/document-types.md.
+-->
+<html lang="es" data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Las series en un gráfico</title>
+    <meta name="description" content="Seis series que se leen por su nombre y su valor, en claro y en oscuro." />
+    <meta name="theme-color" content="#F0EBDE" />
+    <link rel="stylesheet" href="../docs/design-system/v0.19/tokens.css" />
+    <link rel="stylesheet" href="../docs/design-system/v0.19/css/base.css" />
+    <link rel="stylesheet" href="../docs/design-system/v0.19/css/document.css" />
+    <link rel="stylesheet" href="../docs/design-system/v0.19/css/view.css" />
+    <!-- site:css --><link rel="stylesheet" href="../docs/design-system/v0.19/css/library.css" /><!-- /site:css -->
+    <script>
+      // Antes de pintar, para que no haya destello: el tema guardado manda sobre «auto».
+      try {
+        var t = localStorage.getItem('tema');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    </script>
+  </head>
+  <body class="lib">
+    <!-- site:nav -->
+    <nav class="lib-nav" aria-label="Sitio">
+    <details open>
+    <summary><a class="lib-home" href="../index.html">Riego · ejemplo</a><span class="lib-menu">Índice</span></summary>
+    <h2>Método</h2>
+    <ul>
+    <li><a href="ciclo-de-desarrollo.html">El ciclo de desarrollo</a></li>
+    <li><a href="series-en-un-grafico.html" aria-current="page">Las series en un gráfico</a></li>
+    </ul>
+    <h2>Lectura de sensores</h2>
+    <ul>
+    <li><a href="../tecnica/lector-sensores/lector-sensores.html">Cómo funciona</a></li>
+    <li><a href="../registro/sensores/2026-11-05-implementacion-lector-sensores/lector-sensores.html">RS 01 · Lector</a></li>
+    <li><a href="../registro/sensores/2026-11-10-implementacion-lectura-lotes/lectura-lotes.html">RS 02 · Lectura por lotes</a></li>
+    <li><a href="../registro/sensores/2026-11-03-diseno-lector-sensores/lector-sensores.html">Diseño del lector</a></li>
+    </ul>
+    <h2>Programación del riego</h2>
+    <ul>
+    <li><span title="Aún sin página">Cómo funciona</span></li>
+    </ul>
+    </details>
+    </nav>
+    <script>(function () { var m = matchMedia('(max-width: 56rem)'), d = document.querySelector('.lib-nav details'); d.open = !m.matches; m.addEventListener('change', function () { d.open = !m.matches; }); })();</script>
+    <script src="../docs/design-system/v0.19/js/library-fold.js"></script>
+    <!-- /site:nav -->
+    <div class="view">
+      <header class="doc-bar">
+        <span class="doc-brand">riego-management / método</span>
+        <button class="doc-theme" type="button" aria-label="Cambiar tema">Tema</button>
+      </header>
+
+      <header class="doc-header">
+        <h1>Las series en un gráfico</h1>
+        <p class="lede">Seis series que se leen por su nombre y su valor, en claro y en oscuro.</p>
+        <dl class="doc-meta">
+          <div><dt>Fuente</dt><dd><a href="metodo/series-en-un-grafico.md">metodo/series-en-un-grafico.md</a></dd></div>
+          <div><dt>Fecha</dt><dd><time datetime="2026-11-25">2026-11-25</time></dd></div>
+          <div><dt>Estado</dt><dd>vigente</dd></div>
+        </dl>
+      </header>
+
+      <article class="doc-prose">
+        <h2 id="que-ensena">Qué enseña</h2>
+        <p>Un gráfico con seis series usa la rampa <code>series-1</code> … <code>series-6</code>: cada serie toma un tono con su clase <code>.chart-series-N</code> y lo heredan la barra del gráfico y la muestra de la leyenda. No hay reglas nuevas en la página; el color sale siempre del token.</p>
+        <p>El nombre va en la leyenda y el valor, junto a la barra. Así la serie se identifica sin depender del tono: en claro, en oscuro y en impresión, donde la rampa baja a seis grises distintos.</p>
+
+        <h2 id="los-datos">Los datos</h2>
+        <p>Las dos figuras pintan la misma tabla: la humedad de seis sondas en la última lectura.</p>
+        <div class="table-wrap">
+          <table>
+            <caption>Humedad del suelo por sonda</caption>
+            <thead>
+              <tr><th>Sonda</th><th>Ubicación</th><th class="num">Humedad</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>S1</td><td>Norte</td><td class="num">27,4 %</td></tr>
+              <tr><td>S2</td><td>Este</td><td class="num">31,8 %</td></tr>
+              <tr><td>S3</td><td>Sur</td><td class="num">22,6 %</td></tr>
+              <tr><td>S4</td><td>Oeste</td><td class="num">35,1 %</td></tr>
+              <tr><td>S5</td><td>Invernadero</td><td class="num">18,9 %</td></tr>
+              <tr><td>S6</td><td>Vivero</td><td class="num">39,5 %</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="los-dos-temas">Los dos temas</h2>
+        <p>La primera figura fija el tema claro y la segunda el oscuro, cada una en su contenedor. Los dos se ven de una vez y el resto de la página conserva el tema que elija quien la lee.</p>
+      </article>
+
+      <section class="view-panels" aria-label="La misma tabla en claro y en oscuro">
+        <figure class="figwrap" data-theme="light">
+          <ul class="view-legend">
+            <li><svg class="chart-series-1" viewBox="0 0 12 12" aria-hidden="true"><rect width="12" height="12"></rect></svg><span>S1 · Norte</span></li>
+            <li><svg class="chart-series-2" viewBox="0 0 12 12" aria-hidden="true"><rect width="12" height="12"></rect></svg><span>S2 · Este</span></li>
+            <li><svg class="chart-series-3" viewBox="0 0 12 12" aria-hidden="true"><rect width="12" height="12"></rect></svg><span>S3 · Sur</span></li>
+            <li><svg class="chart-series-4" viewBox="0 0 12 12" aria-hidden="true"><rect width="12" height="12"></rect></svg><span>S4 · Oeste</span></li>
+            <li><svg class="chart-series-5" viewBox="0 0 12 12" aria-hidden="true"><rect width="12" height="12"></rect></svg><span>S5 · Invernadero</span></li>
+            <li><svg class="chart-series-6" viewBox="0 0 12 12" aria-hidden="true"><rect width="12" height="12"></rect></svg><span>S6 · Vivero</span></li>
+          </ul>
+          <div class="view-chart">
+            <svg role="img" viewBox="0 0 480 240" aria-labelledby="fig-claro-title fig-claro-desc">
+              <title id="fig-claro-title">Humedad de seis sondas en claro</title>
+              <desc id="fig-claro-desc">Seis barras, una por sonda, con su valor en tanto por ciento: S1 27,4, S2 31,8, S3 22,6, S4 35,1, S5 18,9 y S6 39,5.</desc>
+              <line class="chart-grid" x1="48" y1="12" x2="48" y2="210"></line>
+              <line class="chart-grid" x1="138" y1="12" x2="138" y2="210"></line>
+              <line class="chart-grid" x1="228" y1="12" x2="228" y2="210"></line>
+              <line class="chart-grid" x1="318" y1="12" x2="318" y2="210"></line>
+              <line class="chart-grid" x1="408" y1="12" x2="408" y2="210"></line>
+              <line class="chart-base" x1="48" y1="12" x2="48" y2="210"></line>
+              <text class="chart-label" x="4" y="30">S1</text>
+              <rect class="d-bar chart-series-1" x="48" y="18" width="246.6" height="16"></rect>
+              <text class="chart-label" x="302.6" y="30">27,4 %</text>
+              <text class="chart-label" x="4" y="64">S2</text>
+              <rect class="d-bar chart-series-2" x="48" y="52" width="286.2" height="16"></rect>
+              <text class="chart-label" x="342.2" y="64">31,8 %</text>
+              <text class="chart-label" x="4" y="98">S3</text>
+              <rect class="d-bar chart-series-3" x="48" y="86" width="203.4" height="16"></rect>
+              <text class="chart-label" x="259.4" y="98">22,6 %</text>
+              <text class="chart-label" x="4" y="132">S4</text>
+              <rect class="d-bar chart-series-4" x="48" y="120" width="315.9" height="16"></rect>
+              <text class="chart-label" x="371.9" y="132">35,1 %</text>
+              <text class="chart-label" x="4" y="166">S5</text>
+              <rect class="d-bar chart-series-5" x="48" y="154" width="170.1" height="16"></rect>
+              <text class="chart-label" x="226.1" y="166">18,9 %</text>
+              <text class="chart-label" x="4" y="200">S6</text>
+              <rect class="d-bar chart-series-6" x="48" y="188" width="355.5" height="16"></rect>
+              <text class="chart-label" x="411.5" y="200">39,5 %</text>
+              <text class="chart-label" x="48" y="230" text-anchor="middle">0</text>
+              <text class="chart-label" x="138" y="230" text-anchor="middle">10</text>
+              <text class="chart-label" x="228" y="230" text-anchor="middle">20</text>
+              <text class="chart-label" x="318" y="230" text-anchor="middle">30</text>
+              <text class="chart-label" x="408" y="230" text-anchor="middle">40</text>
+            </svg>
+          </div>
+          <figcaption>Figura 1 · Tema claro. Las seis series de la tabla, con su nombre en la leyenda y su valor junto a la barra. La rampa se ordena de la serie más oscura a la más clara.</figcaption>
+        </figure>
+
+        <figure class="figwrap" data-theme="dark">
+          <ul class="view-legend">
+            <li><svg class="chart-series-1" viewBox="0 0 12 12" aria-hidden="true"><rect width="12" height="12"></rect></svg><span>S1 · Norte</span></li>
+            <li><svg class="chart-series-2" viewBox="0 0 12 12" aria-hidden="true"><rect width="12" height="12"></rect></svg><span>S2 · Este</span></li>
+            <li><svg class="chart-series-3" viewBox="0 0 12 12" aria-hidden="true"><rect width="12" height="12"></rect></svg><span>S3 · Sur</span></li>
+            <li><svg class="chart-series-4" viewBox="0 0 12 12" aria-hidden="true"><rect width="12" height="12"></rect></svg><span>S4 · Oeste</span></li>
+            <li><svg class="chart-series-5" viewBox="0 0 12 12" aria-hidden="true"><rect width="12" height="12"></rect></svg><span>S5 · Invernadero</span></li>
+            <li><svg class="chart-series-6" viewBox="0 0 12 12" aria-hidden="true"><rect width="12" height="12"></rect></svg><span>S6 · Vivero</span></li>
+          </ul>
+          <div class="view-chart">
+            <svg role="img" viewBox="0 0 480 240" aria-labelledby="fig-oscuro-title fig-oscuro-desc">
+              <title id="fig-oscuro-title">Humedad de seis sondas en oscuro</title>
+              <desc id="fig-oscuro-desc">Los mismos datos que la figura 1: seis barras, una por sonda, con su valor en tanto por ciento: S1 27,4, S2 31,8, S3 22,6, S4 35,1, S5 18,9 y S6 39,5.</desc>
+              <line class="chart-grid" x1="48" y1="12" x2="48" y2="210"></line>
+              <line class="chart-grid" x1="138" y1="12" x2="138" y2="210"></line>
+              <line class="chart-grid" x1="228" y1="12" x2="228" y2="210"></line>
+              <line class="chart-grid" x1="318" y1="12" x2="318" y2="210"></line>
+              <line class="chart-grid" x1="408" y1="12" x2="408" y2="210"></line>
+              <line class="chart-base" x1="48" y1="12" x2="48" y2="210"></line>
+              <text class="chart-label" x="4" y="30">S1</text>
+              <rect class="d-bar chart-series-1" x="48" y="18" width="246.6" height="16"></rect>
+              <text class="chart-label" x="302.6" y="30">27,4 %</text>
+              <text class="chart-label" x="4" y="64">S2</text>
+              <rect class="d-bar chart-series-2" x="48" y="52" width="286.2" height="16"></rect>
+              <text class="chart-label" x="342.2" y="64">31,8 %</text>
+              <text class="chart-label" x="4" y="98">S3</text>
+              <rect class="d-bar chart-series-3" x="48" y="86" width="203.4" height="16"></rect>
+              <text class="chart-label" x="259.4" y="98">22,6 %</text>
+              <text class="chart-label" x="4" y="132">S4</text>
+              <rect class="d-bar chart-series-4" x="48" y="120" width="315.9" height="16"></rect>
+              <text class="chart-label" x="371.9" y="132">35,1 %</text>
+              <text class="chart-label" x="4" y="166">S5</text>
+              <rect class="d-bar chart-series-5" x="48" y="154" width="170.1" height="16"></rect>
+              <text class="chart-label" x="226.1" y="166">18,9 %</text>
+              <text class="chart-label" x="4" y="200">S6</text>
+              <rect class="d-bar chart-series-6" x="48" y="188" width="355.5" height="16"></rect>
+              <text class="chart-label" x="411.5" y="200">39,5 %</text>
+              <text class="chart-label" x="48" y="230" text-anchor="middle">0</text>
+              <text class="chart-label" x="138" y="230" text-anchor="middle">10</text>
+              <text class="chart-label" x="228" y="230" text-anchor="middle">20</text>
+              <text class="chart-label" x="318" y="230" text-anchor="middle">30</text>
+              <text class="chart-label" x="408" y="230" text-anchor="middle">40</text>
+            </svg>
+          </div>
+          <figcaption>Figura 2 · Tema oscuro. La misma tabla, con los mismos nombres y valores. La rampa invierte su luminancia para que cada serie siga por encima de 4,5:1 sobre el fondo.</figcaption>
+        </figure>
+      </section>
+
+      <footer class="doc-footer">
+        <span>Fuente: metodo/series-en-un-grafico.md</span>
+        <span>asprog-design-system</span>
+      </footer>
+    </div>
+
+    <script>
+      document.querySelector('.doc-theme').addEventListener('click', function () {
+        var r = document.documentElement, t = r.getAttribute('data-theme');
+        var isDark = t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        var next = isDark ? 'light' : 'dark';
+        r.setAttribute('data-theme', next);
+        try { localStorage.setItem('tema', next); } catch (e) {}
+      });
+    </script>
+  </body>
+</html>
