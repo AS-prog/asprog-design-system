@@ -9,6 +9,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y l
 - Un par de contraste por serie (`series-N` / `ground`, mínimo 3:1), medido también en cada paleta de marca.
 - `.chart-series-1` … `.chart-series-6` en `css/view.css`: fijan `color` con el token de su serie para que lo hereden las marcas de `.view-chart` (línea, área, banda, punto, pico y barra) y la muestra de `.view-legend`, sin añadir coberturas ni reglas en la página.
 
+### Corregido
+- Las pruebas de `site-md` vuelven a pasar con markdown-it-py 4.3.0: el banco de pruebas conserva el `Renderer` propio de las reglas de dibujo al registrarlas. Sin este ajuste, `npm test` fallaba; el sitio generado no cambia.
+
 ## 0.19.0 · 2026-11-23
 
 ### Añadido

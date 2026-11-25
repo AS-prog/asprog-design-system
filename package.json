@@ -34,7 +34,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "example": "uv run --no-project --with markdown python plugins/documentation/skills/site/scripts/site.py vendor --root examples/sample-project && uv run --no-project --with markdown python plugins/documentation/skills/site/scripts/site.py build --root examples/sample-project",
-    "test": "node scripts/test.mjs"
+    "test": "PYTHONPATH=examples/sample-project node scripts/test.mjs"
   },
   "engines": {
     "node": ">=18"
