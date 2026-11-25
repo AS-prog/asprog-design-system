@@ -2,6 +2,17 @@
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y la versión, [SemVer](https://semver.org/lang/es/).
 
+## 0.19.0 · 2026-11-23
+
+### Añadido
+- `scripts/publish-draft` en la skill `change`: publica un borrador de `.scratch/<tema>/borrador.md` como issue con una orden. Sin `--apply` enseña el plan y no escribe nada en GitHub. Con `--apply` crea el issue con el cuerpo sin frontmatter y sus etiquetas, lo enlaza como sub-issue de `parent`, sube la vista como artefacto y borra el borrador.
+- No publica si al frontmatter le falta `title` o `repo`, si queda un `<…>` de la plantilla de su tipo o si la página no pasa `delphos-check`. Si un paso falla, se para, dice qué quedó hecho y no borra nada.
+- `parent` admite un número o `dueño/nombre#N`, para un padre en otro repo.
+- `npm test` pasa las pruebas del script con un `gh` doble (`scripts/test-publish-draft.mjs`).
+
+### Cambiado
+- `change/SKILL.md`: el paso «Publicar» manda usar el script.
+
 ## 0.18.0 · 2026-11-19
 
 ### Añadido
