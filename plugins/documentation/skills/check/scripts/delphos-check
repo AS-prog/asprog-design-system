@@ -54,11 +54,28 @@ function pluginVersion() {
   try { return readFileSync(join(HERE, '..', '..', 'site', 'system', 'VERSION'), 'utf8').trim(); } catch { return ''; }
 }
 
+const publishChecks = new Map();
+function warnIfUnpublished(tag) {
+  if (!publishChecks.has(tag)) {
+    const check = fetch(`${CDN}${tag}/system/tokens.css`, { method: 'HEAD', signal: AbortSignal.timeout(10000) })
+      .then((res) => {
+        if (res.status === 404) console.error(`aviso: jsDelivr no tiene el tag ${tag}: la página sale sin estilos fuera de esta máquina hasta que se suba el tag anotado v${tag.replace(/^v/, '')}`);
+      })
+      .catch(() => {});
+    publishChecks.set(tag, check);
+  }
+  return publishChecks.get(tag);
+}
+
 // Las clases de las hojas de un tag, del classes.json de ese tag. Una vez por tag y ejecución.
 const tagClasses = new Map();
 async function classesFor(src) {
   const tag = src.match(CDN_TAG)?.[1];
-  if (!tag || tag.replace(/^v/, '') === pluginVersion()) return knownClasses();
+  if (!tag) return knownClasses();
+  if (tag.replace(/^v/, '') === pluginVersion()) {
+    await warnIfUnpublished(tag);
+    return knownClasses();
+  }
   if (!tagClasses.has(tag)) {
     let set = null;
     try {

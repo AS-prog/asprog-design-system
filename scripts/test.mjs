@@ -9,6 +9,7 @@
 //   5. el sitio del ejemplo está generado con la versión actual de site.py;
 //   5b. las pruebas de site-md pasan;
 //   5c. las pruebas de publish-draft pasan;
+//   5d. delphos-check y standalone-html avisan si el tag de la versión no está publicado;
 //   6. site.py funciona con el sistema en jsDelivr (system como URL): ni copia ni rutas a una copia.
 import { execFileSync } from 'node:child_process';
 import { cpSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
@@ -92,6 +93,10 @@ try {
 // 5c. publish-draft: publicar un borrador como issue, con un gh doble.
 try { run('node', ['scripts/test-publish-draft.mjs'], { stdio: ['inherit', 'ignore', 'inherit'] }); }
 catch { errors.push('las pruebas de publish-draft fallan: node scripts/test-publish-draft.mjs'); }
+
+// 5d. El aviso del tag sin publicar, con fetch doble.
+try { run('node', ['scripts/test-release-tag.mjs'], { stdio: ['inherit', 'ignore', 'inherit'] }); }
+catch { errors.push('las pruebas del aviso del tag fallan: node scripts/test-release-tag.mjs'); }
 
 // 6. El sistema desde jsDelivr: el ejemplo, sin su copia y con system como URL.
 {

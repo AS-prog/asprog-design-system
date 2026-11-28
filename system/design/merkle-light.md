@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: "Delphos · Merkle · claro"
-description: "Generado desde tokens.json (v0.20.0) de asprog-design-system con npm run build. No se edita a mano. Papel, una sola tinta, papel de puntos, Newsreader, Hanken Grotesk y DM Mono, radio 0."
+description: "Generado desde tokens.json (v0.20.1) de asprog-design-system con npm run build. No se edita a mano. Papel, una sola tinta, papel de puntos, Newsreader, Hanken Grotesk y DM Mono, radio 0."
 unit: "la diapositiva o el fotograma de 1920×1080; las medidas son px de ese escenario"
 theme: light
 palette: merkle
