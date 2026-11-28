@@ -1,0 +1,120 @@
+#!/usr/bin/env node
+import { createHash } from 'node:crypto';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { basename, dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const SYSTEM = join(HERE, '..', '..', 'site', 'system');
+const TEMPLATE = join(HERE, '..', 'templates', 'single.html');
+const TARGETS = ['file', 'artifact'];
+const FONTS = ['embed', 'google'];
+const DEFAULT_FONTS = { file: 'embed', artifact: 'google' };
+const GOOGLE_FONTS = 'https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Hanken+Grotesk:wght@400..600&family=Newsreader:ital,wght@0,300..400;1,300..400&display=swap';
+const BLOCK = /([ \t]*)<!-- single:style([^>]*?)-->([\s\S]*?)<!-- \/single:style -->/;
+
+function fail(msg) {
+  console.error(`single-html: ${msg}`);
+  process.exit(1);
+}
+
+export function systemVersion() {
+  return readFileSync(join(SYSTEM, 'VERSION'), 'utf8').trim();
+}
+
+export function digest(text) {
+  return createHash('sha256').update(text).digest('hex');
+}
+
+export function parseMarker(attrs) {
+  const out = {};
+  for (const m of attrs.matchAll(/([\w-]+)=(\S+)/g)) out[m[1]] = m[2];
+  const v = attrs.match(/\bv(\d+\.\d+\.\d+)\b/);
+  if (v) out.version = v[1];
+  return out;
+}
+
+function embeddedFaces() {
+  const tokens = readFileSync(join(SYSTEM, 'tokens.css'), 'utf8');
+  return [...tokens.matchAll(/@font-face\s*\{[^}]*\}/g)].map((m) => m[0].replace(/url\("([^"]+)"\)/g, (_, file) => {
+    const data = readFileSync(join(SYSTEM, file)).toString('base64');
+    return `url("data:font/woff2;base64,${data}")`;
+  })).join('\n');
+}
+
+export function styleBlock(fonts, indent = '') {
+  if (!FONTS.includes(fonts)) fail(`fuentes «${fonts}»: usa ${FONTS.join(' o ')}`);
+  const css = readFileSync(join(SYSTEM, 'standalone.css'), 'utf8').trim();
+  const parts = [];
+  if (fonts === 'google') {
+    parts.push(`<link rel="preconnect" href="https://fonts.googleapis.com" />`);
+    parts.push(`<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />`);
+    parts.push(`<link rel="stylesheet" href="${GOOGLE_FONTS}" />`);
+    parts.push(`<style>\n${css}\n</style>`);
+  } else {
+    parts.push(`<style>\n${embeddedFaces()}\n\n${css}\n</style>`);
+  }
+  const inner = '\n' + parts.map((p) => indent + p).join('\n') + '\n' + indent;
+  return `<!-- single:style v${systemVersion()} fonts=${fonts} sha256=${digest(inner)} -->${inner}<!-- /single:style -->`;
+}
+
+export function refresh(html, fonts) {
+  const m = html.match(BLOCK);
+  if (!m) fail('la página no tiene el bloque <!-- single:style --> … <!-- /single:style -->');
+  const chosen = fonts ?? parseMarker(m[2]).fonts ?? 'embed';
+  return html.replace(BLOCK, `${m[1]}${styleBlock(chosen, m[1])}`);
+}
+
+export function toArtifact(html) {
+  return html
+    .split('\n')
+    .filter((line) => !/^\s*(<!doctype html>|<\/?html\b[^>]*>|<\/?head>|<\/?body>|<meta charset=[^>]*>|<meta name="viewport"[^>]*>)\s*$/i.test(line))
+    .join('\n')
+    .replace(/^\s*\n/, '');
+}
+
+export function create({ title, target = 'file', fonts }) {
+  if (!TARGETS.includes(target)) fail(`destino «${target}»: usa ${TARGETS.join(' o ')}`);
+  let html = readFileSync(TEMPLATE, 'utf8');
+  if (title) html = html.replaceAll('{{title}}', title);
+  html = refresh(html, fonts ?? DEFAULT_FONTS[target]);
+  return target === 'artifact' ? toArtifact(html) : html;
+}
+
+function args(argv) {
+  const opts = { _: [] };
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === '--title') opts.title = argv[++i];
+    else if (a === '--target') opts.target = argv[++i];
+    else if (a === '--fonts') opts.fonts = argv[++i];
+    else opts._.push(a);
+  }
+  return opts;
+}
+
+function report(out, html) {
+  console.log(`${out} (${Math.round(Buffer.byteLength(html) / 1024)} KB)`);
+}
+
+function main() {
+  const opts = args(process.argv.slice(2));
+  const [cmd, file] = opts._;
+  const usage = 'uso: single-html new <ruta.html> --title "…" [--target file|artifact] [--fonts embed|google]\n     single-html build <ruta.html> [--fonts embed|google]';
+  if (!cmd || !file) fail(usage);
+  if (!/^[A-Za-z0-9._-]+$/.test(basename(file))) fail(`el nombre ${basename(file)} solo puede llevar letras, números, puntos, guiones y guiones bajos`);
+  if (cmd === 'new') {
+    if (existsSync(file)) fail(`${file} ya existe: para renovar el estilo, single-html build ${file}`);
+    const html = create(opts);
+    mkdirSync(dirname(resolve(file)), { recursive: true });
+    writeFileSync(file, html);
+    report(file, html);
+  } else if (cmd === 'build') {
+    if (!existsSync(file)) fail(`no existe ${file}`);
+    const html = refresh(readFileSync(file, 'utf8'), opts.fonts);
+    writeFileSync(file, html);
+    report(file, html);
+  } else fail(usage);
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();

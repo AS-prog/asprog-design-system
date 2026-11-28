@@ -1,22 +1,10 @@
 #!/usr/bin/env node
-// Comprueba el repo entero. Uso: npm test
-//
-//   1. tokens.json y tokens.css coinciden y los contrastes llegan al mínimo;
-//   2. las hojas no llevan valores a mano;
-//   3. la copia del sistema y classes.json del plugin están al día;
-//   3b. los DESIGN.md de system/design/ coinciden con tokens.json;
-//   4. las páginas del ejemplo y los fragmentos de diagrams pasan delphos-check;
-//   5. el sitio del ejemplo está generado con la versión actual de site.py;
-//   5b. las pruebas de site-md pasan;
-//   5c. las pruebas de publish-draft pasan;
-//   5d. delphos-check y standalone-html avisan si el tag de la versión no está publicado;
-//   6. site.py funciona con el sistema en jsDelivr (system como URL): ni copia ni rutas a una copia.
 import { execFileSync } from 'node:child_process';
 import { cpSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { classes, SHIPPED, version } from './build.mjs';
+import { classes, SHIPPED, standaloneCss, version } from './build.mjs';
 import { loadTokens } from './tokens-lib.mjs';
 import { buildDesignMd, designTargets } from './design-md.mjs';
 
@@ -38,7 +26,6 @@ function files(dir, pred = () => true) {
 run('node', ['scripts/check-tokens.mjs'], { stdio: ['inherit', 'ignore', 'inherit'] });
 run('node', ['scripts/check-css.mjs', ...files(join(ROOT, 'system', 'css')).map((f) => relative(ROOT, f))]);
 
-// 3. Copias del plugin.
 for (const item of SHIPPED) {
   const src = join(ROOT, 'system', item);
   for (const f of statSync(src).isFile() ? [src] : files(src)) {
@@ -52,6 +39,7 @@ const shippedVersion = readFileSync(join(PLUGIN, 'skills', 'site', 'system', 'VE
 if (shippedVersion !== version()) errors.push(`el plugin lleva el sistema v${shippedVersion} y package.json dice v${version()}`);
 const listed = JSON.parse(readFileSync(join(PLUGIN, 'skills', 'check', 'classes.json'), 'utf8'));
 if (JSON.stringify(listed) !== JSON.stringify(classes())) errors.push('skills/check/classes.json no coincide con las hojas: ejecuta npm run build');
+if (readFileSync(join(ROOT, 'system', 'standalone.css'), 'utf8') !== standaloneCss()) errors.push('system/standalone.css no coincide con tokens.json y las hojas: ejecuta npm run build');
 const tokensVersion = JSON.parse(readFileSync(join(ROOT, 'system', 'tokens.json'), 'utf8')).version;
 if (tokensVersion !== version()) errors.push(`system/tokens.json dice v${tokensVersion} y package.json, v${version()}`);
 for (const name of ['documentation', 'diagrams']) {
@@ -59,7 +47,6 @@ for (const name of ['documentation', 'diagrams']) {
   if (m.version !== version()) errors.push(`plugins/${name} declara v${m.version}; package.json, v${version()}`);
 }
 
-// 3b. Los DESIGN.md de system/design/ están al día con tokens.json y no sobra ninguno.
 {
   const tokens = loadTokens();
   const targets = designTargets(tokens);
@@ -72,7 +59,6 @@ for (const name of ['documentation', 'diagrams']) {
   for (const f of readdirSync(join(ROOT, 'system', 'design'))) if (!want.has(f)) errors.push(`system/design/${f} sobra: ejecuta npm run build`);
 }
 
-// 4. delphos-check sobre el ejemplo y los fragmentos de diagrams.
 const pages = [
   ...files(join(ROOT, 'examples'), (f) => f.endsWith('.html') && !f.includes(`${join('docs', 'design-system')}`)),
   ...files(join(ROOT, 'plugins', 'diagrams', 'skills', 'diagram', 'examples'), (f) => f.endsWith('.html')),
@@ -80,25 +66,23 @@ const pages = [
 try { run('node', [join(PLUGIN, 'skills', 'check', 'scripts', 'delphos-check'), ...pages.map((f) => relative(ROOT, f))], { stdio: ['inherit', 'ignore', 'inherit'] }); }
 catch { errors.push('delphos-check encuentra fallos (arriba)'); }
 
-// 5. El sitio del ejemplo, regenerado, no cambia.
 try {
   run('uv', ['run', '--quiet', '--no-project', '--with', 'markdown', 'python', join(PLUGIN, 'skills', 'site', 'scripts', 'site.py'), 'build', '--root', 'examples/sample-project', '--check'], { stdio: ['inherit', 'ignore', 'inherit'] });
 } catch { errors.push('el sitio del ejemplo no está al día: ejecuta npm run example'); }
 
-// 5b. site-md: el sitio en Markdown (tests/site-md/, con pytest).
 try {
   run('uv', ['run', '--quiet', '--no-project', '--with', 'pytest', '--with', 'markdown-it-py', '--with', 'mdit-py-plugins', '--with', 'pyyaml', 'python', '-m', 'pytest', '-q', 'tests/site-md'], { stdio: ['inherit', 'ignore', 'inherit'] });
 } catch { errors.push('las pruebas de site-md fallan: uv run … pytest tests/site-md'); }
 
-// 5c. publish-draft: publicar un borrador como issue, con un gh doble.
 try { run('node', ['scripts/test-publish-draft.mjs'], { stdio: ['inherit', 'ignore', 'inherit'] }); }
 catch { errors.push('las pruebas de publish-draft fallan: node scripts/test-publish-draft.mjs'); }
 
-// 5d. El aviso del tag sin publicar, con fetch doble.
 try { run('node', ['scripts/test-release-tag.mjs'], { stdio: ['inherit', 'ignore', 'inherit'] }); }
 catch { errors.push('las pruebas del aviso del tag fallan: node scripts/test-release-tag.mjs'); }
 
-// 6. El sistema desde jsDelivr: el ejemplo, sin su copia y con system como URL.
+try { run('node', ['scripts/test-single.mjs'], { stdio: ['inherit', 'ignore', 'inherit'] }); }
+catch { errors.push('las pruebas de un solo fichero fallan: node scripts/test-single.mjs'); }
+
 {
   const CDN = `https://cdn.jsdelivr.net/gh/AS-prog/asprog-design-system@v${version()}/system`;
   const tmp = mkdtempSync(join(tmpdir(), 'site-cdn-'));

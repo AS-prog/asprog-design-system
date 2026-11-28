@@ -1,24 +1,18 @@
 #!/usr/bin/env node
-// Prepara el plugin documentation a partir de system/. Uso: npm run build
-//
-// El plugin no puede mirar fuera de su carpeta (Claude Code lo copia a su
-// caché), así que lleva una copia de las hojas, los tokens, los scripts y las fuentes, y la
-// lista de clases que delphos-check admite. Las dos cosas se generan aquí;
-// npm test falla si se quedan atrás.
+import { execFileSync } from 'node:child_process';
 import { cpSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadTokens, buildCss } from './tokens-lib.mjs';
+import { loadTokens, buildCss, buildStandaloneTokens } from './tokens-lib.mjs';
 import { buildDesignMd, designTargets } from './design-md.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const SYSTEM = join(ROOT, 'system');
 const PLUGIN = join(ROOT, 'plugins', 'documentation');
 
-// Lo que viaja con el plugin y luego se copia a cada proyecto.
-export const SHIPPED = ['tokens.css', 'css', 'js', 'fonts'];
+export const SHIPPED = ['tokens.css', 'standalone.css', 'css', 'js', 'fonts'];
+export const STANDALONE_SHEETS = ['css/base.css', 'css/document.css', 'css/single.css'];
 
-// Prefijos de las clases que delphos-check vigila (regla 8).
 const WATCHED = /^(doc-|d-|hl-|g-|lib-|notice)/;
 
 export function classes() {
@@ -34,10 +28,16 @@ export function version() {
   return JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).version;
 }
 
+/** The single-file stylesheet: standalone tokens followed by the document sheets, comments removed. */
+export function standaloneCss(tokens = loadTokens()) {
+  const sheets = STANDALONE_SHEETS.map((s) => readFileSync(join(SYSTEM, s), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\n{3,}/g, '\n\n').trim());
+  return [buildStandaloneTokens(tokens).trim(), ...sheets].join('\n\n') + '\n';
+}
+
 function main() {
   const tokens = loadTokens();
   writeFileSync(join(SYSTEM, 'tokens.css'), buildCss(tokens));
-  // DESIGN.md por paleta y tema, para HyperFrames y otras herramientas que leen design.md.
+  writeFileSync(join(SYSTEM, 'standalone.css'), standaloneCss(tokens));
   rmSync(join(SYSTEM, 'design'), { recursive: true, force: true });
   mkdirSync(join(SYSTEM, 'design'), { recursive: true });
   for (const d of designTargets(tokens)) writeFileSync(join(SYSTEM, 'design', d.file), buildDesignMd(tokens, d.theme, d.palette));
@@ -47,6 +47,10 @@ function main() {
   for (const item of SHIPPED) cpSync(join(SYSTEM, item), join(target, item), { recursive: true });
   writeFileSync(join(target, 'VERSION'), version() + '\n');
   writeFileSync(join(PLUGIN, 'skills', 'check', 'classes.json'), JSON.stringify(classes(), null, 2) + '\n');
+  const examples = join(ROOT, 'examples', 'single');
+  for (const f of readdirSync(examples).filter((n) => n.endsWith('.html'))) {
+    execFileSync('node', [join(PLUGIN, 'skills', 'single', 'scripts', 'single-html'), 'build', join(examples, f)], { stdio: 'ignore' });
+  }
   for (const name of ['documentation', 'diagrams']) {
     const p = join(ROOT, 'plugins', name, '.claude-plugin', 'plugin.json');
     const manifest = JSON.parse(readFileSync(p, 'utf8'));
