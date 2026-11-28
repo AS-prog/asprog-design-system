@@ -14,4 +14,18 @@ Las nueve reglas que aplica `scripts/delphos-check` de esta skill a una página 
 | 8 | Clases con prefijo `doc-`, `d-`, `hl-`, `g-`, `lib-` o `notice` que no existen en las hojas (`classes.json`, generado). Si la página enlaza el sistema en jsDelivr, las del `classes.json` de ese tag | §5 |
 | 9 | `<title>` y `meta[name=description]` con texto, y ningún marcador `{{…}}` sin rellenar | §2 |
 
+## Un solo fichero
+
+Una página con el bloque `<!-- single:style … -->` (skill `single`) se revisa como un solo fichero. `--single` lo fuerza, y una página sin el bloque falla. Cambian estas reglas:
+
+| Regla | En un solo fichero |
+| --- | --- |
+| 1 | Admite un único bloque `single:style` con su `<style>`, y solo si su `sha256` coincide con el contenido: tocado a mano, falla. Fuera del bloque, nada de `<style>` ni `style=""` |
+| 2 | Además, falla `var()` en un atributo de color (`fill="var(--ink)"`): muchos navegadores no lo resuelven. El color va con una clase `.d-*` |
+| 3 | Fuera del bloque, ningún host: ni jsDelivr ni Google. Tampoco `<script src>` ni rutas relativas en `<link>`, `<img>`, `<source>` o `<iframe>`: lo que haga falta va como `data:` URI |
+| 4 | Ningún `<link rel="stylesheet">` fuera del bloque |
+| 5 | El mismo esqueleto, sin exigir `<html data-theme="auto">`. En un Artifact no hay `<html>` y se revisa igual |
+
+Los contrastes salen de los tokens, que `npm test` mide en claro y en oscuro. El `sha256` asegura que el bloque es el que generan esos tokens.
+
 Lo que no comprueba: el contenido del `.md`, la calidad de un diagrama ni los contrastes (eso lo mide `npm test` en el repo del sistema sobre los tokens).

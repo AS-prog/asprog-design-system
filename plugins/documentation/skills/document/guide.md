@@ -16,7 +16,7 @@ La identidad es **Delphos** sobre **Cobalt Grid**: papel crema, una sola tinta (
 
 - Una **vista generada** (tablero, panel) añade `css/view.css` en cuarto lugar y usa `.view` en lugar de `.doc`.
 - Una página de un **sitio** lleva al final `css/library.css`, entre `<!-- site:css -->` y `<!-- /site:css -->`. No se escribe a mano: la pone `site.py build`.
-- Nada más. Ninguna página pide nada a un tercero: ni fuentes de Google, ni CDN, ni iconos.
+- Nada más. Ninguna página pide nada a un tercero: ni fuentes de Google, ni CDN, ni iconos. La única excepción es un Artifact de un solo fichero (skill `single`), que toma las fuentes de Google Fonts porque su visor no deja cargar otras.
 - Subir de versión es un cambio propio: `site.py vendor` deja la nueva al lado y las páginas se mueven cuando alguien las regenera.
 
 ## 2. El esqueleto

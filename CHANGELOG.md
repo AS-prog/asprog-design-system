@@ -2,6 +2,19 @@
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y la versión, [SemVer](https://semver.org/lang/es/).
 
+## 0.21.0 · 2026-11-28
+
+### Añadido
+- Skill `single` en el plugin `documentation` (#42): un documento Delphos en un solo fichero HTML, sin sitio ni carpeta al lado, para un Artifact de claude.ai, un artefacto de una issue, un enlace o un adjunto de correo. `scripts/single-html new` crea la página desde su plantilla con el bloque de estilo dentro; `single-html build` lo renueva. `--target artifact` quita el documento propio (`<!doctype>`, `<html>`, `<head>`, `<body>`) y toma las fuentes de Google Fonts; `--target file` las mete como data URI y la página se ve sin red. `reference/destinations.md` recoge las reglas de cada destino.
+- `system/standalone.css`, generado por `npm run build`: los tokens de Delphos con el claro en `:root`, el oscuro bajo `prefers-color-scheme` salvo `data-theme="light"` y otra vez con `data-theme="dark"`, sin `@font-face` ni paletas de marca, seguido de `base.css`, `document.css` y `css/single.css`. `npm test` comprueba que sigue al día.
+- `css/single.css`: el margen lateral de `.doc` respeta `env(safe-area-inset-*)`.
+- `delphos-check` reconoce un solo fichero por su bloque `<!-- single:style -->`, y `--single` lo fuerza. Admite ese bloque solo si su `sha256` coincide, y falla con `var()` en un atributo de color, con `<script src>`, con rutas relativas y con hojas o hosts fuera del bloque. No exige `data-theme="auto"` ni `<html>`, así que un Artifact se revisa entero.
+- `examples/single/lector-sensores.html`: la ficha técnica del ejemplo como un solo fichero.
+- `npm test` prueba `single-html` y `delphos-check --single` (`scripts/test-single.mjs`): la página generada pasa, y fallan una copia con `fill="var(--ink)"`, otra con una hoja de un CDN, otra con `<script src>`, otra con una imagen relativa y otra con el bloque tocado.
+
+### Cambiado
+- `document` remite a `single` cuando la página es un solo fichero que no vive en el sitio.
+
 ## 0.20.1 · 2026-11-28
 
 ### Corregido

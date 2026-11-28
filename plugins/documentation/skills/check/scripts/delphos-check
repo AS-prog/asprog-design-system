@@ -1,23 +1,6 @@
 #!/usr/bin/env node
-// delphos-check: comprueba que un HTML de la biblioteca cumple las reglas del
-// sistema de diseño (ver skills/check/rules.md). Sin dependencias: solo módulos de Node.
-//
-//   delphos-check <ruta.html> …          revisa los ficheros; sale con 2 si alguno falla
-//   delphos-check --hook                 lee el evento de Claude Code por stdin (PostToolUse)
-//   delphos-check --library-dir <dir>    con --hook, solo revisa los .html dentro de <dir>;
-//                                        sin el argumento, lee la opción libraryDir del plugin
-//                                        por la variable CLAUDE_PLUGIN_OPTION_libraryDir
-//   delphos-check --allow-host <host>    admite un host externo (por defecto, ninguno)
-//
-// El sistema puede ir copiado en el repo (rutas relativas) o enlazado desde jsDelivr,
-// fijado a un tag (https://cdn.jsdelivr.net/gh/AS-prog/asprog-design-system@vX.Y.Z/…).
-// Esa URL no cuenta como tercero, y las clases se comprueban contra las hojas de ese tag:
-// su classes.json, que se descarga de jsDelivr. Sin red, se usan las del plugin y se avisa.
-//
-// En modo hook, un .html que no es de la biblioteca (sin .doc-prose ni .figwrap)
-// se deja pasar en silencio: el hook no debe molestar con páginas ajenas.
-
 import { readFileSync, existsSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { resolve, sep, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
@@ -29,13 +12,11 @@ const VIEW_SHEET = 'css/view.css';
 const LIBRARY_SHEET = 'css/library.css';
 const COLOR_ATTRS = ['fill', 'stroke', 'color', 'stop-color', 'flood-color', 'lighting-color', 'bgcolor'];
 const COLOR_OK = new Set(['currentcolor', 'none', 'inherit', 'transparent', '']);
-// El propio sistema servido por jsDelivr, fijado a un tag: no es un tercero.
 const CDN = 'https://cdn.jsdelivr.net/gh/AS-prog/asprog-design-system@';
+const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
+const SINGLE_BLOCK = /<!-- single:style([^>]*?)-->([\s\S]*?)<!-- \/single:style -->/g;
 const CDN_TAG = /https:\/\/cdn\.jsdelivr\.net\/gh\/AS-prog\/asprog-design-system@(v?\d+\.\d+\.\d+)\//;
 
-// Clases que existen en las hojas: las genera `npm run build` desde system/css/.
-// Junto al script en la skill; APM copia el script solo para el hook, así que
-// también se busca en las skills instaladas del proyecto y del usuario.
 function knownClasses() {
   const project = process.env.CLAUDE_PROJECT_DIR || process.cwd();
   const candidates = [
@@ -67,7 +48,6 @@ function warnIfUnpublished(tag) {
   return publishChecks.get(tag);
 }
 
-// Las clases de las hojas de un tag, del classes.json de ese tag. Una vez por tag y ejecución.
 const tagClasses = new Map();
 async function classesFor(src) {
   const tag = src.match(CDN_TAG)?.[1];
@@ -81,18 +61,15 @@ async function classesFor(src) {
     try {
       const res = await fetch(`${CDN}${tag}/plugins/documentation/skills/check/classes.json`, { signal: AbortSignal.timeout(10000) });
       if (res.ok) set = new Set(await res.json());
-    } catch { /* sin red: abajo */ }
+    } catch {}
     if (!set) console.error(`aviso: no pude descargar las clases de ${tag}; uso las del plugin (v${pluginVersion()})`);
     tagClasses.set(tag, set ?? knownClasses());
   }
   return tagClasses.get(tag);
 }
 
-// --- utilidades de texto -------------------------------------------------
-
 function lineOf(src, index) { return src.slice(0, index).split('\n').length; }
 
-// Quita scripts y comentarios sin mover las líneas, para no dar falsos positivos.
 function blank(src, re) {
   return src.replace(re, (m) => m.replace(/[^\n]/g, ' '));
 }
@@ -105,44 +82,59 @@ function attr(tag, name) {
 
 function hostOf(url) {
   const m = url.trim().match(/^(?:https?:)?\/\/([^/:?#]+)/i);
-  return m ? m[1].toLowerCase() : null; // null = ruta relativa, data: o mailto:
+  return m ? m[1].toLowerCase() : null;
 }
 
-// --- las reglas ----------------------------------------------------------
+export function isSingle(src) { return /<!-- single:style\b/.test(src); }
 
-export function check(src, { fragment = false, allowHosts = ALLOWED_HOSTS, classes = knownClasses() } = {}) {
+function checkSingleBlock(src, fail) {
+  const blocks = [...src.matchAll(SINGLE_BLOCK)];
+  if (blocks.length !== 1) { fail(1, 1, `un solo fichero lleva un bloque <!-- single:style --> … <!-- /single:style -->; hay ${blocks.length}`); return src; }
+  const [whole, attrs, inner] = blocks[0];
+  const sha = attrs.match(/sha256=([0-9a-f]{64})/)?.[1];
+  if (!sha || createHash('sha256').update(inner).digest('hex') !== sha) fail(1, lineOf(src, blocks[0].index), 'el bloque single:style no es el que genera el sistema: renuévalo con single-html build, sin tocarlo a mano');
+  return src.slice(0, blocks[0].index) + whole.replace(/[^\n]/g, ' ') + src.slice(blocks[0].index + whole.length);
+}
+
+export function check(src, { fragment = false, single = isSingle(src), allowHosts = ALLOWED_HOSTS, classes = knownClasses() } = {}) {
   const errors = [];
   const fail = (rule, line, msg) => errors.push({ rule, line, msg });
-  const body = blank(blank(src, /<!--[\s\S]*?-->/g), /<script\b[^>]*>[\s\S]*?<\/script>/gi);
+  const own = single ? checkSingleBlock(src, fail) : src;
+  const body = blank(blank(own, /<!--[\s\S]*?-->/g), /<script\b[^>]*>[\s\S]*?<\/script>/gi);
   const tags = [...body.matchAll(/<([a-zA-Z][\w-]*)\b[^>]*>/g)];
-  const isFragment = fragment || !/<html\b/i.test(body);
+  const isFragment = !single && (fragment || !/<html\b/i.test(body));
 
-  // 1. Nada de estilos en línea ni hojas propias.
   for (const t of tags) {
     if (/\sstyle\s*=/i.test(t[0])) fail(1, lineOf(body, t.index), `atributo style="" en <${t[1]}>: usa una clase o un token`);
     if (t[1].toLowerCase() === 'style') fail(1, lineOf(body, t.index), '<style> propio: todo sale de tokens.css y las hojas del sistema');
   }
 
-  // 2. Ningún color a mano.
   for (const t of tags) {
     for (const a of COLOR_ATTRS) {
       const v = attr(t[0], a);
       if (v == null) continue;
-      if (COLOR_OK.has(v.toLowerCase()) || /^var\(/.test(v)) continue;
+      if (COLOR_OK.has(v.toLowerCase())) continue;
+      if (/^var\(/.test(v)) {
+        if (single) fail(2, lineOf(body, t.index), `${a}="${v}" en <${t[1]}>: var() en un atributo no se resuelve en todos los navegadores; usa una clase .d-*`);
+        continue;
+      }
       fail(2, lineOf(body, t.index), `${a}="${v}" en <${t[1]}>: un color a mano; hereda currentColor o usa una clase .d-*`);
     }
-    if (t[1].toLowerCase() === 'meta') continue; // theme-color viene de la plantilla
+    if (t[1].toLowerCase() === 'meta') continue;
   }
   for (const m of body.matchAll(/\b(rgba?|hsla?)\s*\(/g)) fail(2, lineOf(body, m.index), `${m[1]}(): un color a mano`);
 
-  // 3. Nada de terceros.
   for (const t of tags) {
     const name = t[1].toLowerCase();
     const src2 = name === 'link' ? attr(t[0], 'href') : ['script', 'img', 'iframe', 'source', 'video', 'audio'].includes(name) ? attr(t[0], 'src') : null;
     if (src2 == null) continue;
     const host = hostOf(src2);
-    if (src2.startsWith(CDN)) continue;
+    if (single && !host && !/^(data:|#)/.test(src2.trim())) { fail(3, lineOf(body, t.index), `<${name}> pide ${src2}: un solo fichero no tiene nada al lado; mételo como data: URI`); continue; }
+    if (src2.startsWith(CDN) && !single) continue;
     if (host && !allowHosts.has(host)) fail(3, lineOf(body, t.index), `<${name}> carga ${host}: ningún documento pide nada fuera del repo, salvo el propio sistema en jsDelivr`);
+  }
+  if (single) {
+    for (const m of blank(own, /<!--[\s\S]*?-->/g).matchAll(/<script\b[^>]*\bsrc\s*=/gi)) fail(3, lineOf(own, m.index), '<script src> en un solo fichero: el script va en línea');
   }
   for (const m of body.matchAll(/@import\b|url\(\s*['"]?(https?:)?\/\/([^/'")]+)/gi)) {
     const host = m[2]?.toLowerCase();
@@ -150,7 +142,6 @@ export function check(src, { fragment = false, allowHosts = ALLOWED_HOSTS, class
     else if (host && !allowHosts.has(host)) fail(3, lineOf(body, m.index), `url() a ${host}: ningún documento pide nada fuera del repo`);
   }
 
-  // 7. Imágenes con alt, SVG con role, diagramas con título y descripción, sin logos.
   for (const t of tags) {
     const name = t[1].toLowerCase();
     if (name === 'img' && attr(t[0], 'alt') == null) fail(7, lineOf(body, t.index), '<img> sin alt');
@@ -161,7 +152,6 @@ export function check(src, { fragment = false, allowHosts = ALLOWED_HOSTS, class
     if (!/<title[\s>]/i.test(m[1]) || !/<desc[\s>]/i.test(m[1])) fail(7, lineOf(body, m.index), 'un diagrama (figure.figwrap) necesita <title> y <desc> dentro del svg');
   }
 
-  // 8. Clases que no existen.
   if (classes) {
     for (const t of tags) {
       const cls = attr(t[0], 'class');
@@ -174,22 +164,23 @@ export function check(src, { fragment = false, allowHosts = ALLOWED_HOSTS, class
 
   if (isFragment) return errors;
 
-  // 4. Las tres hojas, en orden, y ninguna otra salvo las capas previstas.
-  const sheets = tags.filter((t) => t[1].toLowerCase() === 'link' && /stylesheet/i.test(attr(t[0], 'rel') ?? '')).map((t) => ({ href: attr(t[0], 'href') ?? '', line: lineOf(body, t.index) }));
-  // Una vista (tablero, panel) añade css/view.css y cambia .doc y el cuerpo por .view.
-  const isView = sheets.some((l) => l.href.endsWith(VIEW_SHEET));
-  // Una página de un sitio (scripts/site.py) añade css/library.css al final.
-  const isLibrary = sheets.some((l) => l.href.endsWith(LIBRARY_SHEET));
-  const wanted = [...SHEETS, ...(isView ? [VIEW_SHEET] : []), ...(isLibrary ? [LIBRARY_SHEET] : [])];
-  const expected = wanted.map((s) => sheets.find((l) => l.href.endsWith(s)));
-  if (sheets.length !== wanted.length || expected.some((e, i) => !e || sheets[i] !== e)) {
-    fail(4, sheets[0]?.line ?? 1, `hojas: se esperan exactamente ${wanted.join(', ')} en ese orden; hay ${sheets.map((l) => l.href).join(', ') || 'ninguna'}`);
+  if (single) {
+    for (const t of tags) if (t[1].toLowerCase() === 'link' && /stylesheet/i.test(attr(t[0], 'rel') ?? '')) fail(4, lineOf(body, t.index), `<link rel="stylesheet"> fuera del bloque single:style: un solo fichero no enlaza hojas`);
+  } else {
+    const sheets = tags.filter((t) => t[1].toLowerCase() === 'link' && /stylesheet/i.test(attr(t[0], 'rel') ?? '')).map((t) => ({ href: attr(t[0], 'href') ?? '', line: lineOf(body, t.index) }));
+    const isView = sheets.some((l) => l.href.endsWith(VIEW_SHEET));
+    const isLibrary = sheets.some((l) => l.href.endsWith(LIBRARY_SHEET));
+    const wanted = [...SHEETS, ...(isView ? [VIEW_SHEET] : []), ...(isLibrary ? [LIBRARY_SHEET] : [])];
+    const expected = wanted.map((s) => sheets.find((l) => l.href.endsWith(s)));
+    if (sheets.length !== wanted.length || expected.some((e, i) => !e || sheets[i] !== e)) {
+      fail(4, sheets[0]?.line ?? 1, `hojas: se esperan exactamente ${wanted.join(', ')} en ese orden; hay ${sheets.map((l) => l.href).join(', ') || 'ninguna'}`);
+    }
+    for (const l of sheets) if (/site\.css$/.test(l.href)) fail(4, l.line, 'css/site.css es de la web y no entra en un documento');
   }
-  for (const l of sheets) if (/site\.css$/.test(l.href)) fail(4, l.line, 'css/site.css es de la web y no entra en un documento');
 
-  // 5. El esqueleto.
   const html = tags.find((t) => t[1].toLowerCase() === 'html');
-  if (html && attr(html[0], 'data-theme') !== 'auto') fail(5, lineOf(body, html.index), '<html> sin data-theme="auto"');
+  const isView = !single && tags.some((t) => t[1].toLowerCase() === 'link' && (attr(t[0], 'href') ?? '').endsWith(VIEW_SHEET));
+  if (html && !single && attr(html[0], 'data-theme') !== 'auto') fail(5, lineOf(body, html.index), '<html> sin data-theme="auto"');
   const need = [
     isView ? [/<div\b[^>]*\bclass\s*=\s*["'][^"']*\bview\b/i, 'div.view'] : [/<div\b[^>]*\bclass\s*=\s*["'][^"']*\bdoc\b/i, 'div.doc'],
     [/<header\b[^>]*\bclass\s*=\s*["'][^"']*\bdoc-bar\b/i, 'header.doc-bar'],
@@ -200,21 +191,17 @@ export function check(src, { fragment = false, allowHosts = ALLOWED_HOSTS, class
   for (const [re, what] of need) if (!re.test(body)) fail(5, 1, `falta ${what} en el esqueleto`);
   const h1s = [...body.matchAll(/<h1\b/gi)];
   if (h1s.length !== 1) fail(5, h1s[1] ? lineOf(body, h1s[1].index) : 1, `hay ${h1s.length} <h1>; debe haber uno, el título, en header.doc-header`);
-  // 7 (documento): una imagen antes del cuerpo es un logo en la barra o la cabecera.
   const articleAt = body.search(/<article\b/i);
   for (const t of tags) {
     if (t[1].toLowerCase() === 'img' && (articleAt < 0 || t.index < articleAt)) fail(7, lineOf(body, t.index), '<img> en la barra o la cabecera: sin logo, la marca es texto');
   }
 
-  // 6. Índice solo con cuatro h2 o más; cada h2 con id.
-  // Los h2 del índice y de la barra lateral del sitio no son secciones del cuerpo.
   const noToc = blank(blank(body, /<nav\b[^>]*doc-toc[\s\S]*?<\/nav>/i), /<nav\b[^>]*lib-nav[\s\S]*?<\/nav>/i);
   const h2s = [...noToc.matchAll(/<h2\b[^>]*>/gi)];
   const hasToc = /<nav\b[^>]*doc-toc/i.test(body);
   if (hasToc && h2s.length < 4) fail(6, lineOf(body, body.search(/<nav\b[^>]*doc-toc/i)), `nav.doc-toc con ${h2s.length} h2: el índice solo va con cuatro o más`);
   if (!isView) for (const h of h2s) if (attr(h[0], 'id') == null) fail(6, lineOf(noToc, h.index), '<h2> sin id');
 
-  // 9. Título y descripción.
   const title = body.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i);
   if (!title || !title[1].trim() || /\{\{/.test(title[1])) fail(9, title ? lineOf(body, title.index) : 1, '<title> vacío o sin rellenar');
   const desc = tags.find((t) => t[1].toLowerCase() === 'meta' && attr(t[0], 'name') === 'description');
@@ -224,8 +211,6 @@ export function check(src, { fragment = false, allowHosts = ALLOWED_HOSTS, class
 
   return errors.sort((a, b) => a.line - b.line || a.rule - b.rule);
 }
-
-// --- línea de órdenes ----------------------------------------------------
 
 function report(file, errors) {
   if (!errors.length) { console.log(`✓ ${file} cumple el sistema de diseño`); return; }
@@ -238,21 +223,21 @@ function isLibraryHtml(src) { return /\bdoc-prose\b|\bfigwrap\b|class="view"|\bl
 async function main() {
   const argv = process.argv.slice(2);
   const files = [];
-  let hook = false, libraryDir = '', allow = new Set(ALLOWED_HOSTS);
+  let hook = false, single = false, libraryDir = '', allow = new Set(ALLOWED_HOSTS);
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--hook') hook = true;
     else if (argv[i] === '--library-dir') libraryDir = argv[++i] ?? '';
     else if (argv[i] === '--allow-host') allow.add((argv[++i] ?? '').toLowerCase());
+    else if (argv[i] === '--single') single = true;
     else files.push(argv[i]);
   }
-  // La opción del plugin (userConfig.libraryDir) llega por el entorno del hook.
   if (!libraryDir) libraryDir = process.env.CLAUDE_PLUGIN_OPTION_libraryDir ?? '';
 
   if (hook) {
     let input = '';
-    try { input = readFileSync(0, 'utf8'); } catch { /* sin stdin */ }
+    try { input = readFileSync(0, 'utf8'); } catch {}
     let file = '';
-    try { file = JSON.parse(input)?.tool_input?.file_path ?? ''; } catch { /* no es JSON */ }
+    try { file = JSON.parse(input)?.tool_input?.file_path ?? ''; } catch {}
     if (!/\.html?$/i.test(file) || !existsSync(file)) return 0;
     if (libraryDir && !resolve(file).startsWith(resolve(libraryDir) + sep)) return 0;
     const src = readFileSync(file, 'utf8');
@@ -264,11 +249,11 @@ async function main() {
     return 2;
   }
 
-  if (!files.length) { console.error('uso: delphos-check <ruta.html> … | --hook'); return 1; }
+  if (!files.length) { console.error('uso: delphos-check <ruta.html> … [--single] [--allow-host <host>] | --hook [--library-dir <dir>]'); return 1; }
   let bad = 0;
   for (const f of files) {
     const src = readFileSync(f, 'utf8');
-    const errors = check(src, { allowHosts: allow, classes: await classesFor(src) });
+    const errors = check(src, { single: single || isSingle(src), allowHosts: allow, classes: await classesFor(src) });
     report(f, errors);
     if (errors.length) bad++;
   }

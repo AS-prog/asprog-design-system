@@ -1,8 +1,6 @@
-// Cobalt Grid — lectura de tokens.json y generación de tokens.css. Sin dependencias.
 import { readFileSync } from 'node:fs';
 
 export const THEMES = ['light', 'dark', 'print'];
-// Los temas que una paleta de marca puede cambiar: la impresión es siempre la de la base.
 export const PALETTE_THEMES = ['light', 'dark'];
 export const SCALAR_FAMILIES = ['typeScale', 'lineHeight', 'letterSpacing', 'spacing', 'radius', 'layout', 'motion', 'border', 'slide'];
 
@@ -40,6 +38,30 @@ function cssRef(value) {
   return value.replace(/\{(?:color\.)?([\w-]+)\}/g, (_, n) => `var(--${n})`);
 }
 
+function themeBlock(tokens, theme, indent = '') {
+  const out = [];
+  if (theme !== 'print') out.push(`${indent}  color-scheme: ${theme};`);
+  for (const t of tokens.color.tokens) {
+    const raw = typeof t.value === 'string' ? t.value : t.value[theme];
+    if (raw == null) continue;
+    out.push(`${indent}  --${t.name}: ${cssRef(raw)};`);
+  }
+  return out;
+}
+
+function scalarBlock(tokens) {
+  const L = [':root {'];
+  for (const fam of SCALAR_FAMILIES) {
+    for (const t of tokens[fam].tokens) L.push(`  --${t.name}: ${cssRef(t.value)};`);
+  }
+  for (const [k, v] of Object.entries(tokens.type.families)) L.push(`  --font-${k}: ${v};`);
+  L.push('}', '');
+  const bp = tokens.layout.tokens.find((t) => t.name === 'bp-mobile');
+  const um = tokens.layout.tokens.find((t) => t.name === 'unit-mobile');
+  if (bp && um) L.push(`@media (max-width: ${bp.value}) { :root { --unit: ${um.value}; } }`, '');
+  return L;
+}
+
 export function buildCss(tokens) {
   const L = [];
   L.push(`/* Cobalt Grid — generado desde tokens.json (v${tokens.version}) con scripts/build-tokens.mjs. No se edita a mano. */`, '');
@@ -47,22 +69,9 @@ export function buildCss(tokens) {
     L.push(`@font-face { font-family: "${f.family}"; font-style: ${f.style}; font-weight: ${f.weight}; font-display: swap; src: url("${f.file}") format("woff2");${f.unicodeRange ? ` unicode-range: ${f.unicodeRange};` : ''} }`, '');
   }
   const themeSel = { light: ':root, [data-theme="light"]', dark: '[data-theme="dark"]', print: '[data-theme="print"]' };
-  const block = (theme, indent = '') => {
-    const out = [];
-    if (theme !== 'print') out.push(`${indent}  color-scheme: ${theme};`);
-    for (const t of tokens.color.tokens) {
-      const raw = typeof t.value === 'string' ? t.value : t.value[theme];
-      if (raw == null) continue;
-      // Un valor repetido en oscuro/impresión se emite igualmente: cada tema es completo por sí mismo.
-      out.push(`${indent}  --${t.name}: ${cssRef(raw)};`);
-    }
-    return out;
-  };
-  for (const theme of THEMES) L.push(`${themeSel[theme]} {`, ...block(theme), '}', '');
+  for (const theme of THEMES) L.push(`${themeSel[theme]} {`, ...themeBlock(tokens, theme), '}', '');
   L.push('/* data-theme="auto": sigue a prefers-color-scheme; el conmutador lo sobrescribe escribiendo light o dark. */');
-  L.push('@media (prefers-color-scheme: dark) {', '  [data-theme="auto"] {', ...block('dark', '  '), '  }', '}', '');
-  // Paletas de marca: cambian solo los colores que nombran, sobre el claro o el oscuro.
-  // Van en el mismo elemento que data-theme; sin data-theme, el claro.
+  L.push('@media (prefers-color-scheme: dark) {', '  [data-theme="auto"] {', ...themeBlock(tokens, 'dark', '  '), '  }', '}', '');
   for (const p of palettes(tokens)) {
     const sel = `[data-palette="${p.id}"]`;
     const over = (theme, indent = '') => Object.entries(p.tokens)
@@ -74,20 +83,23 @@ export function buildCss(tokens) {
     L.push('@media (prefers-color-scheme: dark) {', `  ${sel}[data-theme="auto"] {`, ...over('dark', '  '), '  }', '}', '');
   }
   L.push('/* Al imprimir manda el tema print, se elija lo que se elija en pantalla (también con una paleta). */');
-  L.push('@media print {', '  :root, [data-theme], [data-palette], [data-palette][data-theme] {', ...block('print', '  '), '  }', '}', '');
-  L.push(':root {');
-  for (const fam of SCALAR_FAMILIES) {
-    for (const t of tokens[fam].tokens) L.push(`  --${t.name}: ${cssRef(t.value)};`);
-  }
-  for (const [k, v] of Object.entries(tokens.type.families)) L.push(`  --font-${k}: ${v};`);
-  L.push('}', '');
-  const bp = tokens.layout.tokens.find((t) => t.name === 'bp-mobile');
-  const um = tokens.layout.tokens.find((t) => t.name === 'unit-mobile');
-  if (bp && um) L.push(`@media (max-width: ${bp.value}) { :root { --unit: ${um.value}; } }`, '');
+  L.push('@media print {', '  :root, [data-theme], [data-palette], [data-palette][data-theme] {', ...themeBlock(tokens, 'print', '  '), '  }', '}', '');
+  L.push(...scalarBlock(tokens));
   return L.join('\n');
 }
 
-// ---- contraste WCAG 2.x ----
+/** Tokens for a single-file page: light on :root, dark by system preference unless light is forced, and dark when forced; no @font-face and no brand palettes. */
+export function buildStandaloneTokens(tokens) {
+  const L = [];
+  L.push(`/* Delphos v${tokens.version} · un solo fichero · generado por npm run build. No se edita a mano. */`, '');
+  L.push(':root {', ...themeBlock(tokens, 'light'), '}', '');
+  L.push('@media (prefers-color-scheme: dark) {', '  :root:not([data-theme="light"]) {', ...themeBlock(tokens, 'dark', '  '), '  }', '}', '');
+  L.push(':root[data-theme="dark"] {', ...themeBlock(tokens, 'dark'), '}', '');
+  L.push('@media print {', '  :root, :root[data-theme] {', ...themeBlock(tokens, 'print', '  '), '  }', '}', '');
+  L.push(...scalarBlock(tokens));
+  return L.join('\n');
+}
+
 function parseColor(s) {
   s = s.trim();
   let m = s.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);

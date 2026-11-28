@@ -37,9 +37,10 @@ Guía para cambiar este repo. Para **usar** el sistema en un proyecto, las regla
 | Cambiar qué lleva un tipo de documento | `plugins/documentation/skills/method/reference/` y, si tiene página, su plantilla en `plugins/documentation/skills/site/templates/` | `npm run example` si cambia el ejemplo |
 | Cambiar una regla de comprobación | `plugins/documentation/skills/check/scripts/delphos-check` y `skills/check/rules.md`, juntos | `npm test` |
 | Cambiar la web (Astro) | `system/astro/` y `system/css/site.css`, solo con tokens | `npm test`; en la web, subir al tag nuevo |
+| Cambiar el documento de un solo fichero | `system/css/single.css` (solo con tokens), `plugins/documentation/skills/single/` y, si cambia una regla, `delphos-check` y `skills/check/rules.md` | `npm run build` (renueva `standalone.css` y `examples/single/`) y `npm test` |
 | Cambiar el sitio | `plugins/documentation/skills/site/scripts/site.py`, `system/css/library.css` y `skills/site/SKILL.md` | `npm run example` |
 
-Nunca se editan a mano: `system/tokens.css`, `system/design/`, `plugins/documentation/skills/site/system/`, `plugins/documentation/skills/check/classes.json` ni la `version` de los manifiestos. Los genera `npm run build`.
+Nunca se editan a mano: `system/tokens.css`, `system/standalone.css`, el bloque `single:style` de `examples/single/`, `system/design/`, `plugins/documentation/skills/site/system/`, `plugins/documentation/skills/check/classes.json` ni la `version` de los manifiestos. Los genera `npm run build`.
 
 ### Reglas
 
