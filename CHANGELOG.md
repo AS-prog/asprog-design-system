@@ -2,6 +2,15 @@
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y la versión, [SemVer](https://semver.org/lang/es/).
 
+## 0.20.1 · 2026-11-28
+
+### Corregido
+- `delphos-check` y `standalone-html` avisan cuando el tag de la versión del plugin no está en jsDelivr (#40). Antes usaban la copia local sin mirar si el tag estaba publicado, así que pasaban en silencio mientras la página salía sin estilos fuera de la máquina. Es un aviso, no un fallo: sin red no dicen nada y la salida no cambia.
+- `npm test` prueba el aviso con un `fetch` doble (`scripts/test-release-tag.mjs`).
+
+### Añadido
+- `.github/workflows/release-tag.yml`: al fusionar en `main`, crea y sube el tag anotado `vX.Y.Z` de `package.json` si aún no existe.
+
 ## 0.20.0 · 2026-11-25
 
 ### Añadido

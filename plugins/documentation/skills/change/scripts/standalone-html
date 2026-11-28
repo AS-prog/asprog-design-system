@@ -45,11 +45,22 @@ if (!/^[A-Za-z0-9._-]+$/.test(basename(out))) fail(`el nombre ${basename(out)} s
 const here = dirname(resolve(src));
 let html = readFileSync(src, 'utf8');
 
+let publishChecked = false;
+async function warnIfUnpublished(ref) {
+  if (publishChecked) return;
+  publishChecked = true;
+  const res = await fetch(ref, { method: 'HEAD', signal: AbortSignal.timeout(10000) }).catch(() => null);
+  if (res?.status === 404) console.error(`standalone-html: aviso: jsDelivr no tiene el tag v${pluginVersion}: el artefacto lleva los estilos, pero la página original sale sin ellos fuera de esta máquina hasta que se suba el tag`);
+}
+
 // Un fichero local o del sistema en jsDelivr: de la copia del plugin si es su versión; si no, de la red.
 async function load(ref) {
   const cdn = ref.match(CDN_SYSTEM);
   if (!cdn) return readFileSync(ref);
-  if (cdn[1] === pluginVersion) return readFileSync(join(PLUGIN_SYSTEM, cdn[2]));
+  if (cdn[1] === pluginVersion) {
+    await warnIfUnpublished(ref);
+    return readFileSync(join(PLUGIN_SYSTEM, cdn[2]));
+  }
   const res = await fetch(ref).catch(() => null);
   if (!res?.ok) fail(`no pude descargar ${ref}`);
   return Buffer.from(await res.arrayBuffer());
